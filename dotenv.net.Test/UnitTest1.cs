@@ -1,4 +1,5 @@
 using System;
+using FluentAssertions;
 using Xunit;
 
 namespace dotenv.net.Test
@@ -8,6 +9,7 @@ namespace dotenv.net.Test
         [Fact]
         public void Test1()
         {
+            true.Should().BeTrue();
         }
     }
 }

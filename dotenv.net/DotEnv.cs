@@ -18,7 +18,11 @@ namespace dotenv.net
                 encoding = Encoding.Default;
             }
 
+            // read all lines from the env file
             string dotEnvContents = File.ReadAllText(filePath, encoding);
+            
+            // split the long string into an array of rows
+            string[] dotEnvRows = dotEnvContents.Split(new[] {"\r\n", Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }

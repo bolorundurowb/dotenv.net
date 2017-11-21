@@ -4,10 +4,17 @@ using System.Text;
 
 namespace dotenv.net
 {
-    public static class DotEnv
+    public class DotEnv
     {
-        public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
+        private static readonly string DefaultEnvFilePath = $"{Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName}{Path.DirectorySeparatorChar}.env";
+
+        public static void Config(bool throwOnError = true, string filePath = null, Encoding encoding = null)
         {
+            if (filePath == null)
+            {
+                filePath = DefaultEnvFilePath;
+            }
+            
             // if configured to throw errors then throw otherwise return
             if (!File.Exists(filePath))
             {

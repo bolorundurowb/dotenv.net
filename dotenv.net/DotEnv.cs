@@ -4,13 +4,18 @@ using System.Text;
 
 namespace dotenv.net
 {
-    public class DotEnv
+    public static class DotEnv
     {
         public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
         {
-            if (throwOnError && !File.Exists(filePath))
+            // if configured to throw errors then throw otherwise return
+            if (!File.Exists(filePath))
             {
-                throw new FileNotFoundException("Environment file specified does not exist.");
+                if (throwOnError)
+                {
+                    throw new FileNotFoundException("Environment file specified does not exist.");
+                }
+                return;
             }
 
             if (encoding == null)
@@ -30,21 +35,16 @@ namespace dotenv.net
                 string[] keyValue = dotEnvRow.Split(new[] {"="}, StringSplitOptions.None);
                 
                 // if the row is empty continue
-                if (keyValue.Length == 0) 
+                switch (keyValue.Length)
                 {
-                    continue;
-                }
-                
-                // if there is only a key add a null value
-                else if (keyValue.Length == 1)
-                {
-                    Environment.SetEnvironmentVariable(keyValue[0].Trim(), null);
-                }
-
-                // if the value exists then set it
-                else
-                {
-                    Environment.SetEnvironmentVariable(keyValue[0].Trim(), keyValue[1].Trim());
+                    case 0:
+                        break;
+                    case 1:
+                        Environment.SetEnvironmentVariable(keyValue[0].Trim(), null);
+                        break;
+                    default:
+                        Environment.SetEnvironmentVariable(keyValue[0].Trim(), keyValue[1].Trim());
+                        break;
                 }
             }
         }

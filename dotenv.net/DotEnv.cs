@@ -11,7 +11,7 @@ namespace dotenv.net
         /// </summary>
         /// <param name="throwOnError">A value stating whether the application should throw an exception on unexpected data</param>
         /// <param name="filePath">An optional env file path, if not provided it defaults to the one in the same folder as the output exe or dll</param>
-        /// <param name="encoding">The encoding with which the env file was created</param>
+        /// <param name="encoding">The encoding with which the env file was created, It defaults to the platforms default</param>
         /// <exception cref="FileNotFoundException">Thrown if the env file doesn't exist</exception>
         public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
         {

@@ -17,8 +17,8 @@ namespace dotenv.net
             {
                 encoding = Encoding.Default;
             }
-            
-            string dotEnvContents = File.ReadAllText(filePath, )
+
+            string dotEnvContents = File.ReadAllText(filePath, encoding);
         }
     }
 }

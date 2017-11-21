@@ -4,17 +4,17 @@ using System.Text;
 
 namespace dotenv.net
 {
-    public class DotEnv
+    public static class DotEnv
     {
-        private static readonly string DefaultEnvFilePath = $"{Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName}{Path.DirectorySeparatorChar}.env";
-
-        public static void Config(bool throwOnError = true, string filePath = null, Encoding encoding = null)
+        /// <summary>
+        /// Configure the environment varibales from a .env file
+        /// </summary>
+        /// <param name="throwOnError">A value stating whether the application should throw an exception on unexpected data</param>
+        /// <param name="filePath">An optional env file path, if not provided it defaults to the one in the same folder as the output exe or dll</param>
+        /// <param name="encoding">The encoding with which the env file was created</param>
+        /// <exception cref="FileNotFoundException">Thrown if the env file doesn't exist</exception>
+        public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
         {
-            if (filePath == null)
-            {
-                filePath = DefaultEnvFilePath;
-            }
-            
             // if configured to throw errors then throw otherwise return
             if (!File.Exists(filePath))
             {

@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.0.0
 MinimumVisualStudioVersion = 10.0.0.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net", "dotenv.net/dotenv.net.csproj", "{92FD0370-AEB1-4154-8C9F-D5FF30CABCF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.Test", "dotenv.net.Test\dotenv.net.Test.csproj", "{A03D81EE-4F67-4521-932A-0B9B5BE50F72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{92FD0370-AEB1-4154-8C9F-D5FF30CABCF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92FD0370-AEB1-4154-8C9F-D5FF30CABCF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92FD0370-AEB1-4154-8C9F-D5FF30CABCF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A03D81EE-4F67-4521-932A-0B9B5BE50F72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A03D81EE-4F67-4521-932A-0B9B5BE50F72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A03D81EE-4F67-4521-932A-0B9B5BE50F72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A03D81EE-4F67-4521-932A-0B9B5BE50F72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

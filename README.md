@@ -26,4 +26,60 @@ paket add dotenv.net
 
 Create a file with no filename and an extension of `.env`. Add the file to the root of your project. Set the file `Copy To Output Directory` to `Always`.
 
-As early as possible in your code
+A sample `.env` file would look like this:
+```text
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=s1mpl3
+```
+
+in the `Startup.cs` file or as early as possible in your code add the following:
+
+```csharp
+using DotEnv;
+
+
+...
+
+
+DotEnv.Config();
+```
+
+the values saved in your `.env` file would be avaibale in your application and can be accessed via
+ ```csharp
+Environment.GetEnvironmentVariable("DB_HOST"); // would output 'localhost'
+```
+
+### Options
+
+#### ThrowError
+
+Default: `true`
+
+You can specify if you want the library to error out if any issue arises or fail silently.
+
+```csharp
+DotEnv.Config(false); //fails silently
+```
+
+#### Path
+
+Default: `.env`
+
+You can specify a custom path if your file containing environment variables is
+named or located differently.
+
+```csharp
+DotEnv.Config(true, "/custom/path/to/your/env/vars");
+```
+
+#### Encoding
+
+Default: `Encoding.Default`
+
+You may specify the encoding of your file containing environment variables
+using this option.
+
+```csharp
+DotEnv.Config(true, ".env", Encoding.Unicode);
+```

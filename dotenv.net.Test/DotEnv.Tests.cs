@@ -18,7 +18,7 @@ namespace dotenv.net.Test
         [Fact]
         public void DoesNotThrowExceptionWithNonExistentEnvFileWhenThrowErrorIsFalse()
         {
-            Action action = () => DotEnv.Config(false, "hello");
+            Action action = () => DotEnv.Config(false, "hello.env");
             action.ShouldNotThrow();
         }
 
@@ -38,6 +38,15 @@ namespace dotenv.net.Test
             action.ShouldNotThrow();
 
             Environment.GetEnvironmentVariable("strongestavenger").Should().Be(null);
+        }
+
+        [Fact]
+        public void AllowsEnvFilePathToBeSpecified()
+        {
+            Action action = () => DotEnv.Config(true, "./../../../alt.env");
+            action.ShouldNotThrow();
+
+            Environment.GetEnvironmentVariable("me").Should().Be("winner");
         }
     }
 }

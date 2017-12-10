@@ -34,7 +34,7 @@ namespace dotenv.net
             string dotEnvContents = File.ReadAllText(filePath, encoding);
             
             // split the long string into an array of rows
-            string[] dotEnvRows = dotEnvContents.Split(new[] {"\r\n", Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+            string[] dotEnvRows = dotEnvContents.Split(new[] {"\n", "\r\n", Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
             
             // loop through rows, split into key and value then add to enviroment
             foreach (var dotEnvRow in dotEnvRows)

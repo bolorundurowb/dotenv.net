@@ -6,19 +6,22 @@ namespace dotenv.net.DependencyInjection.Infrastructure
     {
         private readonly DotEnvOptions _dotEnvOptions = new DotEnvOptions();
         
-        public void AddEnvFile(string file)
+        public DotEnvOptionsBuilder AddEnvFile(string file)
         {
-            
+            _dotEnvOptions.EnvFile = file;
+            return this;
         }
 
-        public void AddThrowOnError(bool throwOnError = true)
+        public DotEnvOptionsBuilder AddThrowOnError(bool throwOnError)
         {
-            
+            _dotEnvOptions.ThrowOnError = throwOnError;
+            return this;
         }
 
-        public void AddEncoding(Encoding encoding = null)
+        public DotEnvOptionsBuilder AddEncoding(Encoding encoding)
         {
-            
+            _dotEnvOptions.Encoding = encoding;
+            return this;
         }
     }
 }

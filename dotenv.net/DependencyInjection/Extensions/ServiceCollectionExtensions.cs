@@ -11,7 +11,7 @@ namespace dotenv.net.DependencyInjection.Extensions
             return services;
         }
 
-        public static IServiceCollection AddEnv(this IServiceCollection services, Action<DotEnvOptions> setupAction)
+        public static IServiceCollection AddEnv(this IServiceCollection services, Action<DotEnvOptionsBuilder> setupAction)
         {
             
         }

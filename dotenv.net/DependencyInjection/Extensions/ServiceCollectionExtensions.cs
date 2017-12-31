@@ -5,8 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace dotenv.net.DependencyInjection.Extensions
 {
+    /// <summary>
+    /// Servcie collection extensions
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Add the environment vars using a service
+        /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <returns>The service collection</returns>
         public static IServiceCollection AddEnv(this IServiceCollection services)
         {
             AddEnv(services, builder =>
@@ -19,6 +27,13 @@ namespace dotenv.net.DependencyInjection.Extensions
             return services;
         }
 
+        /// <summary>
+        /// Add the environment vars using a service
+        /// </summary>
+        /// <param name="services">Service collection</param>
+        /// <param name="setupAction">The dot env options buider action</param>
+        /// <returns>The service collection</returns>
+        /// <exception cref="ArgumentNullException">If the service passed in is null</exception>
         public static IServiceCollection AddEnv(this IServiceCollection services, Action<DotEnvOptionsBuilder> setupAction)
         {
             if (services == null)

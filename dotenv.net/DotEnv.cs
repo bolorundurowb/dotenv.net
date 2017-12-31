@@ -57,6 +57,10 @@ namespace dotenv.net
             }
         }
 
+        /// <summary>
+        /// Configure the environment variables from a .env file
+        /// </summary>
+        /// <param name="options">Options on how to load the env file</param>
         public static void Config(DotEnvOptions options)
         {
             Config(options.ThrowOnError, options.EnvFile, options.Encoding);

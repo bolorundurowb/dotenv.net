@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using dotenv.net.DependencyInjection.Infrastructure;
 
 namespace dotenv.net
 {
@@ -54,6 +55,11 @@ namespace dotenv.net
                         break;
                 }
             }
+        }
+
+        public static void Config(DotEnvOptions options)
+        {
+            Config(options.ThrowOnError, options.EnvFile, options.Encoding);
         }
     }
 }

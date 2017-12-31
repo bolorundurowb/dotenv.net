@@ -4,7 +4,15 @@
 
 dotenv.net is a zero-dependency module that loads environment variables from a .env file into `Environment`.
 
+## Contributors
+
+Big ups to those who have contributed to this library. :clap:
+
+[@bolorundurowb](https://github.com/bolorundurowb) [@joliveros](https://github.com/joliveros)
+
 ## Usage
+
+### Conventional
 
 First install the library as a dependency in your application from nuget
 
@@ -24,7 +32,7 @@ or for paket
 paket add dotenv.net
 ```
 
-Create a file with no filename and an extension of `.env`. Add the file to the root of your project. Set the file `Copy To Output Directory` to `Always`.
+Create a file with no filename and an extension of `.env`.
 
 A sample `.env` file would look like this:
 ```text
@@ -49,6 +57,27 @@ the values saved in your `.env` file would be avaibale in your application and c
  ```csharp
 Environment.GetEnvironmentVariable("DB_HOST"); // would output 'localhost'
 ```
+
+## With ASP.NET Core or any other DI system that uses `IServiceCollection`
+
+In the `Startup.cs` file
+
+``` csharp
+public void ConfigureServices(IServiceCollection services)
+{
+    ...
+
+    // configure dotenv
+    services.AddEnv(builder => {
+        builder
+        .AddEnvFile("/custom/path/to/your/env/vars")
+        .AddThrowOnError(false)
+        .AddEncoding(Encoding.ASCII);
+    });
+}
+```
+
+With this, your application would have the env file variables imported.
 
 ### Options
 

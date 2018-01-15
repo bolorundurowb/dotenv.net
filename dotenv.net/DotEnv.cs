@@ -40,19 +40,20 @@ namespace dotenv.net
             // loop through rows, split into key and value then add to enviroment
             foreach (var dotEnvRow in dotEnvRows)
             {
-                string[] keyValue = dotEnvRow.Split(new[] {"="}, StringSplitOptions.None);
-                
-                // if the row is empty continue
-                switch (keyValue.Length)
+                int index = dotEnvRow.IndexOf( "=" );
+
+                if ( index >= 0 )
                 {
-                    case 0:
-                        break;
-                    case 1:
-                        Environment.SetEnvironmentVariable(keyValue[0].Trim(), null);
-                        break;
-                    default:
-                        Environment.SetEnvironmentVariable(keyValue[0].Trim(), keyValue[1].Trim());
-                        break;
+                    string key = dotEnvRow.Substring( 0, index).Trim();
+                    string value = dotEnvRow.Substring( index + 1, dotEnvRow.Length - ( index + 1) ).Trim();
+                
+                    if ( key.Length > 0 ){
+                        if ( value.Length == 0 ){
+                            Environment.SetEnvironmentVariable( key, null );
+                        } else {
+                            Environment.SetEnvironmentVariable( key, value );
+                        }
+                    }
                 }
             }
         }

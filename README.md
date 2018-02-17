@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/bolorundurowb/dotenv.net.svg?style=svg)](https://circleci.com/gh/bolorundurowb/dotenv.net) [![NuGet Badge](https://buildstats.info/nuget/dotenv.net)](https://www.nuget.org/packages/dotenv.net) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Book session on Codementor](https://cdn.codementor.io/badges/book_session_github.svg)](https://www.codementor.io/bolorundurowb?utm_source=github&utm_medium=button&utm_term=bolorundurowb&utm_campaign=github)
 
-dotenv.net is a zero-dependency module that loads environment variables from a .env file into `Environment`.
+dotenv.net is a zero-dependency module that loads environment variables from a .env environment variable file into `System.Environment`. Please feel free to create issues with feature requests and raise bugs there too.
 
 ## Contributors
 
@@ -58,9 +58,9 @@ the values saved in your `.env` file would be avaibale in your application and c
 Environment.GetEnvironmentVariable("DB_HOST"); // would output 'localhost'
 ```
 
-## With ASP.NET Core or any other DI system that uses `IServiceCollection`
+## Using with DI (`IServiceCollection`)
 
-In the `Startup.cs` file
+If using with ASP.NET Core or any other system that uses `IServiceCollection` for its dependency injection, in the `Startup.cs` file
 
 ``` csharp
 public void ConfigureServices(IServiceCollection services)

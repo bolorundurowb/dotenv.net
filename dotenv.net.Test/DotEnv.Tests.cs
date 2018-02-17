@@ -5,14 +5,14 @@ using Xunit;
 
 namespace dotenv.net.Test
 {
-    public class DotEnv_Tests
+    public class DotEnvTests
     {
         [Fact]
         public void ThrowsExceptionWithNonExistentEnvFileWhenThrowErrorIsTrue()
         {
             Action action = () => DotEnv.Config(true, "hello");
             action.ShouldThrowExactly<FileNotFoundException>()
-                .WithMessage("Environment file specified does not exist.");
+                .WithMessage("An enviroment file with path \"hello\" does not exist.");
         }
         
         [Fact]

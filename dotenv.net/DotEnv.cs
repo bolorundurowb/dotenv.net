@@ -18,7 +18,7 @@ namespace dotenv.net
             {
                 if (throwOnError)
                 {
-                    throw new FileNotFoundException("Environment file specified does not exist.");
+                    throw new FileNotFoundException($"An enviroment file with path \"{filePath}\" does not exist.");
                 }
                 return;
             }

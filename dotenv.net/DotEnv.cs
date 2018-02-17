@@ -5,16 +5,13 @@ using dotenv.net.DependencyInjection.Infrastructure;
 
 namespace dotenv.net
 {
-    public static class DotEnv
+    public class DotEnv
     {
-        /// <summary>
-        /// Configure the environment varibales from a .env file
-        /// </summary>
-        /// <param name="throwOnError">A value stating whether the application should throw an exception on unexpected data</param>
-        /// <param name="filePath">An optional env file path, if not provided it defaults to the one in the same folder as the output exe or dll</param>
-        /// <param name="encoding">The encoding with which the env file was created, It defaults to the platforms default</param>
-        /// <exception cref="FileNotFoundException">Thrown if the env file doesn't exist</exception>
-        public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
+        private static DotEnv _instance;
+
+        private static DotEnv Instance => _instance ?? (_instance = new DotEnv());
+
+        private void ConfigRunner(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
         {
             // if configured to throw errors then throw otherwise return
             if (!File.Exists(filePath))
@@ -40,21 +37,34 @@ namespace dotenv.net
             // loop through rows, split into key and value then add to enviroment
             foreach (var dotEnvRow in dotEnvRows)
             {
-                string[] keyValue = dotEnvRow.Split(new[] {"="}, StringSplitOptions.None);
-                
-                // if the row is empty continue
-                switch (keyValue.Length)
+                int index = dotEnvRow.IndexOf( "=" );
+
+                if ( index >= 0 )
                 {
-                    case 0:
-                        break;
-                    case 1:
-                        Environment.SetEnvironmentVariable(keyValue[0].Trim(), null);
-                        break;
-                    default:
-                        Environment.SetEnvironmentVariable(keyValue[0].Trim(), keyValue[1].Trim());
-                        break;
+                    string key = dotEnvRow.Substring( 0, index).Trim();
+                    string value = dotEnvRow.Substring( index + 1, dotEnvRow.Length - ( index + 1) ).Trim();
+                
+                    if ( key.Length > 0 ){
+                        if ( value.Length == 0 ){
+                            Environment.SetEnvironmentVariable( key, null );
+                        } else {
+                            Environment.SetEnvironmentVariable( key, value );
+                        }
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Configure the environment varibales from a .env file
+        /// </summary>
+        /// <param name="throwOnError">A value stating whether the application should throw an exception on unexpected data</param>
+        /// <param name="filePath">An optional env file path, if not provided it defaults to the one in the same folder as the output exe or dll</param>
+        /// <param name="encoding">The encoding with which the env file was created, It defaults to the platforms default</param>
+        /// <exception cref="FileNotFoundException">Thrown if the env file doesn't exist</exception>
+        public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
+        {
+            Instance.ConfigRunner(throwOnError, filePath, encoding);
         }
 
         /// <summary>
@@ -63,7 +73,7 @@ namespace dotenv.net
         /// <param name="options">Options on how to load the env file</param>
         public static void Config(DotEnvOptions options)
         {
-            Config(options.ThrowOnError, options.EnvFile, options.Encoding);
+            Instance.ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding);
         }
     }
 }

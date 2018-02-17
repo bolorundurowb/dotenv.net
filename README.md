@@ -8,7 +8,7 @@ dotenv.net is a zero-dependency module that loads environment variables from a .
 
 Big ups to those who have contributed to this library. :clap:
 
-[@bolorundurowb](https://github.com/bolorundurowb) [@joliveros](https://github.com/joliveros)
+[@bolorundurowb](https://github.com/bolorundurowb) [@joliveros](https://github.com/joliveros) [@vizeke](https://github.com/vizeke) [@merqlove](https://github.com/merqlove)
 
 ## Usage
 

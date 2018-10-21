@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Copyright>Copyright 2018</Copyright>
     <PackageReleaseNotes>Make exception message more descriptive</PackageReleaseNotes>
     <Authors>Bolorunduro Winner-Timothy</Authors>
@@ -9,7 +9,7 @@
     <PackageId>dotenv.net</PackageId>
     <Description>A library to read .env files and add then values to the environment variables of the application.</Description>
     <PackageIconUrl>https://raw.githubusercontent.com/motdotla/dotenv/master/dotenv.png</PackageIconUrl>
-    <PackageProjectUrl>https://bolorundurowb.github.io/dotenv.net/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/bolorundurowb/dotenv.net</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/bolorundurowb/dotenv.net/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
   </PropertyGroup>

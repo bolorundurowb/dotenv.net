@@ -44,7 +44,7 @@ DB_PASS=s1mpl3
 in the `Startup.cs` file or as early as possible in your code add the following:
 
 ```csharp
-using DotEnv;
+using dotenv.net;
 
 
 ...

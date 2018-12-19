@@ -83,5 +83,23 @@ namespace dotenv.net
         {
             Instance.ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding);
         }
+        
+        
+        /// <summary>
+        /// Search for .env file from current directory up, and attempt to load it if found.
+        /// </summary>
+        public static void AutoConfig() {
+            var levelsToCheck = 4;
+            var currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
+
+            for (; currentDirectory != null && levelsToCheck > 0; levelsToCheck--, currentDirectory = currentDirectory.Parent)
+            {
+                foreach (var fi in currentDirectory.GetFiles(".env", SearchOption.TopDirectoryOnly))
+                {
+                    Config(false, fi.FullName);
+                    return; // found .env file
+                }
+            };
+        }
     }
 }

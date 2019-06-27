@@ -57,14 +57,7 @@ namespace dotenv.net
                 if (key.Length <= 0)
                     continue;
 
-                if (value.Length == 0)
-                {
-                    Environment.SetEnvironmentVariable(key, null);
-                }
-                else
-                {
-                    Environment.SetEnvironmentVariable(key, value);
-                }
+                Environment.SetEnvironmentVariable(key, value.Length == 0 ? null : value);
             }
         }
 

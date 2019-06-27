@@ -18,5 +18,10 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         /// The Encoding that the env file was created with. <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptions"/>
         /// </summary>
         public Encoding Encoding { get; set; }
+
+        /// <summary>
+        /// A value to state whether or not to trim whitespace from the values retrieved. <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptions"/>
+        /// </summary>
+        public bool TrimValues { get; set; }
     }
 }

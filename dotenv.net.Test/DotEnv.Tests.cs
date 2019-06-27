@@ -12,7 +12,7 @@ namespace dotenv.net.Test
         {
             Action action = () => DotEnv.Config(true, "hello");
             action.ShouldThrowExactly<FileNotFoundException>()
-                .WithMessage("An enviroment file with path \"hello\" does not exist.");
+                .WithMessage("An environment file with path \"hello\" does not exist.");
         }
         
         [Fact]

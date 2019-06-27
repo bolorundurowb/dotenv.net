@@ -21,8 +21,9 @@ namespace dotenv.net.DependencyInjection.Extensions
             {
                 builder
                     .AddEnvFile(".env")
-                    .AddEncoding(Encoding.Default)
-                    .AddThrowOnError(true);
+                    .AddEncoding(Encoding.UTF8)
+                    .AddThrowOnError(true)
+                    .AddTrimOptions(true);
             });
             return services;
         }
@@ -45,7 +46,7 @@ namespace dotenv.net.DependencyInjection.Extensions
                 throw new ArgumentNullException(nameof(setupAction));
             }
             
-            DotEnvOptionsBuilder dotEnvOptionsBuilder = new DotEnvOptionsBuilder();
+            var dotEnvOptionsBuilder = new DotEnvOptionsBuilder();
             setupAction(dotEnvOptionsBuilder);
             
             var dotEnvOptions = dotEnvOptionsBuilder.Build();

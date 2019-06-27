@@ -37,15 +37,19 @@ namespace dotenv.net
                 StringSplitOptions.RemoveEmptyEntries);
 
             // loop through rows, split into key and value then add to environment
-            foreach (var row in dotEnvRows)
+            foreach (var dotEnvRow in dotEnvRows)
             {
-                var dotEnvRow = trimValues ? row.Trim() : row;
+                var row = trimValues ? dotEnvRow.Trim() : dotEnvRow;
 
-                // determine if row is comment
-                if (dotEnvRow.StartsWith("#"))
+                // determine if row is empty
+                if (string.IsNullOrEmpty(row))
                     continue;
 
-                var index = dotEnvRow.IndexOf("=", StringComparison.Ordinal);
+                // determine if row is comment
+                if (row.StartsWith("#"))
+                    continue;
+
+                var index = row.IndexOf('#');
 
                 // if there is no key, skip
                 if (index <= 0)
@@ -54,10 +58,7 @@ namespace dotenv.net
                 var key = dotEnvRow.Substring(0, index).Trim();
                 var value = dotEnvRow.Substring(index + 1, dotEnvRow.Length - (index + 1)).Trim();
 
-                if (key.Length <= 0)
-                    continue;
-
-                Environment.SetEnvironmentVariable(key, value.Length == 0 ? null : value);
+                Environment.SetEnvironmentVariable(key, value);
             }
         }
 

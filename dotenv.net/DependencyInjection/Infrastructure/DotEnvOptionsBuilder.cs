@@ -40,6 +40,17 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         }
 
         /// <summary>
+        /// Set the option to trim whitespace from values. <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
+        /// </summary>
+        /// <param name="trimValues">The encoding to use</param>
+        /// <returns>The current options builder</returns>
+        public DotEnvOptionsBuilder AddTrimOptions(bool trimValues)
+        {
+            _dotEnvOptions.TrimValues = trimValues;
+            return this;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <returns>The constructed <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptions"/></returns>

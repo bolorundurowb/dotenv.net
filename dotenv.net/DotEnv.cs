@@ -11,7 +11,7 @@ namespace dotenv.net
 
         private static DotEnv Instance => _instance ?? (_instance = new DotEnv());
 
-        private void ConfigRunner(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
+        private void ConfigRunner(bool throwOnError, string filePath, Encoding encoding, bool trimValues)
         {
             // if configured to throw errors then throw otherwise return
             if (!File.Exists(filePath))
@@ -39,8 +39,8 @@ namespace dotenv.net
             // loop through rows, split into key and value then add to environment
             foreach (var row in dotEnvRows)
             {
-                var dotEnvRow = row.Trim();
-                
+                var dotEnvRow = trimValues ? row.Trim() : row;
+
                 // determine if row is comment
                 if (dotEnvRow.StartsWith("#"))
                     continue;
@@ -48,15 +48,15 @@ namespace dotenv.net
                 var index = dotEnvRow.IndexOf("=", StringComparison.Ordinal);
 
                 // if there is no key, skip
-                if (index <= 0) 
+                if (index <= 0)
                     continue;
-                
+
                 var key = dotEnvRow.Substring(0, index).Trim();
                 var value = dotEnvRow.Substring(index + 1, dotEnvRow.Length - (index + 1)).Trim();
 
-                if (key.Length <= 0) 
+                if (key.Length <= 0)
                     continue;
-                
+
                 if (value.Length == 0)
                 {
                     Environment.SetEnvironmentVariable(key, null);
@@ -69,15 +69,17 @@ namespace dotenv.net
         }
 
         /// <summary>
-        /// Configure the environment varibales from a .env file
+        /// Configure the environment variables from a .env file
         /// </summary>
         /// <param name="throwOnError">A value stating whether the application should throw an exception on unexpected data</param>
         /// <param name="filePath">An optional env file path, if not provided it defaults to the one in the same folder as the output exe or dll</param>
         /// <param name="encoding">The encoding with which the env file was created, It defaults to the platforms default</param>
+        /// <param name="trimValues">This determines whether not whitespace is trimmed from the values. It defaults to true</param>
         /// <exception cref="FileNotFoundException">Thrown if the env file doesn't exist</exception>
-        public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
+        public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null,
+            bool trimValues = true)
         {
-            Instance.ConfigRunner(throwOnError, filePath, encoding);
+            Instance.ConfigRunner(throwOnError, filePath, encoding, trimValues);
         }
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace dotenv.net
         /// <param name="options">Options on how to load the env file</param>
         public static void Config(DotEnvOptions options)
         {
-            Instance.ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding);
+            Instance.ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding, options.TrimValues);
         }
     }
 }

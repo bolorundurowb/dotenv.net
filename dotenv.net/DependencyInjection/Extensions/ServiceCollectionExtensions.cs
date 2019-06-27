@@ -45,7 +45,7 @@ namespace dotenv.net.DependencyInjection.Extensions
                 throw new ArgumentNullException(nameof(setupAction));
             }
             
-            DotEnvOptionsBuilder dotEnvOptionsBuilder = new DotEnvOptionsBuilder();
+            var dotEnvOptionsBuilder = new DotEnvOptionsBuilder();
             setupAction(dotEnvOptionsBuilder);
             
             var dotEnvOptions = dotEnvOptionsBuilder.Build();

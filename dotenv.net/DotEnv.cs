@@ -33,32 +33,34 @@ namespace dotenv.net
             var dotEnvContents = File.ReadAllText(filePath, encoding);
 
             // split the long string into an array of rows
-            var dotEnvRows = dotEnvContents.Split(new[] {"\n", "\r\n", Environment.NewLine},
-                StringSplitOptions.RemoveEmptyEntries);
+            var dotEnvRows = new ReadOnlySpan<string>(dotEnvContents.Split(new[] {"\n", "\r\n", Environment.NewLine},
+                StringSplitOptions.RemoveEmptyEntries));
 
             // loop through rows, split into key and value then add to environment
             foreach (var dotEnvRow in dotEnvRows)
             {
-                var row = trimValues ? dotEnvRow.Trim() : dotEnvRow;
+                var rowSpan = new ReadOnlySpan<char>((trimValues ? dotEnvRow.Trim() : dotEnvRow).ToCharArray());
 
                 // determine if row is empty
-                if (string.IsNullOrEmpty(row))
+                if (rowSpan.Length == 0)
                     continue;
 
                 // determine if row is comment
-                if (row.StartsWith("#"))
+                if (rowSpan[0] == '#')
                     continue;
 
-                var index = row.IndexOf('#');
+                var index = rowSpan.IndexOf('=');
 
                 // if there is no key, skip
-                if (index <= 0)
+                if (index < 0)
                     continue;
 
-                var key = dotEnvRow.Substring(0, index).Trim();
-                var value = dotEnvRow.Substring(index + 1, dotEnvRow.Length - (index + 1)).Trim();
+                var untrimmedKey = rowSpan.Slice(0, index);
+                var untrimmedValue = rowSpan.Slice(index + 1);
+                var key = trimValues ? untrimmedKey.Trim() : untrimmedKey;
+                var value = trimValues ? untrimmedValue.Trim() : untrimmedValue;
 
-                Environment.SetEnvironmentVariable(key, value);
+                Environment.SetEnvironmentVariable(key.ToString(), value.ToString());
             }
         }
 

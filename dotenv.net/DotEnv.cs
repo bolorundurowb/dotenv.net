@@ -26,7 +26,7 @@ namespace dotenv.net
 
             if (encoding == null)
             {
-                encoding = Encoding.Default;
+                encoding = Encoding.UTF8;
             }
 
             // read all lines from the env file
@@ -36,31 +36,34 @@ namespace dotenv.net
             var dotEnvRows = dotEnvContents.Split(new[] {"\n", "\r\n", Environment.NewLine},
                 StringSplitOptions.RemoveEmptyEntries);
 
-            // loop through rows, split into key and value then add to enviroment
+            // loop through rows, split into key and value then add to environment
             foreach (var row in dotEnvRows)
             {
                 var dotEnvRow = row.Trim();
+                
+                // determine if row is comment
                 if (dotEnvRow.StartsWith("#"))
                     continue;
 
                 var index = dotEnvRow.IndexOf("=", StringComparison.Ordinal);
 
-                if (index >= 0)
-                {
-                    var key = dotEnvRow.Substring(0, index).Trim();
-                    var value = dotEnvRow.Substring(index + 1, dotEnvRow.Length - (index + 1)).Trim();
+                // if there is no key, skip
+                if (index <= 0) 
+                    continue;
+                
+                var key = dotEnvRow.Substring(0, index).Trim();
+                var value = dotEnvRow.Substring(index + 1, dotEnvRow.Length - (index + 1)).Trim();
 
-                    if (key.Length > 0)
-                    {
-                        if (value.Length == 0)
-                        {
-                            Environment.SetEnvironmentVariable(key, null);
-                        }
-                        else
-                        {
-                            Environment.SetEnvironmentVariable(key, value);
-                        }
-                    }
+                if (key.Length <= 0) 
+                    continue;
+                
+                if (value.Length == 0)
+                {
+                    Environment.SetEnvironmentVariable(key, null);
+                }
+                else
+                {
+                    Environment.SetEnvironmentVariable(key, value);
                 }
             }
         }

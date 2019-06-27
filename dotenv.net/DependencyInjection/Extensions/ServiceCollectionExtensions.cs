@@ -21,7 +21,7 @@ namespace dotenv.net.DependencyInjection.Extensions
             {
                 builder
                     .AddEnvFile(".env")
-                    .AddEncoding(Encoding.Default)
+                    .AddEncoding(Encoding.UTF8)
                     .AddThrowOnError(true);
             });
             return services;

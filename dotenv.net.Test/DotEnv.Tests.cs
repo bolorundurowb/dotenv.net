@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using dotenv.net.DependencyInjection.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
@@ -31,7 +32,14 @@ namespace dotenv.net.Test
         [Fact]
         public void DoesNotThrowExceptionWithNonExistentEnvFileWhenThrowErrorIsFalse()
         {
-            Action action = () => DotEnv.Config(false, "non-existent.env");
+            var dotEnvOptions = new DotEnvOptions
+            {
+                Encoding = Encoding.UTF8,
+                ThrowOnError = false,
+                EnvFile = NonExistentEnvFileName,
+                TrimValues = true
+            };
+            Action action = () => DotEnv.Config(dotEnvOptions);
             action.ShouldNotThrow();
         }
 

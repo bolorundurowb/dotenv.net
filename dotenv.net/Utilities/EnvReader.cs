@@ -64,10 +64,23 @@ namespace dotenv.net.Utilities
             var retrievedValue = Environment.GetEnvironmentVariable(key);
             var converter = TypeDescriptor.GetConverter(typeof(T));
 
-            if (!string.IsNullOrEmpty(retrievedValue) && converter.CanConvertTo(typeof(T)))
+            if (!string.IsNullOrEmpty(retrievedValue))
             {
-                value = (T) converter.ConvertFromString(retrievedValue);
-                return true;
+                // NOTE: this had to be added because the typeconverter does not convert strings to bool
+                if (typeof(T) == typeof(bool))
+                {
+                    if (bool.TryParse(retrievedValue, out var boolValue))
+                    {
+                        value = (T) (object) boolValue;
+                        return true;
+                    }
+                }
+                else if (converter.CanConvertTo(typeof(T)))
+                {
+                    retrievedValue = retrievedValue.Trim();
+                    value = (T) converter.ConvertFromString(retrievedValue);
+                    return true;
+                }
             }
 
             value = default(T);

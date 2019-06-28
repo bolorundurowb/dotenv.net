@@ -8,16 +8,16 @@ namespace dotenv.net.Test
 {
     public class DotEnvTests
     {
-        private const string whitespacesEnvFileName = "values-with-whitespaces.env";
-        private const string valuesAndCommentsEnvFileName = "values-and-comments.env";
-        private const string nonExistentEnvFileName = "non-existent.env";
+        private const string WhitespacesEnvFileName = "values-with-whitespaces.env";
+        private const string ValuesAndCommentsEnvFileName = "values-and-comments.env";
+        private const string NonExistentEnvFileName = "non-existent.env";
 
         [Fact]
         public void ThrowsExceptionWithNonExistentEnvFileWhenThrowErrorIsTrue()
         {
-            Action action = () => DotEnv.Config(true, nonExistentEnvFileName);
+            Action action = () => DotEnv.Config(true, NonExistentEnvFileName);
             action.ShouldThrowExactly<FileNotFoundException>()
-                .WithMessage($"An environment file with path \"{nonExistentEnvFileName}\" does not exist.");
+                .WithMessage($"An environment file with path \"{NonExistentEnvFileName}\" does not exist.");
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace dotenv.net.Test
         [Fact]
         public void AllowsEnvFilePathToBeSpecified()
         {
-            Action action = () => DotEnv.Config(true, valuesAndCommentsEnvFileName);
+            Action action = () => DotEnv.Config(true, ValuesAndCommentsEnvFileName);
             action.ShouldNotThrow();
 
             Environment.GetEnvironmentVariable("me").Should().Be("winner");
@@ -57,7 +57,7 @@ namespace dotenv.net.Test
         [Fact]
         public void ShouldReturnUntrimmedValuesWhenTrimIsFalse()
         {
-            DotEnv.Config(true, whitespacesEnvFileName, Encoding.UTF8, false);
+            DotEnv.Config(true, WhitespacesEnvFileName, Encoding.UTF8, false);
 
             Environment.GetEnvironmentVariable("DB_CONNECTION").Should().Be("mysql  ");
             Environment.GetEnvironmentVariable("DB_HOST").Should().Be("127.0.0.1");
@@ -68,7 +68,7 @@ namespace dotenv.net.Test
         [Fact]
         public void ShouldReturnTrimmedValuesWhenTrimIsTrue()
         {
-            DotEnv.Config(true, whitespacesEnvFileName, Encoding.UTF8, true);
+            DotEnv.Config(true, WhitespacesEnvFileName, Encoding.UTF8, true);
 
             Environment.GetEnvironmentVariable("DB_CONNECTION").Should().Be("mysql");
             Environment.GetEnvironmentVariable("DB_HOST").Should().Be("127.0.0.1");

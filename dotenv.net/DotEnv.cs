@@ -13,41 +13,17 @@ namespace dotenv.net
 
         private void ConfigRunner(bool throwOnError, string filePath, Encoding encoding, bool trimValues)
         {
-            
+            var rawEnvRows = Reader.Read(filePath, throwOnError, encoding);
 
-           
-
-           
-
-            // split the long string into an array of rows
-            var dotEnvRows = new ReadOnlySpan<string>(dotEnvContents.Split(new[] {"\n", "\r\n", Environment.NewLine},
-                StringSplitOptions.RemoveEmptyEntries));
-
-            // loop through rows, split into key and value then add to environment
-            foreach (var dotEnvRow in dotEnvRows)
+            if (rawEnvRows == ReadOnlySpan<string>.Empty)
             {
-                var rowSpan = new ReadOnlySpan<char>((trimValues ? dotEnvRow.Trim() : dotEnvRow).ToCharArray());
+                return;
+            }
 
-                // determine if row is empty
-                if (rowSpan.Length == 0)
-                    continue;
-
-                // determine if row is comment
-                if (rowSpan[0] == '#')
-                    continue;
-
-                var index = rowSpan.IndexOf('=');
-
-                // if there is no key, skip
-                if (index < 0)
-                    continue;
-
-                var untrimmedKey = rowSpan.Slice(0, index);
-                var untrimmedValue = rowSpan.Slice(index + 1);
-                var key = trimValues ? untrimmedKey.Trim() : untrimmedKey;
-                var value = trimValues ? untrimmedValue.Trim() : untrimmedValue;
-
-                Environment.SetEnvironmentVariable(key.ToString(), value.ToString());
+            var processedEnvRows = Parser.Parse(rawEnvRows, trimValues);
+            foreach (var processedEnvRow in processedEnvRows)
+            {
+                Environment.SetEnvironmentVariable(processedEnvRow.Key, processedEnvRow.Value);
             }
         }
 

@@ -13,24 +13,11 @@ namespace dotenv.net
 
         private void ConfigRunner(bool throwOnError, string filePath, Encoding encoding, bool trimValues)
         {
-            // if configured to throw errors then throw otherwise return
-            if (!File.Exists(filePath))
-            {
-                if (throwOnError)
-                {
-                    throw new FileNotFoundException($"An environment file with path \"{filePath}\" does not exist.");
-                }
+            
 
-                return;
-            }
+           
 
-            if (encoding == null)
-            {
-                encoding = Encoding.UTF8;
-            }
-
-            // read all lines from the env file
-            var dotEnvContents = File.ReadAllText(filePath, encoding);
+           
 
             // split the long string into an array of rows
             var dotEnvRows = new ReadOnlySpan<string>(dotEnvContents.Split(new[] {"\n", "\r\n", Environment.NewLine},

@@ -33,6 +33,12 @@ namespace dotenv.net.Utilities
             return (T) converter.ConvertFromString(retrievedValue);
         }
 
+        /// <summary>
+        /// Try to retrieve a value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <param name="value">The string value retrieved or null</param>
+        /// <returns>A value representing the retrieval success status</returns>
         public bool TryGetValue(string key, out string value)
         {
             var retrievedValue = Environment.GetEnvironmentVariable(key);
@@ -47,6 +53,12 @@ namespace dotenv.net.Utilities
             return false;
         }
 
+        /// <summary>
+        /// Try to retrieve a value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <param name="value">The typed value retrieved or the type default</param>
+        /// <returns>A value representing the retrieval success status</returns>
         public bool TryGetValue<T>(string key, out T value) where T : struct
         {
             var retrievedValue = Environment.GetEnvironmentVariable(key);

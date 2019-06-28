@@ -18,7 +18,7 @@ namespace dotenv.net.Test
         [Fact]
         public void DoesNotThrowExceptionWithNonExistentEnvFileWhenThrowErrorIsFalse()
         {
-            Action action = () => DotEnv.Config(false, "hello.env");
+            Action action = () => DotEnv.Config(false, "non-existent.env");
             action.ShouldNotThrow();
         }
 
@@ -43,7 +43,7 @@ namespace dotenv.net.Test
         [Fact]
         public void AllowsEnvFilePathToBeSpecified()
         {
-            Action action = () => DotEnv.Config(true, "./../../../alt.env");
+            Action action = () => DotEnv.Config(true, "values-and-comments.env");
             action.ShouldNotThrow();
 
             Environment.GetEnvironmentVariable("me").Should().Be("winner");

@@ -28,4 +28,4 @@ jobs:
       - run:
           name: Report Coverage
           command:
-            ./tools/csmacnz.Coveralls --opencover -i ./dotenv.net.Test/coverage.opencover.xml --repoToken $COVERALLS_REPO_TOKEN  --serviceName "circleci" --useRelativePaths
+            ./tools/csmacnz.Coveralls --opencover -i ./dotenv.net.Test/coverage.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths

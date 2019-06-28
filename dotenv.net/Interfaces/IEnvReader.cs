@@ -4,10 +4,10 @@ namespace dotenv.net.Interfaces
     {
         string GetValue(string key);
 
-        T GetValue<T>(string key);
+        T GetValue<T>(string key) where T : struct;
         
         bool TryGetValue(string key, out string value);
 
-        T TryGetValue<T>(string key, out T value);
+        bool TryGetValue<T>(string key, out T value) where T : struct;
     }
 }

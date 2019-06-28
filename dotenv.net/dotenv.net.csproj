@@ -2,7 +2,10 @@
   <PropertyGroup>
     <Version>1.0.4</Version>
     <Copyright>Copyright 2019</Copyright>
-    <PackageReleaseNotes>Make exception message more descriptive</PackageReleaseNotes>
+    <PackageReleaseNotes>- Rework the app logic to make more maintainable
+- Increase speed and reduce memory allocations by replacing string manipulation with IReadOnlySpan&lt;T&gt;.
+- Add class for reading environment variables as strings and typed values
+- Improve testing and upgrade CI config</PackageReleaseNotes>
     <Authors>Winner-Timothy Bolorunduro</Authors>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>dotenv.net</PackageId>
@@ -13,7 +16,7 @@
     <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
     <TargetFrameworks>netstandard1.6;netstandard2.0</TargetFrameworks>
     <LangVersion>default</LangVersion>
-    <PackageVersion>1.0.5</PackageVersion>
+    <PackageVersion>1.0.6</PackageVersion>
     <RepositoryType>git</RepositoryType>
     <PackageTags>dotnet, dotnetcore, env, dotenv, asp.net core</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

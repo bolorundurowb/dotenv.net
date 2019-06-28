@@ -10,7 +10,7 @@ namespace dotenv.net
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                throw new ArgumentException("The file path cannot be null, empty or whitespace", nameof(filePath));
+                throw new ArgumentException("The file path cannot be null, empty or whitespace.", nameof(filePath));
             }
 
             // if configured to throw errors then throw otherwise return

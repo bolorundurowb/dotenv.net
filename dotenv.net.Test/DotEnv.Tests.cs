@@ -13,6 +13,14 @@ namespace dotenv.net.Test
         private const string NonExistentEnvFileName = "non-existent.env";
 
         [Fact]
+        public void ShouldThrowExceptionWhenFileNameEmptyOrNull()
+        {
+            Action action = () => DotEnv.Config(true, null);
+            action.ShouldThrowExactly<ArgumentException>()
+                .WithMessage($"The file path cannot be null, empty or whitespace.{Environment.NewLine}Parameter name: filePath");
+        }
+
+        [Fact]
         public void ThrowsExceptionWithNonExistentEnvFileWhenThrowErrorIsTrue()
         {
             Action action = () => DotEnv.Config(true, NonExistentEnvFileName);

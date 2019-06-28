@@ -31,7 +31,7 @@ namespace dotenv.net
 
                 var untrimmedKey = rowSpan.Slice(0, index);
                 var untrimmedValue = rowSpan.Slice(index + 1);
-                var key = trimValues ? untrimmedKey.Trim() : untrimmedKey;
+                var key = untrimmedKey.Trim();
                 var value = trimValues ? untrimmedValue.Trim() : untrimmedValue;
 
                 validEntries.Add(new KeyValuePair<string, string>(key.ToString(), value.ToString()));

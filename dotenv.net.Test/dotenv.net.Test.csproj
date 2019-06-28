@@ -24,7 +24,7 @@
     <None Update="values-and-comments.env">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="values-with-whitespace.env">
+    <None Update="values-with-whitespaces.env">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -13,54 +13,17 @@ namespace dotenv.net
 
         private void ConfigRunner(bool throwOnError, string filePath, Encoding encoding, bool trimValues)
         {
-            // if configured to throw errors then throw otherwise return
-            if (!File.Exists(filePath))
-            {
-                if (throwOnError)
-                {
-                    throw new FileNotFoundException($"An environment file with path \"{filePath}\" does not exist.");
-                }
+            var rawEnvRows = Reader.Read(filePath, throwOnError, encoding);
 
+            if (rawEnvRows == ReadOnlySpan<string>.Empty)
+            {
                 return;
             }
 
-            if (encoding == null)
+            var processedEnvRows = Parser.Parse(rawEnvRows, trimValues);
+            foreach (var processedEnvRow in processedEnvRows)
             {
-                encoding = Encoding.UTF8;
-            }
-
-            // read all lines from the env file
-            var dotEnvContents = File.ReadAllText(filePath, encoding);
-
-            // split the long string into an array of rows
-            var dotEnvRows = new ReadOnlySpan<string>(dotEnvContents.Split(new[] {"\n", "\r\n", Environment.NewLine},
-                StringSplitOptions.RemoveEmptyEntries));
-
-            // loop through rows, split into key and value then add to environment
-            foreach (var dotEnvRow in dotEnvRows)
-            {
-                var rowSpan = new ReadOnlySpan<char>((trimValues ? dotEnvRow.Trim() : dotEnvRow).ToCharArray());
-
-                // determine if row is empty
-                if (rowSpan.Length == 0)
-                    continue;
-
-                // determine if row is comment
-                if (rowSpan[0] == '#')
-                    continue;
-
-                var index = rowSpan.IndexOf('=');
-
-                // if there is no key, skip
-                if (index < 0)
-                    continue;
-
-                var untrimmedKey = rowSpan.Slice(0, index);
-                var untrimmedValue = rowSpan.Slice(index + 1);
-                var key = trimValues ? untrimmedKey.Trim() : untrimmedKey;
-                var value = trimValues ? untrimmedValue.Trim() : untrimmedValue;
-
-                Environment.SetEnvironmentVariable(key.ToString(), value.ToString());
+                Environment.SetEnvironmentVariable(processedEnvRow.Key, processedEnvRow.Value);
             }
         }
 

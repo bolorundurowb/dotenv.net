@@ -10,6 +10,7 @@ namespace dotenv.net.Test
     public class DotEnvTests
     {
         private const string WhitespacesEnvFileName = "values-with-whitespaces.env";
+        private const string WhitespacesCopyEnvFileName = "values-with-whitespaces-too.env";
         private const string ValuesAndCommentsEnvFileName = "values-and-comments.env";
         private const string NonExistentEnvFileName = "non-existent.env";
 
@@ -84,12 +85,12 @@ namespace dotenv.net.Test
         [Fact]
         public void ShouldReturnTrimmedValuesWhenTrimIsTrue()
         {
-            DotEnv.Config(true, WhitespacesEnvFileName, Encoding.UTF8, true);
+            DotEnv.Config(true, WhitespacesCopyEnvFileName, Encoding.UTF8, true);
 
-            Environment.GetEnvironmentVariable("DB_CONNECTION").Should().Be("mysql");
-            Environment.GetEnvironmentVariable("DB_HOST").Should().Be("127.0.0.1");
-            Environment.GetEnvironmentVariable("DB_PORT").Should().Be("3306");
-            Environment.GetEnvironmentVariable("DB_DATABASE").Should().Be("laravel");
+            Environment.GetEnvironmentVariable("B_CONNECTION").Should().Be("mysql");
+            Environment.GetEnvironmentVariable("B_HOST").Should().Be("127.0.0.1");
+            Environment.GetEnvironmentVariable("B_PORT").Should().Be("3306");
+            Environment.GetEnvironmentVariable("B_DATABASE").Should().Be("laravel");
         }
     }
 }

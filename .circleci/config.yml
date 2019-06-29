@@ -22,10 +22,6 @@ jobs:
           command:
             dotnet tool install coveralls.net --version 1.0.0 --tool-path tools
       - run:
-          name: Print Envs
-          command:
-            printenv
-      - run:
           name: Report Coverage
           command:
             ./tools/csmacnz.Coveralls --opencover -i ./dotenv.net.Test/coverage.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths

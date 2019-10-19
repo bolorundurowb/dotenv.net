@@ -11,60 +11,34 @@ namespace dotenv.net
 
         private static DotEnv Instance => _instance ?? (_instance = new DotEnv());
 
-        private void ConfigRunner(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
+        private void ConfigRunner(bool throwOnError, string filePath, Encoding encoding, bool trimValues)
         {
-            // if configured to throw errors then throw otherwise return
-            if (!File.Exists(filePath))
+            var rawEnvRows = Reader.Read(filePath, throwOnError, encoding);
+
+            if (rawEnvRows == ReadOnlySpan<string>.Empty)
             {
-                if (throwOnError)
-                {
-                    throw new FileNotFoundException($"An enviroment file with path \"{filePath}\" does not exist.");
-                }
                 return;
             }
 
-            if (encoding == null)
+            var processedEnvRows = Parser.Parse(rawEnvRows, trimValues);
+            foreach (var processedEnvRow in processedEnvRows)
             {
-                encoding = Encoding.Default;
-            }
-
-            // read all lines from the env file
-            string dotEnvContents = File.ReadAllText(filePath, encoding);
-            
-            // split the long string into an array of rows
-            string[] dotEnvRows = dotEnvContents.Split(new[] {"\n", "\r\n", Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
-            
-            // loop through rows, split into key and value then add to enviroment
-            foreach (var dotEnvRow in dotEnvRows)
-            {
-                int index = dotEnvRow.IndexOf( "=" );
-
-                if ( index >= 0 )
-                {
-                    string key = dotEnvRow.Substring( 0, index).Trim();
-                    string value = dotEnvRow.Substring( index + 1, dotEnvRow.Length - ( index + 1) ).Trim();
-                
-                    if ( key.Length > 0 ){
-                        if ( value.Length == 0 ){
-                            Environment.SetEnvironmentVariable( key, null );
-                        } else {
-                            Environment.SetEnvironmentVariable( key, value );
-                        }
-                    }
-                }
+                Environment.SetEnvironmentVariable(processedEnvRow.Key, processedEnvRow.Value);
             }
         }
 
         /// <summary>
-        /// Configure the environment varibales from a .env file
+        /// Configure the environment variables from a .env file
         /// </summary>
         /// <param name="throwOnError">A value stating whether the application should throw an exception on unexpected data</param>
         /// <param name="filePath">An optional env file path, if not provided it defaults to the one in the same folder as the output exe or dll</param>
         /// <param name="encoding">The encoding with which the env file was created, It defaults to the platforms default</param>
+        /// <param name="trimValues">This determines whether not whitespace is trimmed from the values. It defaults to true</param>
         /// <exception cref="FileNotFoundException">Thrown if the env file doesn't exist</exception>
-        public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null)
+        public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null,
+            bool trimValues = true)
         {
-            Instance.ConfigRunner(throwOnError, filePath, encoding);
+            Instance.ConfigRunner(throwOnError, filePath, encoding, trimValues);
         }
 
         /// <summary>
@@ -73,7 +47,7 @@ namespace dotenv.net
         /// <param name="options">Options on how to load the env file</param>
         public static void Config(DotEnvOptions options)
         {
-            Instance.ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding);
+            Instance.ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding, options.TrimValues);
         }
     }
 }

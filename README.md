@@ -1,14 +1,14 @@
 # dotenv.net
 
-[![CircleCI](https://circleci.com/gh/bolorundurowb/dotenv.net.svg?style=svg)](https://circleci.com/gh/bolorundurowb/dotenv.net) [![NuGet Badge](https://buildstats.info/nuget/dotenv.net)](https://www.nuget.org/packages/dotenv.net) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Book session on Codementor](https://cdn.codementor.io/badges/book_session_github.svg)](https://www.codementor.io/bolorundurowb?utm_source=github&utm_medium=button&utm_term=bolorundurowb&utm_campaign=github)
+[![CircleCI](https://circleci.com/gh/bolorundurowb/dotenv.net.svg?style=svg)](https://circleci.com/gh/bolorundurowb/dotenv.net) [![NuGet Badge](https://buildstats.info/nuget/dotenv.net)](https://www.nuget.org/packages/dotenv.net) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Coverage Status](https://coveralls.io/repos/github/bolorundurowb/dotenv.net/badge.svg?branch=)](https://coveralls.io/github/bolorundurowb/dotenv.net?branch=)
 
-dotenv.net is a zero-dependency module that loads environment variables from a .env environment variable file into `System.Environment`. Please feel free to create issues with feature requests and raise bugs there too.
+dotenv.net is a zero-dependency module that loads environment variables from a .env environment variable file into `System.Environment`. It has built in support for the in-built dependency injection framework packaged with ASP.NET Core. It now comes packaged with an interface that allows for reading environment variables wihtout repeated calls to `Environment.GetEnvironmentVariable("KEY");`.  If you have ideas or issues, create an issue.
 
 ## Contributors
 
 Big ups to those who have contributed to this library. :clap:
 
-[@bolorundurowb](https://github.com/bolorundurowb) [@joliveros](https://github.com/joliveros) [@vizeke](https://github.com/vizeke) [@merqlove](https://github.com/merqlove)
+[@bolorundurowb](https://github.com/bolorundurowb) [@joliveros](https://github.com/joliveros) [@vizeke](https://github.com/vizeke) [@merqlove](https://github.com/merqlove) [@tracker1](https://github.com/tracker1)  [@NaturalWill](https://github.com/NaturalWill)
 
 ## Usage
 
@@ -44,7 +44,7 @@ DB_PASS=s1mpl3
 in the `Startup.cs` file or as early as possible in your code add the following:
 
 ```csharp
-using DotEnv;
+using dotenv.net;
 
 
 ...
@@ -104,7 +104,7 @@ DotEnv.Config(true, "/custom/path/to/your/env/vars");
 
 #### Encoding
 
-Default: `Encoding.Default`
+Default: `Encoding.UTF8`
 
 You may specify the encoding of your file containing environment variables
 using this option.
@@ -112,3 +112,82 @@ using this option.
 ```csharp
 DotEnv.Config(true, ".env", Encoding.Unicode);
 ```
+
+#### Trim Values
+
+Default: `true`
+
+You may specify whether or not you want the values retrieved to be trimmed i.e have all leading and trailing whitepaces removed.
+
+```csharp
+DotEnv.Config(true, ".env", Encoding.Unicode, false);
+```
+
+## Support For `IEnvReader`
+
+With `v1.0.6` and above an interface `IEnvReader` has been introduced that specifies methods that help with reading values from the environment easily. The library has a default implementation `EnvReader` that can be added to the default ASP.NET Core DI framework (`IServiceCollection`).
+
+### Using `EnvReader`
+
+```csharp
+using dotenv.net.Utilities;
+...
+
+var envReader = new EnvReader();
+var value = envReader.GetValue("KEY");
+```
+
+### Using `IEnvReader` with DI
+
+In the `StartUp.cs` file, in the `ConfigureServices` method
+
+```csharp
+...
+
+public void ConfigureServices(IServiceCollection services)
+{
+    ...
+    services.AddEnvReader();
+    ...
+}
+```
+
+In the rest of your application, the `IEnvReader` interface can get injected and used. For example, in a `SampleController` class for example:
+
+```csharp
+public class SampleController
+{
+    private readonly IEnvReader _envReader;
+    
+    public SampleController(IEnvReader envReader)
+    {
+        _envReader = envReader;
+    }
+}
+```
+
+### IEnvReader Methods
+
+#### string GetValue(string key)
+
+Default: `null`
+
+Retrieve a value from the current environment by the given key and return `null` if a value does not exist for that key.
+
+#### T GetValue<T>(string key)
+
+Default: `default(T)`
+
+A generic method that allows for a typed value to be retrieved from the environment variables and returns the default for the type. This functionality is limited to `struct`s currently.
+
+#### bool TryGetValue(string key, out string value)
+
+Default: `null`
+
+A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required.
+
+#### bool TryGetValue<T>(string key, out T value)
+
+Default: `default(T)`
+
+A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved and coverted the value required.

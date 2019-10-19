@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 using dotenv.net.DependencyInjection.Infrastructure;
+using dotenv.net.Interfaces;
+using dotenv.net.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace dotenv.net.DependencyInjection.Extensions
@@ -21,8 +23,9 @@ namespace dotenv.net.DependencyInjection.Extensions
             {
                 builder
                     .AddEnvFile(".env")
-                    .AddEncoding(Encoding.Default)
-                    .AddThrowOnError(true);
+                    .AddEncoding(Encoding.UTF8)
+                    .AddThrowOnError(true)
+                    .AddTrimOptions(true);
             });
             return services;
         }
@@ -31,26 +34,45 @@ namespace dotenv.net.DependencyInjection.Extensions
         /// Add the environment vars using a service
         /// </summary>
         /// <param name="services">Service collection</param>
-        /// <param name="setupAction">The dot env options buider action</param>
+        /// <param name="setupAction">The dot env options builder action</param>
         /// <returns>The service collection</returns>
         /// <exception cref="ArgumentNullException">If the service passed in is null</exception>
-        public static IServiceCollection AddEnv(this IServiceCollection services, Action<DotEnvOptionsBuilder> setupAction)
+        public static IServiceCollection AddEnv(this IServiceCollection services,
+            Action<DotEnvOptionsBuilder> setupAction)
         {
             if (services == null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
+
             if (setupAction == null)
             {
                 throw new ArgumentNullException(nameof(setupAction));
             }
-            
-            DotEnvOptionsBuilder dotEnvOptionsBuilder = new DotEnvOptionsBuilder();
+
+            var dotEnvOptionsBuilder = new DotEnvOptionsBuilder();
             setupAction(dotEnvOptionsBuilder);
-            
+
             var dotEnvOptions = dotEnvOptionsBuilder.Build();
             DotEnv.Config(dotEnvOptions);
-            
+
+            return services;
+        }
+
+        /// <summary>
+        /// Use the env reader class ad the provider for reading environment variables
+        /// </summary>
+        /// <param name="services">Service collection</param>
+        /// <returns>The service collection</returns>
+        /// <exception cref="ArgumentNullException">If the service passed in is null</exception>
+        public static IServiceCollection AddEnvReader(this IServiceCollection services)
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            services.AddSingleton<IEnvReader, EnvReader>();
             return services;
         }
     }

@@ -10,6 +10,8 @@ namespace dotenv.net.Interfaces
 
         decimal GetDecimalValue(string key);
 
+        bool GetBooleanValue(string key);
+
         bool TryGetStringValue(string key, out string value);
 
         bool TryGetIntValue(string key, out int value);
@@ -17,5 +19,7 @@ namespace dotenv.net.Interfaces
         bool TryGetDoubleValue(string key, out double value);
 
         bool TryGetDecimalValue(string key, out decimal value);
+
+        bool TryGetBooleanValue(string key, out bool value);
     }
 }

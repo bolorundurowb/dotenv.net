@@ -70,6 +70,22 @@ namespace dotenv.net.Utilities
         }
 
         /// <summary>
+        /// Retrieve a boolean value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <returns>A boolran representing the value</returns>
+        /// <exception cref="Exception">When the value could not be found or is not a valid bool</exception>
+        public bool GetBooleanValue(string key)
+        {
+            if (TryGetBooleanValue(key, out var value))
+            {
+                return value;
+            }
+
+            throw new Exception("Value could not be retrieved.");
+        }
+
+        /// <summary>
         /// Try to retrieve a value from the current environment
         /// </summary>
         /// <param name="key">The key to retrieve the value via</param>
@@ -143,6 +159,25 @@ namespace dotenv.net.Utilities
             }
 
             value = 0.0m;
+            return false;
+        }
+
+        /// <summary>
+        /// Try to retrieve a boolean value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <param name="value">The boolean value retrieved or null</param>
+        /// <returns>A value representing the retrieval success status</returns>
+        public bool TryGetBooleanValue(string key, out bool value)
+        {
+            var retrievedValue = Environment.GetEnvironmentVariable(key);
+
+            if (!string.IsNullOrEmpty(retrievedValue))
+            {
+                return bool.TryParse(retrievedValue, out value);
+            }
+
+            value = false;
             return false;
         }
     }

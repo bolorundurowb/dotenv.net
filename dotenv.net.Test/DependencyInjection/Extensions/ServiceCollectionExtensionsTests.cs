@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 using dotenv.net.DependencyInjection.Extensions;
+using dotenv.net.Interfaces;
+using dotenv.net.Utilities;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -45,9 +47,34 @@ namespace dotenv.net.Test.DependencyInjection.Extensions
         {
             var services = new ServiceCollection();
             Action action = () => ServiceCollectionExtensions.AddEnv(services);
-            // NOTE: this is because the default file does not exist
             action.Should()
                 .NotThrow<Exception>();
+        }
+        
+        [Fact]
+        public void ShouldThrowWhenServicesAreProvided()
+        {
+            Action action = () => ServiceCollectionExtensions.AddEnvReader(null);
+            action.Should()
+                .ThrowExactly<ArgumentNullException>();
+        }
+        
+        [Fact]
+        public void ShouldInjectEnvReaderWhenServicesAreProvided()
+        {
+            var services = new ServiceCollection();
+            services.AddEnvReader();
+            var provider = services.BuildServiceProvider();
+            
+            object service = null;
+            Action action = () => service = (EnvReader) provider.GetService(typeof(IEnvReader));
+            
+            action.Should()
+                .NotThrow<Exception>();
+            service.Should()
+                .NotBeNull();
+            service.Should()
+                .BeOfType<EnvReader>();
         }
     }
 }

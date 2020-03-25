@@ -87,26 +87,22 @@ namespace dotenv.net.Test.Utilities
         }
 
         [Fact]
-        public void ShouldReadValuesWithReaderMethods()
+        public void ShouldReadIntValues()
         {
             DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
             var envReader = new EnvReader();
 
-            envReader.GetStringValue("CONNECTION").Should().Be("mysql");
-            envReader.TryGetStringValue("DATABASE", out var database).Should().BeTrue();
-            database.Should().Be("laravel");
-        }
+            envReader.GetIntValue("PORT")
+                .Should()
+                .Be(3306);
 
-        [Fact]
-        public void ShouldReadTypedValuesWithReaderMethods()
-        {
-            DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
-            var envReader = new EnvReader();
+            envReader.TryGetIntValue("NON_EXISTENT_KEY", out _)
+                .Should()
+                .BeFalse();
 
-            envReader.GetIntValue("PORT").Should().Be(3306);
-            envReader.TryGetStringValue("HOST", out _).Should().BeFalse();
-            envReader.TryGetBooleanValue("IS_PRESENT", out var isPresent).Should().BeTrue();
-            isPresent.Should().BeTrue();
+            Action action = () => envReader.GetIntValue("NON_EXISTENT_KEY");
+            action.Should()
+                .Throw<Exception>();
         }
     }
 }

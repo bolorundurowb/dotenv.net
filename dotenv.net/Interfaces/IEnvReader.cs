@@ -2,12 +2,18 @@ namespace dotenv.net.Interfaces
 {
     public interface IEnvReader
     {
-        string GetValue(string key);
+        string GetStringValue(string key);
 
-        T GetValue<T>(string key) where T : struct;
-        
-        bool TryGetValue(string key, out string value);
+        int GetIntValue(string key);
 
-        bool TryGetValue<T>(string key, out T value) where T : struct;
+        double GetDoubleValue(string key);
+
+        decimal GetDecimalValue(string key);
+
+        bool TryGetStringValue(string key, out string value);
+
+        bool TryGetDoubleValue(string key, out double value);
+
+        bool TryGetDecimalValue(string key, out decimal value);
     }
 }

@@ -12,6 +12,8 @@ namespace dotenv.net.Interfaces
 
         bool TryGetStringValue(string key, out string value);
 
+        bool TryGetIntValue(string key, out int value);
+
         bool TryGetDoubleValue(string key, out double value);
 
         bool TryGetDecimalValue(string key, out decimal value);

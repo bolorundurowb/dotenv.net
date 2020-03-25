@@ -19,7 +19,7 @@ namespace dotenv.net.Test
         public void ShouldThrowExceptionWhenFileNameEmptyOrNull()
         {
             Action action = () => DotEnv.Config(true, null);
-            action.ShouldThrowExactly<ArgumentException>()
+            action.Should().ThrowExactly<ArgumentException>()
                 .WithMessage($"The file path cannot be null, empty or whitespace.{Environment.NewLine}Parameter name: filePath");
         }
 
@@ -27,7 +27,7 @@ namespace dotenv.net.Test
         public void ThrowsExceptionWithNonExistentEnvFileWhenThrowErrorIsTrue()
         {
             Action action = () => DotEnv.Config(true, NonExistentEnvFileName);
-            action.ShouldThrowExactly<FileNotFoundException>()
+            action.Should().ThrowExactly<FileNotFoundException>()
                 .WithMessage($"An environment file with path \"{NonExistentEnvFileName}\" does not exist.");
         }
 
@@ -42,14 +42,14 @@ namespace dotenv.net.Test
                 TrimValues = true
             };
             Action action = () => DotEnv.Config(dotEnvOptions);
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]
         public void AddsEnvironmentVariablesIfADefaultEnvFileExists()
         {
             Action action = () => DotEnv.Config();
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
 
             Environment.GetEnvironmentVariable("hello").Should().Be("world");
         }
@@ -58,7 +58,7 @@ namespace dotenv.net.Test
         public void AddsEnvironmentVariablesAndSetsValueAsNullIfNoneExists()
         {
             Action action = () => DotEnv.Config();
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
 
             Environment.GetEnvironmentVariable("strongestavenger").Should().Be(null);
         }
@@ -67,7 +67,7 @@ namespace dotenv.net.Test
         public void AllowsEnvFilePathToBeSpecified()
         {
             Action action = () => DotEnv.Config(true, ValuesAndCommentsEnvFileName);
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
 
             Environment.GetEnvironmentVariable("me").Should().Be("winner");
         }

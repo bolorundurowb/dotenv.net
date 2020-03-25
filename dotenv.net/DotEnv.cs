@@ -9,7 +9,7 @@ namespace dotenv.net
     {
         private static DotEnv _instance;
 
-        private static DotEnv Instance => _instance ?? (_instance = new DotEnv());
+        private static DotEnv Instance => _instance ??= new DotEnv();
 
         private void ConfigRunner(bool throwOnError, string filePath, Encoding encoding, bool trimValues)
         {

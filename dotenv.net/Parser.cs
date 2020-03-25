@@ -9,7 +9,7 @@ namespace dotenv.net
             bool trimValues)
         {
             var validEntries = new List<KeyValuePair<string, string>>();
-            
+
             // loop through rows, split into key and value then add to environment
             foreach (var dotEnvRow in dotEnvRows)
             {

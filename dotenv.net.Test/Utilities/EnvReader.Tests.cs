@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using dotenv.net.Utilities;
 using FluentAssertions;
@@ -10,13 +11,31 @@ namespace dotenv.net.Test.Utilities
         private const string ValueTypesEnvFileName = "various-value-types.env";
 
         [Fact]
+        public void ShouldReadStringValues()
+        {
+            DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
+            var envReader = new EnvReader();
+
+            envReader.GetStringValue("CONNECTION")
+                .Should()
+                .Be("mysql");
+
+            envReader.TryGetStringValue("NON_EXISTENT_KEY", out _)
+                .Should()
+                .BeFalse();
+
+            Action action = () => envReader.GetStringValue("CONNEXION");
+            action.Should()
+                .Throw<Exception>();
+        }
+
+        [Fact]
         public void ShouldReadValuesWithReaderMethods()
         {
             DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
             var envReader = new EnvReader();
-            
+
             envReader.GetStringValue("CONNECTION").Should().Be("mysql");
-            envReader.TryGetStringValue("NON_EXISTENT_KEY", out _).Should().BeFalse();
             envReader.TryGetStringValue("DATABASE", out var database).Should().BeTrue();
             database.Should().Be("laravel");
         }
@@ -26,7 +45,7 @@ namespace dotenv.net.Test.Utilities
         {
             DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
             var envReader = new EnvReader();
-            
+
             envReader.GetIntValue("PORT").Should().Be(3306);
             envReader.TryGetStringValue("HOST", out _).Should().BeFalse();
             envReader.TryGetBooleanValue("IS_PRESENT", out var isPresent).Should().BeTrue();

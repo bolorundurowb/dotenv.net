@@ -49,6 +49,25 @@ namespace dotenv.net.Test.Utilities
         }
 
         [Fact]
+        public void ShouldReadDoubleValues()
+        {
+            DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
+            var envReader = new EnvReader();
+
+            envReader.GetDoubleValue("DOUBLE")
+                .Should()
+                .Be(2762821981981.37627828722);
+
+            envReader.TryGetDoubleValue("NON_EXISTENT_KEY", out _)
+                .Should()
+                .BeFalse();
+
+            Action action = () => envReader.GetDoubleValue("NON_EXISTENT_KEY");
+            action.Should()
+                .Throw<Exception>();
+        }
+
+        [Fact]
         public void ShouldReadValuesWithReaderMethods()
         {
             DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);

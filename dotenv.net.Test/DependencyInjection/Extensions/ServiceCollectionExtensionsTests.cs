@@ -23,7 +23,7 @@ namespace dotenv.net.Test.DependencyInjection.Extensions
         public void ShouldThrowWhenSetupActionIsNull()
         {
             var services = new ServiceCollection();
-            Action action = () => ServiceCollectionExtensions.AddEnv(services, null);
+            Action action = () => services.AddEnv(null);
             action.Should()
                 .ThrowExactly<ArgumentNullException>();
         }
@@ -32,7 +32,7 @@ namespace dotenv.net.Test.DependencyInjection.Extensions
         public void ShouldWorkWhenSetupActionIsValid()
         {
             var services = new ServiceCollection();
-            Action action = () => ServiceCollectionExtensions.AddEnv(services, options =>
+            Action action = () => services.AddEnv(options =>
             {
                 options.AddEnvFile(".env");
                     options.AddEncoding(Encoding.UTF8);
@@ -46,7 +46,7 @@ namespace dotenv.net.Test.DependencyInjection.Extensions
         public void ShouldWorkWithAutomatedOptions()
         {
             var services = new ServiceCollection();
-            Action action = () => ServiceCollectionExtensions.AddEnv(services);
+            Action action = () => services.AddEnv();
             action.Should()
                 .NotThrow<Exception>();
         }

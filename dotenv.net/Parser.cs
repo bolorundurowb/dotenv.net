@@ -39,7 +39,7 @@ namespace dotenv.net
                 {
                     value = value.Trim('\'');
                 }
-                else if (value.StartsWith("\"") && value.EndsWith("\'"))
+                else if (value.StartsWith("\"") && value.EndsWith("\""))
                 {
                     value = value.Trim('\"');
                 }

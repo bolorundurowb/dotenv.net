@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>1.0.4</Version>
+    <Version>2.0.0</Version>
     <Copyright>Copyright 2020</Copyright>
-    <PackageReleaseNotes>- Rework the app logic to make more maintainable
-- Increase speed and reduce memory allocations by replacing string manipulation with IReadOnlySpan&lt;T&gt;.
-- Add class for reading environment variables as strings and typed values
-- Improve testing and upgrade CI config</PackageReleaseNotes>
+    <PackageReleaseNotes>- Add support for IoC with AutoFac.
+- Re-engineer the env reader
+- Update tests and improve coverage
+- Support values surrounded by quotes</PackageReleaseNotes>
     <Authors>Winner-Timothy Bolorunduro</Authors>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>dotenv.net</PackageId>
-    <Description>A library to read .env files and add then values to the environment variables of the application.</Description>
+    <Description>A library to read variables from a .env file and populate the environment variables.</Description>
     <PackageIconUrl>https://raw.githubusercontent.com/motdotla/dotenv/master/dotenv.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/bolorundurowb/dotenv.net</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/bolorundurowb/dotenv.net/blob/master/LICENSE</PackageLicenseUrl>
@@ -17,7 +17,7 @@
     <LangVersion>default</LangVersion>
     <PackageVersion>2.0.0</PackageVersion>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>dotnet, dotnetcore, env, dotenv, asp.net core</PackageTags>
+    <PackageTags>dotnet, environment, variables, env, dotenv, net core, autofac</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>

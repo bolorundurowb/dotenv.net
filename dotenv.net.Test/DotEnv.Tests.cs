@@ -13,20 +13,22 @@ namespace dotenv.net.Test
         private const string WhitespacesCopyEnvFileName = "values-with-whitespaces-too.env";
         private const string ValuesAndCommentsEnvFileName = "values-and-comments.env";
         private const string NonExistentEnvFileName = "non-existent.env";
+        private const string QuotationsEnvFileName = "quotations.env";
 
         [Fact]
         public void ShouldThrowExceptionWhenFileNameEmptyOrNull()
         {
             Action action = () => DotEnv.Config(true, null);
-            action.ShouldThrowExactly<ArgumentException>()
-                .WithMessage($"The file path cannot be null, empty or whitespace.{Environment.NewLine}Parameter name: filePath");
+            action.Should().ThrowExactly<ArgumentException>()
+                .WithMessage(
+                    $"The file path cannot be null, empty or whitespace.{Environment.NewLine}Parameter name: filePath");
         }
 
         [Fact]
         public void ThrowsExceptionWithNonExistentEnvFileWhenThrowErrorIsTrue()
         {
             Action action = () => DotEnv.Config(true, NonExistentEnvFileName);
-            action.ShouldThrowExactly<FileNotFoundException>()
+            action.Should().ThrowExactly<FileNotFoundException>()
                 .WithMessage($"An environment file with path \"{NonExistentEnvFileName}\" does not exist.");
         }
 
@@ -41,14 +43,14 @@ namespace dotenv.net.Test
                 TrimValues = true
             };
             Action action = () => DotEnv.Config(dotEnvOptions);
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]
         public void AddsEnvironmentVariablesIfADefaultEnvFileExists()
         {
             Action action = () => DotEnv.Config();
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
 
             Environment.GetEnvironmentVariable("hello").Should().Be("world");
         }
@@ -57,7 +59,7 @@ namespace dotenv.net.Test
         public void AddsEnvironmentVariablesAndSetsValueAsNullIfNoneExists()
         {
             Action action = () => DotEnv.Config();
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
 
             Environment.GetEnvironmentVariable("strongestavenger").Should().Be(null);
         }
@@ -66,7 +68,7 @@ namespace dotenv.net.Test
         public void AllowsEnvFilePathToBeSpecified()
         {
             Action action = () => DotEnv.Config(true, ValuesAndCommentsEnvFileName);
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
 
             Environment.GetEnvironmentVariable("me").Should().Be("winner");
         }
@@ -91,6 +93,15 @@ namespace dotenv.net.Test
             Environment.GetEnvironmentVariable("B_HOST").Should().Be("127.0.0.1");
             Environment.GetEnvironmentVariable("B_PORT").Should().Be("3306");
             Environment.GetEnvironmentVariable("B_DATABASE").Should().Be("laravel");
+        }
+
+        [Fact]
+        public void ShouldReturnValidValuesWhenValuesAreQuoted()
+        {
+            DotEnv.Config(true, QuotationsEnvFileName, Encoding.UTF8);
+
+            Environment.GetEnvironmentVariable("SINGLE").Should().Be("single");
+            Environment.GetEnvironmentVariable("DOUBLE").Should().Be("double");
         }
     }
 }

@@ -24,7 +24,26 @@ namespace dotenv.net.Test.Utilities
                 .Should()
                 .BeFalse();
 
-            Action action = () => envReader.GetStringValue("CONNEXION");
+            Action action = () => envReader.GetStringValue("NON_EXISTENT_KEY");
+            action.Should()
+                .Throw<Exception>();
+        }
+
+        [Fact]
+        public void ShouldReadBooleanValues()
+        {
+            DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
+            var envReader = new EnvReader();
+
+            envReader.GetBooleanValue("IS_PRESENT")
+                .Should()
+                .BeTrue();
+
+            envReader.TryGetBooleanValue("NON_EXISTENT_KEY", out _)
+                .Should()
+                .BeFalse();
+
+            Action action = () => envReader.GetBooleanValue("NON_EXISTENT_KEY");
             action.Should()
                 .Throw<Exception>();
         }

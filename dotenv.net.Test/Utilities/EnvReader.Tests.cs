@@ -16,7 +16,7 @@ namespace dotenv.net.Test.Utilities
             var envReader = new EnvReader();
             
             envReader.GetStringValue("CONNECTION").Should().Be("mysql");
-            envReader.TryGetStringValue("NON_EXISTENT_KEY", out var _).Should().BeFalse();
+            envReader.TryGetStringValue("NON_EXISTENT_KEY", out _).Should().BeFalse();
             envReader.TryGetStringValue("DATABASE", out var database).Should().BeTrue();
             database.Should().Be("laravel");
         }
@@ -28,8 +28,8 @@ namespace dotenv.net.Test.Utilities
             var envReader = new EnvReader();
             
             envReader.GetIntValue("PORT").Should().Be(3306);
-            envReader.TryGetStringValue("HOST", out var _).Should().BeFalse();
-            envReader.TryGetValue<bool>("IS_PRESENT", out var isPresent).Should().BeTrue();
+            envReader.TryGetStringValue("HOST", out _).Should().BeFalse();
+            envReader.TryGetBooleanValue("IS_PRESENT", out var isPresent).Should().BeTrue();
             isPresent.Should().BeTrue();
         }
     }

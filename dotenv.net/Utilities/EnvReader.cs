@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using dotenv.net.Interfaces;
 
 namespace dotenv.net.Utilities
@@ -7,30 +6,83 @@ namespace dotenv.net.Utilities
     public class EnvReader : IEnvReader
     {
         /// <summary>
-        /// Retrieve a value from the current environment
+        /// Retrieve a string value from the current environment
         /// </summary>
         /// <param name="key">The key to retrieve the value via</param>
-        /// <returns>A string representing the value if it exists or null</returns>
-        public string GetValue(string key)
+        /// <returns>A string representing the value</returns>
+        /// <exception cref="Exception">When the value could not be found</exception>
+        public string GetStringValue(string key)
         {
-            return Environment.GetEnvironmentVariable(key);
+            if (TryGetStringValue(key, out var value))
+            {
+                return value;
+            }
+
+            throw new Exception("Value could not be retrieved.");
         }
 
         /// <summary>
-        /// Retrieve a typed value from the current environment
+        /// Retrieve an integer value from the current environment
         /// </summary>
         /// <param name="key">The key to retrieve the value via</param>
-        /// <returns>Returns a value of the specified type if it exists or the type default</returns>
-        public T GetValue<T>(string key) where T : struct
+        /// <returns>An integer representing the value</returns>
+        /// <exception cref="Exception">When the value could not be found or is not an integer</exception>
+        public int GetIntValue(string key)
         {
-            var retrievedValue = Environment.GetEnvironmentVariable(key);
-            if (string.IsNullOrWhiteSpace(retrievedValue))
+            if (TryGetIntValue(key, out var value))
             {
-                return default(T);
+                return value;
             }
 
-            var converter = TypeDescriptor.GetConverter(typeof(T));
-            return (T) converter.ConvertFromString(retrievedValue);
+            throw new Exception("Value could not be retrieved.");
+        }
+
+        /// <summary>
+        /// Retrieve a double value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <returns>A double representing the value</returns>
+        /// <exception cref="Exception">When the value could not be found or is not a valid double</exception>
+        public double GetDoubleValue(string key)
+        {
+            if (TryGetDoubleValue(key, out var value))
+            {
+                return value;
+            }
+
+            throw new Exception("Value could not be retrieved.");
+        }
+
+        /// <summary>
+        /// Retrieve a decimal value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <returns>A decimal representing the value</returns>
+        /// <exception cref="Exception">When the value could not be found or is not a valid decimal</exception>
+        public decimal GetDecimalValue(string key)
+        {
+            if (TryGetDecimalValue(key, out var value))
+            {
+                return value;
+            }
+
+            throw new Exception("Value could not be retrieved.");
+        }
+
+        /// <summary>
+        /// Retrieve a boolean value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <returns>A boolran representing the value</returns>
+        /// <exception cref="Exception">When the value could not be found or is not a valid bool</exception>
+        public bool GetBooleanValue(string key)
+        {
+            if (TryGetBooleanValue(key, out var value))
+            {
+                return value;
+            }
+
+            throw new Exception("Value could not be retrieved.");
         }
 
         /// <summary>
@@ -39,7 +91,7 @@ namespace dotenv.net.Utilities
         /// <param name="key">The key to retrieve the value via</param>
         /// <param name="value">The string value retrieved or null</param>
         /// <returns>A value representing the retrieval success status</returns>
-        public bool TryGetValue(string key, out string value)
+        public bool TryGetStringValue(string key, out string value)
         {
             var retrievedValue = Environment.GetEnvironmentVariable(key);
 
@@ -54,36 +106,78 @@ namespace dotenv.net.Utilities
         }
 
         /// <summary>
-        /// Try to retrieve a value from the current environment
+        /// Try to retrieve an int value from the current environment
         /// </summary>
         /// <param name="key">The key to retrieve the value via</param>
-        /// <param name="value">The typed value retrieved or the type default</param>
+        /// <param name="value">The int value retrieved or null</param>
         /// <returns>A value representing the retrieval success status</returns>
-        public bool TryGetValue<T>(string key, out T value) where T : struct
+        public bool TryGetIntValue(string key, out int value)
         {
             var retrievedValue = Environment.GetEnvironmentVariable(key);
-            var converter = TypeDescriptor.GetConverter(typeof(T));
 
             if (!string.IsNullOrEmpty(retrievedValue))
             {
-                // NOTE: this had to be added because the typeconverter does not convert strings to bool
-                if (typeof(T) == typeof(bool))
-                {
-                    if (bool.TryParse(retrievedValue, out var boolValue))
-                    {
-                        value = (T) (object) boolValue;
-                        return true;
-                    }
-                }
-                else if (converter.CanConvertTo(typeof(T)))
-                {
-                    retrievedValue = retrievedValue.Trim();
-                    value = (T) converter.ConvertFromString(retrievedValue);
-                    return true;
-                }
+                return int.TryParse(retrievedValue, out value);
             }
 
-            value = default(T);
+            value = 0;
+            return false;
+        }
+
+        /// <summary>
+        /// Try to retrieve a double value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <param name="value">The double value retrieved or null</param>
+        /// <returns>A value representing the retrieval success status</returns>
+        public bool TryGetDoubleValue(string key, out double value)
+        {
+            var retrievedValue = Environment.GetEnvironmentVariable(key);
+
+            if (!string.IsNullOrEmpty(retrievedValue))
+            {
+                return double.TryParse(retrievedValue, out value);
+            }
+
+            value = 0.0;
+            return false;
+        }
+
+        /// <summary>
+        /// Try to retrieve a decimal value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <param name="value">The decimal value retrieved or null</param>
+        /// <returns>A value representing the retrieval success status</returns>
+        public bool TryGetDecimalValue(string key, out decimal value)
+        {
+            var retrievedValue = Environment.GetEnvironmentVariable(key);
+
+            if (!string.IsNullOrEmpty(retrievedValue))
+            {
+                return decimal.TryParse(retrievedValue, out value);
+            }
+
+            value = 0.0m;
+            return false;
+        }
+
+        /// <summary>
+        /// Try to retrieve a boolean value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <param name="value">The boolean value retrieved or null</param>
+        /// <returns>A value representing the retrieval success status</returns>
+        public bool TryGetBooleanValue(string key, out bool value)
+        {
+            var retrievedValue = Environment.GetEnvironmentVariable(key);
+
+            if (!string.IsNullOrEmpty(retrievedValue))
+            {
+                return bool.TryParse(retrievedValue, out value);
+            }
+
+            value = false;
             return false;
         }
     }

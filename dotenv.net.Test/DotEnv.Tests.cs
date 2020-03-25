@@ -20,7 +20,8 @@ namespace dotenv.net.Test
         {
             Action action = () => DotEnv.Config(true, null);
             action.Should().ThrowExactly<ArgumentException>()
-                .WithMessage($"The file path cannot be null, empty or whitespace.{Environment.NewLine}Parameter name: filePath");
+                .WithMessage(
+                    $"The file path cannot be null, empty or whitespace.{Environment.NewLine}Parameter name: filePath");
         }
 
         [Fact]

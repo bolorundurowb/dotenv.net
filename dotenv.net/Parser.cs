@@ -6,7 +6,7 @@ namespace dotenv.net
     internal static class Parser
     {
         internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> dotEnvRows,
-            bool trimValues)
+            bool shouldTrimValue)
         {
             var validEntries = new List<KeyValuePair<string, string>>();
 
@@ -32,7 +32,7 @@ namespace dotenv.net
                 var untrimmedKey = rowSpan.Slice(0, index);
                 var untrimmedValue = rowSpan.Slice(index + 1);
                 var key = untrimmedKey.Trim();
-                var value = trimValues ? untrimmedValue.Trim() : untrimmedValue;
+                var value = shouldTrimValue ? untrimmedValue.Trim() : untrimmedValue;
 
                 validEntries.Add(new KeyValuePair<string, string>(key.ToString(), value.ToString()));
             }

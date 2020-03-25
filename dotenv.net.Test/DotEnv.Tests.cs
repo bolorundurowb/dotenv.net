@@ -13,6 +13,7 @@ namespace dotenv.net.Test
         private const string WhitespacesCopyEnvFileName = "values-with-whitespaces-too.env";
         private const string ValuesAndCommentsEnvFileName = "values-and-comments.env";
         private const string NonExistentEnvFileName = "non-existent.env";
+        private const string QuotationsEnvFileName = "quotations.env";
 
         [Fact]
         public void ShouldThrowExceptionWhenFileNameEmptyOrNull()
@@ -91,6 +92,15 @@ namespace dotenv.net.Test
             Environment.GetEnvironmentVariable("B_HOST").Should().Be("127.0.0.1");
             Environment.GetEnvironmentVariable("B_PORT").Should().Be("3306");
             Environment.GetEnvironmentVariable("B_DATABASE").Should().Be("laravel");
+        }
+
+        [Fact]
+        public void ShouldReturnValidValuesWhenValuesAreQuoted()
+        {
+            DotEnv.Config(true, QuotationsEnvFileName, Encoding.UTF8);
+
+            Environment.GetEnvironmentVariable("SINGLE").Should().Be("single");
+            Environment.GetEnvironmentVariable("DOUBLE").Should().Be("double");
         }
     }
 }

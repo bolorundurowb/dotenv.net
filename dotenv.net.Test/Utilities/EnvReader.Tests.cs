@@ -68,6 +68,25 @@ namespace dotenv.net.Test.Utilities
         }
 
         [Fact]
+        public void ShouldReadDecimalValues()
+        {
+            DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
+            var envReader = new EnvReader();
+
+            envReader.GetDecimalValue("DECIMAL")
+                .Should()
+                .Be(34.56m);
+
+            envReader.TryGetDecimalValue("NON_EXISTENT_KEY", out _)
+                .Should()
+                .BeFalse();
+
+            Action action = () => envReader.GetDecimalValue("NON_EXISTENT_KEY");
+            action.Should()
+                .Throw<Exception>();
+        }
+
+        [Fact]
         public void ShouldReadValuesWithReaderMethods()
         {
             DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);

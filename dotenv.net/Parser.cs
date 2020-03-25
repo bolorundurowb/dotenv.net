@@ -13,7 +13,7 @@ namespace dotenv.net
             // loop through rows, split into key and value then add to environment
             foreach (var dotEnvRow in dotEnvRows)
             {
-                var rowSpan = new ReadOnlySpan<char>(dotEnvRow.ToCharArray());
+                var rowSpan = new ReadOnlySpan<char>(dotEnvRow.TrimStart().ToCharArray());
 
                 // determine if row is empty
                 if (rowSpan.Length == 0)

@@ -31,10 +31,26 @@ namespace dotenv.net
 
                 var untrimmedKey = rowSpan.Slice(0, index);
                 var untrimmedValue = rowSpan.Slice(index + 1);
-                var key = untrimmedKey.Trim();
-                var value = shouldTrimValue ? untrimmedValue.Trim() : untrimmedValue;
+                var key = untrimmedKey.Trim().ToString();
+                var value = untrimmedValue.ToString();
 
-                validEntries.Add(new KeyValuePair<string, string>(key.ToString(), value.ToString()));
+                // handle quoted values
+                if (value.StartsWith("'") && value.EndsWith("'"))
+                {
+                    value = value.Trim('\'');
+                }
+                else if (value.StartsWith("\"") && value.EndsWith("\'"))
+                {
+                    value = value.Trim('\"');
+                }
+                
+                // trim output if requested
+                if (shouldTrimValue)
+                {
+                    value = value.Trim();
+                }
+
+                validEntries.Add(new KeyValuePair<string, string>(key, value));
             }
 
             return new ReadOnlySpan<KeyValuePair<string, string>>(validEntries.ToArray());

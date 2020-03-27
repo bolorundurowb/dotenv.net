@@ -1,6 +1,8 @@
 ﻿using System;
 using Autofac;
 using dotenv.net.DependencyInjection.Extensions;
+using dotenv.net.Interfaces;
+using dotenv.net.Utilities;
 using FluentAssertions;
 using Xunit;
 
@@ -15,7 +17,7 @@ namespace dotenv.net.Test.DependencyInjection.Extensions
             action.Should()
                 .ThrowExactly<ArgumentNullException>();
         }
-        
+
         [Fact]
         public void ShouldThrowWhenSetupActionIsNull()
         {
@@ -29,11 +31,40 @@ namespace dotenv.net.Test.DependencyInjection.Extensions
         public void AddsEnvironmentVariablesIfADefaultEnvFileExists()
         {
             var builder = new ContainerBuilder();
-           Action action = () => builder.AddEnv();
-           
-           action.Should()
-               .NotThrow<Exception>();
+            Action action = () => builder.AddEnv();
+
+            action.Should()
+                .NotThrow<Exception>();
             Environment.GetEnvironmentVariable("hello").Should().Be("world");
+        }
+
+        [Fact]
+        public void ShouldThrowWhenContainerBuilderIsNotProvided()
+        {
+            Action action = () => AutoFacExtension.AddEnvReader(null);
+            action.Should()
+                .ThrowExactly<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ShouldInjectEnvReaderWhenContainerBuilderServicesIsProvided()
+        {
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.AddEnvReader();
+            var provider = containerBuilder.Build();
+
+            using (var scope = provider.BeginLifetimeScope())
+            {
+                object service = null;
+                Action action = () => service = scope.Resolve<IEnvReader>();
+
+                action.Should()
+                    .NotThrow<Exception>();
+                service.Should()
+                    .NotBeNull();
+                service.Should()
+                    .BeOfType<EnvReader>();
+            }
         }
     }
 }

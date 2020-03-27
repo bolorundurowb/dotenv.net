@@ -7,6 +7,7 @@ namespace dotenv.net
 {
     public class DotEnv
     {
+        private const int LevelsToSearch = 4;
         private static DotEnv _instance;
 
         private static DotEnv Instance => _instance ?? (_instance = new DotEnv());
@@ -48,6 +49,11 @@ namespace dotenv.net
         public static void Config(DotEnvOptions options)
         {
             Instance.ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding, options.TrimValues);
+        }
+
+        public static bool AutoConfig()
+        {
+            
         }
     }
 }

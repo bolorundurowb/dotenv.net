@@ -9,6 +9,7 @@ namespace dotenv.net
     public class DotEnv
     {
         private static DotEnv _instance;
+        private const string DefaultEnvFileName = ".env";
 
         private static DotEnv Instance => _instance ?? (_instance = new DotEnv());
 
@@ -36,8 +37,8 @@ namespace dotenv.net
         /// <param name="encoding">The encoding with which the env file was created, It defaults to the platforms default</param>
         /// <param name="trimValues">This determines whether not whitespace is trimmed from the values. It defaults to true</param>
         /// <exception cref="FileNotFoundException">Thrown if the env file doesn't exist</exception>
-        public static void Config(bool throwOnError = true, string filePath = ".env", Encoding encoding = null,
-            bool trimValues = true)
+        public static void Config(bool throwOnError = true, string filePath = DefaultEnvFileName,
+            Encoding encoding = null, bool trimValues = true)
         {
             Instance.ConfigRunner(throwOnError, filePath, encoding, trimValues);
         }
@@ -56,12 +57,12 @@ namespace dotenv.net
             var levelsToSearch = 3;
             var assembly = new FileInfo(Assembly.GetExecutingAssembly().Location);
             var currentDirectory = assembly.Directory;
-            
+
             for (;
                 currentDirectory != null && levelsToSearch > 0;
                 levelsToSearch--, currentDirectory = currentDirectory.Parent)
             {
-                foreach (var fi in currentDirectory.GetFiles(".env", SearchOption.TopDirectoryOnly))
+                foreach (var fi in currentDirectory.GetFiles(DefaultEnvFileName, SearchOption.TopDirectoryOnly))
                 {
                     Config(false, fi.FullName);
                     return true;

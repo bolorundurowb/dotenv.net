@@ -1,12 +1,10 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using dotenv.net.DependencyInjection.Extensions;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
-namespace dotenv.net.Test.DependencyInjection
+namespace dotenv.net.Test.DependencyInjection.Extensions
 {
     public class AutofacExtensionTests
     {
@@ -17,7 +15,7 @@ namespace dotenv.net.Test.DependencyInjection
             Environment.GetEnvironmentVariable("hello").Should().Be("world");
         }
 
-        private void SetupTest()
+        private static void SetupTest()
         {
             var builder = new ContainerBuilder();
             builder.AddEnv();

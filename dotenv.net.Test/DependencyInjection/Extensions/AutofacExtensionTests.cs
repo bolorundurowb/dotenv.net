@@ -9,16 +9,31 @@ namespace dotenv.net.Test.DependencyInjection.Extensions
     public class AutofacExtensionTests
     {
         [Fact]
-        public void AddsEnvironmentVariablesIfADefaultEnvFileExists()
+        public void ShouldThrowWhenContainerBuilderIsNull()
         {
-            SetupTest();
-            Environment.GetEnvironmentVariable("hello").Should().Be("world");
+            Action action = () => AutoFacExtension.AddEnv(null, builder => { });
+            action.Should()
+                .ThrowExactly<ArgumentNullException>();
+        }
+        
+        [Fact]
+        public void ShouldThrowWhenSetupActionIsNull()
+        {
+            var containerBuilder = new ContainerBuilder();
+            Action action = () => containerBuilder.AddEnv(null);
+            action.Should()
+                .ThrowExactly<ArgumentNullException>();
         }
 
-        private static void SetupTest()
+        [Fact]
+        public void AddsEnvironmentVariablesIfADefaultEnvFileExists()
         {
             var builder = new ContainerBuilder();
-            builder.AddEnv();
+           Action action = () => builder.AddEnv();
+           
+           action.Should()
+               .NotThrow<Exception>();
+            Environment.GetEnvironmentVariable("hello").Should().Be("world");
         }
     }
 }

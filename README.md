@@ -53,7 +53,7 @@ using dotenv.net;
 DotEnv.Config();
 ```
 
-the values saved in your `.env` file would be avaibale in your application and can be accessed via
+the values saved in your `.env` file would be availale in your application and can be accessed via
  ```csharp
 Environment.GetEnvironmentVariable("DB_HOST"); // would output 'localhost'
 ```

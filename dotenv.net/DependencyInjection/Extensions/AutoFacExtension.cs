@@ -3,6 +3,8 @@ using dotenv.net.DependencyInjection.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using dotenv.net.Interfaces;
+using dotenv.net.Utilities;
 
 namespace dotenv.net.DependencyInjection.Extensions
 {
@@ -58,6 +60,17 @@ namespace dotenv.net.DependencyInjection.Extensions
                     .AddTrimOptions(true);
             });
 
+            return containerBuilder;
+        }
+
+        public static ContainerBuilder AddEnvReader(this ContainerBuilder containerBuilder)
+        {
+            if (containerBuilder == null)
+            {
+                throw new ArgumentNullException(nameof(containerBuilder));
+            }
+
+            containerBuilder.RegisterType<EnvReader>().As<IEnvReader>();
             return containerBuilder;
         }
     }

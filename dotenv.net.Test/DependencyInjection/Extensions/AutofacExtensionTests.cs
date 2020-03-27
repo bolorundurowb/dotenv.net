@@ -13,7 +13,7 @@ namespace dotenv.net.Test.DependencyInjection.Extensions
         [Fact]
         public void ShouldThrowWhenContainerBuilderIsNull()
         {
-            Action action = () => AutoFacExtension.AddEnv(null, builder => { });
+            Action action = () => AutofacExtensions.AddEnv(null, builder => { });
             action.Should()
                 .ThrowExactly<ArgumentNullException>();
         }
@@ -41,7 +41,7 @@ namespace dotenv.net.Test.DependencyInjection.Extensions
         [Fact]
         public void ShouldThrowWhenContainerBuilderIsNotProvided()
         {
-            Action action = () => AutoFacExtension.AddEnvReader(null);
+            Action action = () => AutofacExtensions.AddEnvReader(null);
             action.Should()
                 .ThrowExactly<ArgumentNullException>();
         }

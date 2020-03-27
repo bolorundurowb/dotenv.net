@@ -1,14 +1,13 @@
 ﻿using Autofac;
 using dotenv.net.DependencyInjection.Infrastructure;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using dotenv.net.Interfaces;
 using dotenv.net.Utilities;
 
 namespace dotenv.net.DependencyInjection.Extensions
 {
-    public static class AutoFacExtension
+    public static class AutofacExtensions
     {
         /// <summary>
         /// Add the environment variables using autofac

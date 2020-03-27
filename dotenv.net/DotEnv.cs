@@ -52,6 +52,10 @@ namespace dotenv.net
             Instance.ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding, options.TrimValues);
         }
 
+        /// <summary>
+        /// Searches the current directory and three directories up and loads the environment variables
+        /// </summary>
+        /// <returns>States whether or not the operation succeeded</returns>
         public static bool AutoConfig()
         {
             var levelsToSearch = 3;

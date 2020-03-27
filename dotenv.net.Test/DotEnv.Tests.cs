@@ -103,5 +103,14 @@ namespace dotenv.net.Test
             Environment.GetEnvironmentVariable("SINGLE").Should().Be("single");
             Environment.GetEnvironmentVariable("DOUBLE").Should().Be("double");
         }
+
+        [Fact]
+        public void ShouldReturnValidValuesWithAutoConfig()
+        {
+           var success = DotEnv.AutoConfig();
+           
+           success.Should().BeTrue();
+            Environment.GetEnvironmentVariable("hello").Should().Be("world");
+        }
     }
 }

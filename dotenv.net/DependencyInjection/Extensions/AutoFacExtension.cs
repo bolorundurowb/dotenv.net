@@ -63,6 +63,12 @@ namespace dotenv.net.DependencyInjection.Extensions
             return containerBuilder;
         }
 
+        /// <summary>
+        /// Add autofac IoC for the env reader
+        /// </summary>
+        /// <param name="containerBuilder">The container builder instance</param>
+        /// <returns>The container builder instance</returns>
+        /// <exception cref="ArgumentNullException">If the container builder is null</exception>
         public static ContainerBuilder AddEnvReader(this ContainerBuilder containerBuilder)
         {
             if (containerBuilder == null)

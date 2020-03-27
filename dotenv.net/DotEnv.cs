@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using dotenv.net.DependencyInjection.Infrastructure;
 
@@ -7,7 +8,6 @@ namespace dotenv.net
 {
     public class DotEnv
     {
-        private const int LevelsToSearch = 4;
         private static DotEnv _instance;
 
         private static DotEnv Instance => _instance ?? (_instance = new DotEnv());
@@ -53,7 +53,22 @@ namespace dotenv.net
 
         public static bool AutoConfig()
         {
+            var levelsToSearch = 3;
+            var assembly = new FileInfo(Assembly.GetExecutingAssembly().Location);
+            var currentDirectory = assembly.Directory;
             
+            for (;
+                currentDirectory != null && levelsToSearch > 0;
+                levelsToSearch--, currentDirectory = currentDirectory.Parent)
+            {
+                foreach (var fi in currentDirectory.GetFiles(".env", SearchOption.TopDirectoryOnly))
+                {
+                    Config(false, fi.FullName);
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

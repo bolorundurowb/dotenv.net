@@ -52,7 +52,7 @@ namespace dotenv.net.Test.DependencyInjection.Extensions
         }
         
         [Fact]
-        public void ShouldThrowWhenServicesAreProvided()
+        public void ShouldThrowWhenServicesAreNotProvided()
         {
             Action action = () => ServiceCollectionExtensions.AddEnvReader(null);
             action.Should()

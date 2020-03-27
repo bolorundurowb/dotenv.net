@@ -53,7 +53,19 @@ using dotenv.net;
 DotEnv.Config();
 ```
 
-the values saved in your `.env` file would be availale in your application and can be accessed via
+At times the `.env` would not be in the same directory as your assembly, in that case the following would apply
+
+```csharp
+using dotenv.net
+
+...
+
+var success = DotEnv.AutoConfig(); // success holds a value stating whether the env was found and read or not
+```
+
+this looks through your assembly's folder and three folders up for a `.env` file and loads that.
+
+the values saved in your `.env` file would be availale in your application and can be accessed via:
  ```csharp
 Environment.GetEnvironmentVariable("DB_HOST"); // would output 'localhost'
 ```
@@ -77,7 +89,23 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-With this, your application would have the env file variables imported.
+## Using with DI (`ContainerBuilder`)
+
+If using with ASP.NET Core or any other system that uses `ContainerBuilder` for its dependency injection, in the `Startup.cs` file
+
+``` csharp
+...
+
+// configure dotenv
+containerBuilder.AddEnv(builder => {
+    builder
+    .AddEnvFile("/custom/path/to/your/env/vars")
+    .AddThrowOnError(false)
+    .AddEncoding(Encoding.ASCII);
+});
+```
+
+With any of the above, your application would have the env file variables imported.
 
 ### Options
 
@@ -141,15 +169,23 @@ var value = envReader.GetValue("KEY");
 
 In the `StartUp.cs` file, in the `ConfigureServices` method
 
-```csharp
-...
+For (ASP.NET DI)
 
+```csharp
 public void ConfigureServices(IServiceCollection services)
 {
     ...
     services.AddEnvReader();
     ...
 }
+```
+
+For Autofac
+
+```csharp
+...
+
+containerBuilder.AddEnvReader();
 ```
 
 In the rest of your application, the `IEnvReader` interface can get injected and used. For example, in a `SampleController` class for example:
@@ -168,26 +204,63 @@ public class SampleController
 
 ### IEnvReader Methods
 
-#### string GetValue(string key)
+#### string GetStringValue(string key)
 
 Default: `null`
 
-Retrieve a value from the current environment by the given key and return `null` if a value does not exist for that key.
+Retrieve a value from the current environment by the given key and throws an exception if not found.
 
-#### T GetValue<T>(string key)
+#### int GetIntValue(string key)
 
-Default: `default(T)`
+Default: `0`
 
-A generic method that allows for a typed value to be retrieved from the environment variables and returns the default for the type. This functionality is limited to `struct`s currently.
+Retrieve a value from the current environment by the given key and throws an exception if not found.
 
-#### bool TryGetValue(string key, out string value)
+#### double GetDoubleValue(string key)
+
+Default: `0.0`
+
+Retrieve a value from the current environment by the given key and throws an exception if not found.
+
+#### decimal GetDecimalValue(string key)
+
+Default: `0.0m`
+
+Retrieve a value from the current environment by the given key and throws an exception if not found.
+
+#### bool GetBooleanValue(string key)
+
+Default: `false`
+
+Retrieve a value from the current environment by the given key and throws an exception if not found.
+
+
+#### bool TryGetStringValue(string key, out string value)
 
 Default: `null`
 
 A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required.
 
-#### bool TryGetValue<T>(string key, out T value)
+#### bool TryGetIntValue(string key, out int value)
 
-Default: `default(T)`
+Default: `0`
 
-A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved and coverted the value required.
+A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required.
+
+#### bool TryGetDoubleValue(string key, out double value)
+
+Default: `0.0`
+
+A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required.
+
+#### bool TryGetDecimalValue(string key, out decimal value)
+
+Default: `0.0m`
+
+A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required.
+
+#### bool TryGetBooleanValue(string key, out bool value)
+
+Default: `false`
+
+A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required.

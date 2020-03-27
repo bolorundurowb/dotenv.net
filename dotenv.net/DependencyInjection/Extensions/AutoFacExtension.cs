@@ -8,6 +8,13 @@ namespace dotenv.net.DependencyInjection.Extensions
 {
     public static class AutoFacExtension
     {
+        /// <summary>
+        /// Add the environment variables using autofac
+        /// </summary>
+        /// <param name="containerBuilder">The container builder instance</param>
+        /// <param name="action">The env builder action</param>
+        /// <returns>The container builder instance</returns>
+        /// <exception cref="ArgumentNullException">If the container builder or action is null</exception>
         public static ContainerBuilder AddEnv(this ContainerBuilder containerBuilder,
             Action<DotEnvOptionsBuilder> action)
         {
@@ -30,6 +37,12 @@ namespace dotenv.net.DependencyInjection.Extensions
             return containerBuilder;
         }
 
+        /// <summary>
+        /// Add the environment variables using autofac
+        /// </summary>
+        /// <param name="containerBuilder">The container builder instance</param>
+        /// <returns>The container builder instance</returns>
+        /// <exception cref="ArgumentNullException">If the container builder is null</exception>
         public static ContainerBuilder AddEnv(this ContainerBuilder containerBuilder)
         {
             if (containerBuilder == null)

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net", "dotenv.net/do
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.Test", "dotenv.net.Test\dotenv.net.Test.csproj", "{A03D81EE-4F67-4521-932A-0B9B5BE50F72}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependecyInjection.Autofac", "dotenv.net.DependecyInjection.Autofac\dotenv.net.DependecyInjection.Autofac.csproj", "{B07730C5-C070-4715-883A-C484E64940BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A03D81EE-4F67-4521-932A-0B9B5BE50F72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A03D81EE-4F67-4521-932A-0B9B5BE50F72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A03D81EE-4F67-4521-932A-0B9B5BE50F72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B07730C5-C070-4715-883A-C484E64940BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07730C5-C070-4715-883A-C484E64940BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B07730C5-C070-4715-883A-C484E64940BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B07730C5-C070-4715-883A-C484E64940BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

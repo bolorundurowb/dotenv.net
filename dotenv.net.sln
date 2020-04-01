@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.0.0
 MinimumVisualStudioVersion = 10.0.0.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net", "dotenv.net/dotenv.net.csproj", "{92FD0370-AEB1-4154-8C9F-D5FF30CABCF8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net", "src/dotenv.net/dotenv.net.csproj", "{92FD0370-AEB1-4154-8C9F-D5FF30CABCF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.Test", "dotenv.net.Test\dotenv.net.Test.csproj", "{A03D81EE-4F67-4521-932A-0B9B5BE50F72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.Test", "tests/dotenv.net.Test\dotenv.net.Test.csproj", "{A03D81EE-4F67-4521-932A-0B9B5BE50F72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependencyInjection.Microsoft", "dotenv.net.DependencyInjection.Microsoft\dotenv.net.DependencyInjection.Microsoft.csproj", "{5E1AD966-386D-4BB4-85FC-872E8EE2F211}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependencyInjection.Microsoft", "src/dotenv.net.DependencyInjection.Microsoft\dotenv.net.DependencyInjection.Microsoft.csproj", "{5E1AD966-386D-4BB4-85FC-872E8EE2F211}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependencyInjection.Autofac", "dotenv.net.DependencyInjection.Autofac\dotenv.net.DependencyInjection.Autofac.csproj", "{DE6358F8-CA1A-428F-8DE9-12A0A17DD0CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependencyInjection.Autofac", "src/dotenv.net.DependencyInjection.Autofac\dotenv.net.DependencyInjection.Autofac.csproj", "{DE6358F8-CA1A-428F-8DE9-12A0A17DD0CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

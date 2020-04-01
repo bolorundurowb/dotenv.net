@@ -1,6 +1,6 @@
 ﻿using System;
 using Autofac;
-using dotenv.net.DependencyInjection.Extensions;
+using dotenv.net.DependencyInjection.Autofac;
 using dotenv.net.Interfaces;
 using dotenv.net.Utilities;
 using FluentAssertions;

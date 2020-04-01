@@ -14,6 +14,8 @@
         <PackageTags>autofac, dotenv, net core</PackageTags>
         <PackageReleaseNotes>- initial release</PackageReleaseNotes>
         <AssemblyVersion>2.1.0</AssemblyVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Copyright>Copyright 2020</Copyright>
     </PropertyGroup>
 
     <ItemGroup>

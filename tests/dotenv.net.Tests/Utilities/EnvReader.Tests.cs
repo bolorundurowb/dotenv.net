@@ -4,7 +4,7 @@ using dotenv.net.Utilities;
 using FluentAssertions;
 using Xunit;
 
-namespace dotenv.net.Test.Utilities
+namespace dotenv.net.Tests.Utilities
 {
     public class EnvReaderTests
     {

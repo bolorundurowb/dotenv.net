@@ -6,7 +6,7 @@ using dotenv.net.Utilities;
 using FluentAssertions;
 using Xunit;
 
-namespace dotenv.net.Test.DependencyInjection.Extensions
+namespace dotenv.net.Tests.DependencyInjection.Extensions
 {
     public class AutofacExtensionTests
     {

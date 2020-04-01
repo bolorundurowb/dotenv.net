@@ -3,7 +3,7 @@ using dotenv.net.DependencyInjection.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace dotenv.net.Test.DependencyInjection.Infrastructure
+namespace dotenv.net.Tests.DependencyInjection.Infrastructure
 {
     public class DotEnvOptionsBuilderTests
     {

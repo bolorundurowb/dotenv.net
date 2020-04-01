@@ -7,7 +7,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace dotenv.net.Test.DependencyInjection.Extensions
+namespace dotenv.net.Tests.DependencyInjection.Extensions
 {
     public class ServiceCollectionExtensionsTests
     {

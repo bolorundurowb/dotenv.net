@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependencyInject
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependencyInjection.Autofac", "src/dotenv.net.DependencyInjection.Autofac\dotenv.net.DependencyInjection.Autofac.csproj", "{DE6358F8-CA1A-428F-8DE9-12A0A17DD0CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependencyInjection.Autofac.Tests", "dotenv.net.DependencyInjection.Autofac.Tests\dotenv.net.DependencyInjection.Autofac.Tests.csproj", "{5CD8426D-725D-4079-9EC5-46A285A7988B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependencyInjection.Microsoft.Tests", "dotenv.net.DependencyInjection.Microsoft.Tests\dotenv.net.DependencyInjection.Microsoft.Tests.csproj", "{9D856541-B72B-428D-8FE7-483FC1943C7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{DE6358F8-CA1A-428F-8DE9-12A0A17DD0CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE6358F8-CA1A-428F-8DE9-12A0A17DD0CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE6358F8-CA1A-428F-8DE9-12A0A17DD0CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CD8426D-725D-4079-9EC5-46A285A7988B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CD8426D-725D-4079-9EC5-46A285A7988B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CD8426D-725D-4079-9EC5-46A285A7988B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CD8426D-725D-4079-9EC5-46A285A7988B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D856541-B72B-428D-8FE7-483FC1943C7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D856541-B72B-428D-8FE7-483FC1943C7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D856541-B72B-428D-8FE7-483FC1943C7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D856541-B72B-428D-8FE7-483FC1943C7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

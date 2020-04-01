@@ -14,9 +14,17 @@ jobs:
           command:
             dotnet build
       - run:
-          name: Test
+          name: Core Test
           command:
-            dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover dotenv.net.Test/dotenv.net.Test.csproj
+            dotnet test tests/dotenv.net.Tests/dotenv.net.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/"
+      - run:
+          name: Autofac Extension Test
+          command:
+            dotnet test tests/dotenv.net.DependencyInjection.Autofac.Tests/dotenv.net.DependencyInjection.Autofac.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/" /p:MergeWith="./../../results/coverage.json"
+      - run:
+          name: MS DI Test
+          command:
+            dotnet test tests/dotenv.net.DependencyInjection.Microsoft.Tests/dotenv.net.DependencyInjection.Microsoft.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/" /p:MergeWith="./../../results/coverage.json" /p:CoverletOutputFormat="opencover"
       - run:
           name: Install Coveralls
           command:
@@ -24,4 +32,4 @@ jobs:
       - run:
           name: Report Coverage
           command:
-            ./tools/csmacnz.Coveralls --opencover -i ./dotenv.net.Test/coverage.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths
+            ./tools/csmacnz.Coveralls --opencover -i ./results/coverage.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths

@@ -5,10 +5,10 @@ using dotenv.net.Interfaces;
 using dotenv.net.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace dotenv.net.DependencyInjection.Extensions
+namespace dotenv.net.DependencyInjection.Microsoft
 {
     /// <summary>
-    /// Servcie collection extensions
+    /// Service collection extensions
     /// </summary>
     public static class ServiceCollectionExtensions
     {

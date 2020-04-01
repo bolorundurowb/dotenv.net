@@ -1,12 +1,11 @@
 ﻿using System;
 using Autofac;
-using dotenv.net.DependencyInjection.Extensions;
 using dotenv.net.Interfaces;
 using dotenv.net.Utilities;
 using FluentAssertions;
 using Xunit;
 
-namespace dotenv.net.Test.DependencyInjection.Extensions
+namespace dotenv.net.DependencyInjection.Autofac.Tests
 {
     public class AutofacExtensionTests
     {

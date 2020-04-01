@@ -1,11 +1,11 @@
-﻿using Autofac;
-using dotenv.net.DependencyInjection.Infrastructure;
-using System;
+﻿using System;
 using System.Text;
+using Autofac;
+using dotenv.net.DependencyInjection.Infrastructure;
 using dotenv.net.Interfaces;
 using dotenv.net.Utilities;
 
-namespace dotenv.net.DependencyInjection.Extensions
+namespace dotenv.net.DependencyInjection.Autofac
 {
     public static class AutofacExtensions
     {

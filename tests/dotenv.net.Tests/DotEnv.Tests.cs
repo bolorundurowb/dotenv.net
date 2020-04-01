@@ -5,7 +5,7 @@ using dotenv.net.DependencyInjection.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace dotenv.net.Test
+namespace dotenv.net.Tests
 {
     public class DotEnvTests
     {

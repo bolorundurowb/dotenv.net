@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Text;
-using dotenv.net.DependencyInjection.Extensions;
 using dotenv.net.Interfaces;
 using dotenv.net.Utilities;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace dotenv.net.Test.DependencyInjection.Extensions
+namespace dotenv.net.DependencyInjection.Microsoft.Tests
 {
     public class ServiceCollectionExtensionsTests
     {

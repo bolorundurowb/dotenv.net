@@ -24,7 +24,7 @@ jobs:
       - run:
           name: MS DI Test
           command:
-            dotnet test tests/dotenv.net.DependencyInjection.Microsoft.Tests/dotenv.net.DependencyInjection.Microsoft.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/" /p:MergeWith="./../../results/coverage.json /p:CoverletOutputFormat=opencover"
+            dotnet test tests/dotenv.net.DependencyInjection.Microsoft.Tests/dotenv.net.DependencyInjection.Microsoft.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/" /p:MergeWith="./../../results/coverage.json" /p:CoverletOutputFormat="opencover"
       - run:
           name: Install Coveralls
           command:

@@ -20,11 +20,11 @@ jobs:
       - run:
           name: Autofac Extension Test
           command:
-            dotnet test tests/dotenv.net.DependencyInjection.Autofac.Tests/dotenv.net.DependencyInjection.Autofac.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/" /p:MergeWith="./../../results/coverage.opencover.xml"
+            dotnet test tests/dotenv.net.DependencyInjection.Autofac.Tests/dotenv.net.DependencyInjection.Autofac.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/" /p:MergeWith="./../../results/coverage.json"
       - run:
           name: MS DI Test
           command:
-            dotnet test tests/dotenv.net.DependencyInjection.Microsoft.Tests/dotenv.net.DependencyInjection.Microsoft.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./../../results/" /p:MergeWith="./../../results/coverage.opencover.xml"
+            dotnet test tests/dotenv.net.DependencyInjection.Microsoft.Tests/dotenv.net.DependencyInjection.Microsoft.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/" /p:MergeWith="./../../results/coverage.json /p:CoverletOutputFormat=opencover"
       - run:
           name: Install Coveralls
           command:

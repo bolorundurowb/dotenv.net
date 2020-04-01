@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Text;
+using dotenv.net.DependencyInjection.Infrastructure;
+using dotenv.net.Interfaces;
+using dotenv.net.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace dotenv.net.DependencyInjection.Microsoft
@@ -72,4 +75,5 @@ namespace dotenv.net.DependencyInjection.Microsoft
             services.AddSingleton<IEnvReader, EnvReader>();
             return services;
         }
+    }
 }

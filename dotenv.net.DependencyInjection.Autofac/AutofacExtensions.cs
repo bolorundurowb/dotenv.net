@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Text;
 using Autofac;
+using dotenv.net.DependencyInjection.Infrastructure;
+using dotenv.net.Interfaces;
+using dotenv.net.Utilities;
 
 namespace dotenv.net.DependencyInjection.Autofac
 {
@@ -76,3 +79,4 @@ namespace dotenv.net.DependencyInjection.Autofac
             return containerBuilder;
         }
     }
+}

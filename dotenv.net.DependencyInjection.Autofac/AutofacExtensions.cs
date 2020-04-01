@@ -1,11 +1,8 @@
-﻿using Autofac;
-using dotenv.net.DependencyInjection.Infrastructure;
-using System;
+﻿using System;
 using System.Text;
-using dotenv.net.Interfaces;
-using dotenv.net.Utilities;
+using Autofac;
 
-namespace dotenv.net.DependencyInjection.Extensions
+namespace dotenv.net.DependencyInjection.Autofac
 {
     public static class AutofacExtensions
     {
@@ -79,4 +76,3 @@ namespace dotenv.net.DependencyInjection.Extensions
             return containerBuilder;
         }
     }
-}

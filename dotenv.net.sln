@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependencyInject
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.DependencyInjection.Microsoft.Tests", "tests\dotenv.net.DependencyInjection.Microsoft.Tests\dotenv.net.DependencyInjection.Microsoft.Tests.csproj", "{9D856541-B72B-428D-8FE7-483FC1943C7F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "tests", "{1CEC83AC-9E34-4320-AECE-F0F52FE70538}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5CD8426D-725D-4079-9EC5-46A285A7988B} = {1CEC83AC-9E34-4320-AECE-F0F52FE70538}
+		{9D856541-B72B-428D-8FE7-483FC1943C7F} = {1CEC83AC-9E34-4320-AECE-F0F52FE70538}
+		{A03D81EE-4F67-4521-932A-0B9B5BE50F72} = {1CEC83AC-9E34-4320-AECE-F0F52FE70538}
 	EndGlobalSection
 EndGlobal

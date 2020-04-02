@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>2.0.1</Version>
     <Copyright>Copyright 2020</Copyright>
     <PackageReleaseNotes>- Split the dotenv package into component libs</PackageReleaseNotes>
     <Authors>Winner-Timothy Bolorunduro</Authors>

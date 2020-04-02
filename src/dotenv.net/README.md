@@ -2,7 +2,7 @@
 
 [![NuGet Badge](https://buildstats.info/nuget/dotenv.net)](https://www.nuget.org/packages/dotenv.net)
 
-dotenv.net is a zero-dependency module that loads environment variables from a .env environment variable file into `System.Environment`. It has built in support for the in-built dependency injection framework packaged with ASP.NET Core. It now comes packaged with an interface that allows for reading environment variables wihtout repeated calls to `Environment.GetEnvironmentVariable("KEY");`.  If you have ideas or issues, create an issue.
+dotenv.net is a zero-dependency module that loads environment variables from a .env environment variable file into `System.Environment`.
 
 ## Usage
 

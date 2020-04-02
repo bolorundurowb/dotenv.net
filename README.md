@@ -11,27 +11,11 @@ Big ups to those who have contributed to these libraries. :clap:
 [@bolorundurowb](https://github.com/bolorundurowb) [@joliveros](https://github.com/joliveros) [@vizeke](https://github.com/vizeke) [@merqlove](https://github.com/merqlove) [@tracker1](https://github.com/tracker1)  [@NaturalWill](https://github.com/NaturalWill)  [@texyh](https://github.com/texyh)
 
 
+## How to use this documentation
 
+Documentation specific to each project can be found in the README files for the specific projects while common features would be documented
 
-## Using with DI (`ContainerBuilder`)
-
-If using with ASP.NET Core or any other system that uses `ContainerBuilder` for its dependency injection, in the `Startup.cs` file
-
-``` csharp
-...
-
-// configure dotenv
-containerBuilder.AddEnv(builder => {
-    builder
-    .AddEnvFile("/custom/path/to/your/env/vars")
-    .AddThrowOnError(false)
-    .AddEncoding(Encoding.ASCII);
-});
-```
-
-With any of the above, your application would have the env file variables imported.
-
-### Options
+###  Options
 
 #### ThrowError
 
@@ -77,9 +61,9 @@ DotEnv.Config(true, ".env", Encoding.Unicode, false);
 
 ## Support For `IEnvReader`
 
-With `v1.0.6` and above an interface `IEnvReader` has been introduced that specifies methods that help with reading values from the environment easily. The library has a default implementation `EnvReader` that can be added to the default ASP.NET Core DI framework (`IServiceCollection`).
+With `v1.0.6` and above an interface `IEnvReader` has been introduced that specifies methods that help with reading typed values from the environment easily. The library has a default implementation `EnvReader`.
 
-### Using `EnvReader`
+### Using `EnvReader` 
 
 ```csharp
 using dotenv.net.Utilities;
@@ -87,43 +71,6 @@ using dotenv.net.Utilities;
 
 var envReader = new EnvReader();
 var value = envReader.GetValue("KEY");
-```
-
-### Using `IEnvReader` with DI
-
-In the `StartUp.cs` file, in the `ConfigureServices` method
-
-For (ASP.NET DI)
-
-```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    ...
-    services.AddEnvReader();
-    ...
-}
-```
-
-For Autofac
-
-```csharp
-...
-
-containerBuilder.AddEnvReader();
-```
-
-In the rest of your application, the `IEnvReader` interface can get injected and used. For example, in a `SampleController` class for example:
-
-```csharp
-public class SampleController
-{
-    private readonly IEnvReader _envReader;
-    
-    public SampleController(IEnvReader envReader)
-    {
-        _envReader = envReader;
-    }
-}
 ```
 
 ### IEnvReader Methods

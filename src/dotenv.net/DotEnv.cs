@@ -55,10 +55,10 @@ namespace dotenv.net
         /// <summary>
         /// Searches the current directory and three directories up and loads the environment variables
         /// </summary>
+        /// <param name="levelsToSearch">The number of top-level directories to search; the default is 3 top-level directories.</param>
         /// <returns>States whether or not the operation succeeded</returns>
-        public static bool AutoConfig()
+        public static bool AutoConfig(int levelsToSearch = 3)
         {
-            var levelsToSearch = 3;
             var assembly = new FileInfo(Assembly.GetExecutingAssembly().Location);
             var currentDirectory = assembly.Directory;
 

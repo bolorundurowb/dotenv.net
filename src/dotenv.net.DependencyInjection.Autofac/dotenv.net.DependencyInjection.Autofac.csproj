@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <PackageVersion>2.1.0</PackageVersion>
+        <PackageVersion>2.1.1</PackageVersion>
         <Title>dotenv.net.DependencyInjection.Autofac</Title>
         <Authors>Winner-Timothy Bolorunduro</Authors>
         <Description>Adds DI support for values read from the environment for Autofac</Description>

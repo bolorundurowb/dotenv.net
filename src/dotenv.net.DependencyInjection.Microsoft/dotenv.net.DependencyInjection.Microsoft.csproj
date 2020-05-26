@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>2.1.0</PackageVersion>
+        <PackageVersion>2.1.1</PackageVersion>
         <Title>dotenv.net.DependencyInjection.Microsoft</Title>
         <Authors>Winner-Timothy Bolorunduro</Authors>
         <Description>Adds DI support for values read from the environment for Microsoft Service Collection</Description>

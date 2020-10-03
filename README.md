@@ -19,6 +19,15 @@ Documentation specific to each project can be found in the README files for the 
 
 ###  Options
 
+
+#### AutoConfig
+
+You can specify if you want the library to search for .env files up the directory chain
+
+```csharp
+DotEnv.AutoConfig(); //silent if no .env file found up the chain
+```
+
 #### ThrowError
 
 Default: `true`

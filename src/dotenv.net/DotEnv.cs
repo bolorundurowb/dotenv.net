@@ -59,8 +59,7 @@ namespace dotenv.net
         /// <returns>States whether or not the operation succeeded</returns>
         public static bool AutoConfig(int levelsToSearch = 3)
         {
-            var assembly = new FileInfo(Assembly.GetExecutingAssembly().Location);
-            var currentDirectory = assembly.Directory;
+            var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
 
             for (;
                 currentDirectory != null && levelsToSearch > 0;

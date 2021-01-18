@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using dotenv.net.DependencyInjection.Infrastructure;
 
@@ -11,9 +10,9 @@ namespace dotenv.net
         private static DotEnv _instance;
         private const string DefaultEnvFileName = ".env";
 
-        private static DotEnv Instance => _instance ?? (_instance = new DotEnv());
+        private static DotEnv Instance => _instance ??= new DotEnv();
 
-        private void ConfigRunner(bool throwOnError, string filePath, Encoding encoding, bool trimValues)
+        private static void ConfigRunner(bool throwOnError, string filePath, Encoding encoding, bool trimValues)
         {
             var rawEnvRows = Reader.Read(filePath, throwOnError, encoding);
 
@@ -40,7 +39,7 @@ namespace dotenv.net
         public static void Config(bool throwOnError = true, string filePath = DefaultEnvFileName,
             Encoding encoding = null, bool trimValues = true)
         {
-            Instance.ConfigRunner(throwOnError, filePath, encoding, trimValues);
+            ConfigRunner(throwOnError, filePath, encoding, trimValues);
         }
 
         /// <summary>
@@ -49,7 +48,7 @@ namespace dotenv.net
         /// <param name="options">Options on how to load the env file</param>
         public static void Config(DotEnvOptions options)
         {
-            Instance.ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding, options.TrimValues);
+            ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding, options.TrimValues);
         }
 
         /// <summary>

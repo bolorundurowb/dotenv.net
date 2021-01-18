@@ -1,20 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>2.1.1</PackageVersion>
+        <PackageVersion>2.1.2</PackageVersion>
         <Title>dotenv.net.DependencyInjection.Microsoft</Title>
         <Authors>Winner-Timothy Bolorunduro</Authors>
         <Description>Adds DI support for values read from the environment for Microsoft Service Collection</Description>
-        <Copyright>Copyright 2020</Copyright>
+        <Copyright>Copyright 2021</Copyright>
         <PackageProjectUrl>https://github.com/bolorundurowb/dotenv.net</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/bolorundurowb/dotenv.net/blob/master/LICENSE</PackageLicenseUrl>
         <PackageIconUrl>https://raw.githubusercontent.com/motdotla/dotenv/master/dotenv.png</PackageIconUrl>
         <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>service collection, dotenv</PackageTags>
-        <PackageReleaseNotes>- initial release</PackageReleaseNotes>
+        <PackageReleaseNotes>- bump support</PackageReleaseNotes>
+        <TargetFrameworks>netstandard1.6;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <AssemblyVersion>2.1.2</AssemblyVersion>
+        <FileVersion>2.1.2</FileVersion>
+        <NeutralLanguage>en-NG</NeutralLanguage>
     </PropertyGroup>
 
     <ItemGroup>

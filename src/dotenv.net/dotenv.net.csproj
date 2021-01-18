@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Copyright>Copyright 2020</Copyright>
+    <Copyright>Copyright 2021</Copyright>
     <PackageReleaseNotes>- Split the dotenv package into component libs</PackageReleaseNotes>
     <Authors>Winner-Timothy Bolorunduro</Authors>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -11,12 +11,14 @@
     <PackageLicenseUrl>https://github.com/bolorundurowb/dotenv.net/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
     <LangVersion>default</LangVersion>
-    <PackageVersion>2.1.1</PackageVersion>
+    <PackageVersion>2.1.2</PackageVersion>
     <RepositoryType>git</RepositoryType>
     <PackageTags>dotnet, environment, variables, env, dotenv, net core, autofac</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>2.1.0</AssemblyVersion>
+    <AssemblyVersion>2.1.2</AssemblyVersion>
+    <FileVersion>2.1.2</FileVersion>
+    <NeutralLanguage>en-NG</NeutralLanguage>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.4" />

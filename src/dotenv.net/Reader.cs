@@ -24,11 +24,8 @@ namespace dotenv.net
                 return ReadOnlySpan<string>.Empty;
             }
 
-            // default to UTF8 if null
-            if (encoding == null)
-            {
-                encoding = Encoding.UTF8;
-            }
+            // default to UTF8 if encoding is not provided
+            encoding ??= Encoding.UTF8;
 
             // read all lines from the env file
             return new ReadOnlySpan<string>(File.ReadAllLines(filePath, encoding));

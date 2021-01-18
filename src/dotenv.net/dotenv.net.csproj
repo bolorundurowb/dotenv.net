@@ -15,10 +15,11 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>dotnet, environment, variables, env, dotenv, net core, autofac</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyVersion>2.1.2</AssemblyVersion>
     <FileVersion>2.1.2</FileVersion>
     <NeutralLanguage>en-NG</NeutralLanguage>
+    <TargetFrameworks>netstandard1.6;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <Title>dotenv.net</Title>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.4" />

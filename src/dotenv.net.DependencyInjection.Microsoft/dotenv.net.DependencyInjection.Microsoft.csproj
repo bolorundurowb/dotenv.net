@@ -1,25 +1,38 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>2.1.1</PackageVersion>
+        <PackageVersion>2.1.3</PackageVersion>
         <Title>dotenv.net.DependencyInjection.Microsoft</Title>
         <Authors>Winner-Timothy Bolorunduro</Authors>
         <Description>Adds DI support for values read from the environment for Microsoft Service Collection</Description>
-        <Copyright>Copyright 2020</Copyright>
+        <Copyright>Copyright 2021</Copyright>
         <PackageProjectUrl>https://github.com/bolorundurowb/dotenv.net</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/bolorundurowb/dotenv.net/blob/master/LICENSE</PackageLicenseUrl>
         <PackageIconUrl>https://raw.githubusercontent.com/motdotla/dotenv/master/dotenv.png</PackageIconUrl>
         <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>service collection, dotenv</PackageTags>
-        <PackageReleaseNotes>- initial release</PackageReleaseNotes>
+        <PackageReleaseNotes>- bump support</PackageReleaseNotes>
+        <TargetFrameworks>netstandard1.6;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <AssemblyVersion>2.1.3</AssemblyVersion>
+        <FileVersion>2.1.3</FileVersion>
+        <NeutralLanguage>en-NG</NeutralLanguage>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="dotenv.net" Version="2.1.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+      <PackageReference Include="dotenv.net" Version="2.1.3" />
     </ItemGroup>
 
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+    </ItemGroup>
 </Project>

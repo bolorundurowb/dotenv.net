@@ -10,41 +10,21 @@ namespace dotenv.net
         {
             var validEntries = new List<KeyValuePair<string, string>>();
 
-            // loop through rows, split into key and value then add to environment
             foreach (var dotEnvRow in dotEnvRows)
             {
-                var rowSpan = new ReadOnlySpan<char>(dotEnvRow.TrimStart().ToCharArray());
+                var row = new ReadOnlySpan<char>(dotEnvRow.TrimStart().ToCharArray());
 
-                if (rowSpan.IsEmpty)
+                if (row.IsEmpty)
                     continue;
 
-                if (rowSpan.IsComment())
+                if (row.IsComment())
                     continue;
 
-                if (rowSpan.HasNoKey(out var index))
+                if (row.HasNoKey(out var index))
                     continue;
 
-                var untrimmedKey = rowSpan.Slice(0, index);
-                var untrimmedValue = rowSpan.Slice(index + 1);
-                var key = untrimmedKey.Trim().ToString();
-                var value = untrimmedValue.ToString();
-
-                // handle quoted values
-                if (value.StartsWith("'") && value.EndsWith("'"))
-                {
-                    value = value.Trim('\'');
-                }
-                else if (value.StartsWith("\"") && value.EndsWith("\""))
-                {
-                    value = value.Trim('\"');
-                }
-
-                // trim output if requested
-                if (shouldTrimValue)
-                {
-                    value = value.Trim();
-                }
-
+                var key = row.Key(index);
+                var value = row.Value(index, shouldTrimValue);
                 validEntries.Add(new KeyValuePair<string, string>(key, value));
             }
 

@@ -28,8 +28,8 @@ jobs:
       - run:
           name: Install Coveralls
           command:
-            dotnet tool install coveralls.net --version 2.0.0 --tool-path tools
+            dotnet tool install --global coveralls.net
       - run:
           name: Report Coverage
           command:
-            ./tools/csmacnz.Coveralls --opencover -i ./results/coverage.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths
+            csmacnz.Coveralls --opencover -i ./results/coverage.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths

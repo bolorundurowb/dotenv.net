@@ -1,11 +1,11 @@
-﻿﻿using System.Text;
+﻿using System.Text;
 
 namespace dotenv.net.DependencyInjection.Infrastructure
 {
     public class DotEnvOptionsBuilder
     {
         private readonly DotEnvOptions _dotEnvOptions = new DotEnvOptions();
-        
+
         /// <summary>
         /// Sets the environment file to be read <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
         /// </summary>

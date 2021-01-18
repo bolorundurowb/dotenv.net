@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Install Coveralls
           command:
-            dotnet tool install --global coveralls.net --tool-path tools
+            dotnet tool install coveralls.net --tool-path tools
       - run:
           name: Report Coverage
           command:

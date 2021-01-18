@@ -7,10 +7,7 @@ namespace dotenv.net
 {
     public class DotEnv
     {
-        private static DotEnv _instance;
         private const string DefaultEnvFileName = ".env";
-
-        private static DotEnv Instance => _instance ??= new DotEnv();
 
         private static void ConfigRunner(bool throwOnError, string filePath, Encoding encoding, bool trimValues)
         {
@@ -54,9 +51,9 @@ namespace dotenv.net
         /// <summary>
         /// Searches the current directory and three directories up and loads the environment variables
         /// </summary>
-        /// <param name="levelsToSearch">The number of top-level directories to search; the default is 3 top-level directories.</param>
+        /// <param name="levelsToSearch">The number of top-level directories to search; the default is 4 top-level directories.</param>
         /// <returns>States whether or not the operation succeeded</returns>
-        public static bool AutoConfig(int levelsToSearch = 3)
+        public static bool AutoConfig(int levelsToSearch = 4)
         {
             var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
 
@@ -64,9 +61,9 @@ namespace dotenv.net
                 currentDirectory != null && levelsToSearch > 0;
                 levelsToSearch--, currentDirectory = currentDirectory.Parent)
             {
-                foreach (var fi in currentDirectory.GetFiles(DefaultEnvFileName, SearchOption.TopDirectoryOnly))
+                foreach (var file in currentDirectory.GetFiles(DefaultEnvFileName, SearchOption.TopDirectoryOnly))
                 {
-                    Config(false, fi.FullName);
+                    Config(false, file.FullName);
                     return true;
                 }
             }

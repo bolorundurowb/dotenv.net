@@ -2,7 +2,7 @@ version: 2.0
 jobs:
   build:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:3.1
+      - image: mcr.microsoft.com/dotnet/sdk:5.0
     steps:
       - checkout
       - run:
@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Install Coveralls
           command:
-            dotnet tool install coveralls.net --version 2.0.0 --tool-path tools
+            dotnet tool install coveralls.net --version 3.0.0 --tool-path tools
       - run:
           name: Report Coverage
           command:

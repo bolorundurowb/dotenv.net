@@ -70,5 +70,11 @@ namespace dotenv.net
 
             return false;
         }
+
+        public static void Load(string envFilePath = DefaultEnvFileName, Encoding encoding = null,
+            bool ignoreExceptions = true)
+        {
+            ConfigRunner(ignoreExceptions, envFilePath, encoding, true);
+        }
     }
 }

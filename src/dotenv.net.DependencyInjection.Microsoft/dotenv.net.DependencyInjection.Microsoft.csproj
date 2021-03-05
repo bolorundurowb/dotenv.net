@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>2.1.3</PackageVersion>
+        <PackageVersion>3.0.0</PackageVersion>
         <Title>dotenv.net.DependencyInjection.Microsoft</Title>
         <Authors>Winner-Timothy Bolorunduro</Authors>
         <Description>Adds DI support for values read from the environment for Microsoft Service Collection</Description>
@@ -14,9 +14,9 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>service collection, dotenv</PackageTags>
         <PackageReleaseNotes>- bump support</PackageReleaseNotes>
-        <TargetFrameworks>netstandard1.6;netstandard2.0;netstandard2.1</TargetFrameworks>
-        <AssemblyVersion>2.1.3</AssemblyVersion>
-        <FileVersion>2.1.3</FileVersion>
+        <TargetFrameworks>net5.0;net5.0-windows;netstandard1.6;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <AssemblyVersion>3.0.0</AssemblyVersion>
+        <FileVersion>3.0.0</FileVersion>
         <NeutralLanguage>en-NG</NeutralLanguage>
     </PropertyGroup>
 
@@ -34,5 +34,13 @@
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0-windows' ">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     </ItemGroup>
 </Project>

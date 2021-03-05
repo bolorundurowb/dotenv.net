@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using dotenv.net.DependencyInjection.Infrastructure;
 
@@ -69,6 +71,35 @@ namespace dotenv.net
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Load the values in the provided env file into the environment variables
+        /// </summary>
+        /// <param name="envFilePath">The path to the .env file to be read</param>
+        /// <param name="encoding">The encoding that the env file was saved in</param>
+        /// <param name="ignoreExceptions">Determines if an exception should be thrown or swallowed</param>
+        public static void Load(string envFilePath = DefaultEnvFileName, Encoding encoding = null,
+            bool ignoreExceptions = true)
+        {
+            ConfigRunner(ignoreExceptions, envFilePath, encoding, true);
+        }
+
+        /// <summary>
+        /// Load the values in the provided env files into the environment variables
+        /// </summary>
+        /// <param name="envFilePaths">The paths to the .env files to be read</param>
+        /// <param name="encoding">The encoding that the env file was saved in</param>
+        /// <param name="ignoreExceptions">Determines if an exception should be thrown or swallowed</param>
+        public static void Load(IEnumerable<string> envFilePaths = null, Encoding encoding = null,
+            bool ignoreExceptions = true)
+        {
+            envFilePaths ??= Enumerable.Empty<string>();
+
+            foreach (var envFilePath in envFilePaths)
+            {
+                ConfigRunner(ignoreExceptions, envFilePath, encoding, true);
+            }
         }
     }
 }

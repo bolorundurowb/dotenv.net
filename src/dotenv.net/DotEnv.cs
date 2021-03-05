@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using dotenv.net.DependencyInjection.Infrastructure;
 
@@ -75,6 +77,17 @@ namespace dotenv.net
             bool ignoreExceptions = true)
         {
             ConfigRunner(ignoreExceptions, envFilePath, encoding, true);
+        }
+
+        public static void Load(IEnumerable<string> envFilePaths = null, Encoding encoding = null,
+            bool ignoreExceptions = true)
+        {
+            envFilePaths ??= Enumerable.Empty<string>();
+
+            foreach (var envFilePath in envFilePaths)
+            {
+                ConfigRunner(ignoreExceptions, envFilePath, encoding, true);
+            }
         }
     }
 }

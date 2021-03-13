@@ -20,7 +20,7 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         /// <summary>
         /// Sets the option to throw an eception if an error should occur <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
         /// </summary>
-        /// <param name="throwOnError">The option to use</param>
+        /// <param name="throwOnError">A boolean determining if eeceptions should be thrown</param>
         /// <returns>The current options builder</returns>
         public DotEnvOptionsBuilder AddThrowOnError(bool throwOnError)
         {

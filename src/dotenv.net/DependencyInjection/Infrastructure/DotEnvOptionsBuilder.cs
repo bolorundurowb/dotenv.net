@@ -4,7 +4,7 @@ namespace dotenv.net.DependencyInjection.Infrastructure
 {
     public class DotEnvOptionsBuilder
     {
-        private readonly DotEnvOptions _dotEnvOptions = new DotEnvOptions();
+        private readonly DotEnvOptions _dotEnvOptions = new();
 
         /// <summary>
         /// Sets the environment file to be read <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
@@ -18,9 +18,9 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         }
 
         /// <summary>
-        /// Sets the option to throw an eception if an error should occur <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
+        /// Sets the option to throw an exception if an error should occur <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
         /// </summary>
-        /// <param name="throwOnError">A boolean determining if eeceptions should be thrown</param>
+        /// <param name="throwOnError">A boolean determining if exceptions should be thrown</param>
         /// <returns>The current options builder</returns>
         public DotEnvOptionsBuilder AddThrowOnError(bool throwOnError)
         {
@@ -42,7 +42,7 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         /// <summary>
         /// Set the option to trim whitespace from values. <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
         /// </summary>
-        /// <param name="trimValues">The encoding to use</param>
+        /// <param name="trimValues">A boolean determining whether values read should be trimmed</param>
         /// <returns>The current options builder</returns>
         public DotEnvOptionsBuilder AddTrimOptions(bool trimValues)
         {

@@ -16,7 +16,7 @@ namespace dotenv.net.Tests.DependencyInjection.Infrastructure
            var dotEnvOptions = dotEnvOptionsBuilder
                 .AddEncoding(Encoding.UTF32)
                 .AddEnvFile(fileName)
-                .AddThrowOnError(false)
+                .AddIgnoreExceptionOptions(false)
                 .AddTrimOptions(true)
                 .Build();
 

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace dotenv.net.DependencyInjection.Infrastructure
 {
@@ -9,22 +10,33 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         /// <summary>
         /// Sets the environment file to be read <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
         /// </summary>
-        /// <param name="file">The file path</param>
+        /// <param name="envFilePath">The env file path</param>
         /// <returns>The current options builder</returns>
-        public DotEnvOptionsBuilder AddEnvFile(string file)
+        public DotEnvOptionsBuilder AddEnvFile(string envFilePath)
         {
-            _dotEnvOptions.EnvFilePaths = file;
+            _dotEnvOptions.EnvFilePaths = new[] {envFilePath};
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the environment files to be read <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
+        /// </summary>
+        /// <param name="envFilePaths">The env file paths</param>
+        /// <returns>The current options builder</returns>
+        public DotEnvOptionsBuilder AddEnvFiles(IEnumerable<string> envFilePaths)
+        {
+            _dotEnvOptions.EnvFilePaths = envFilePaths;
             return this;
         }
 
         /// <summary>
         /// Sets the option to throw an exception if an error should occur <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
         /// </summary>
-        /// <param name="throwOnError">A boolean determining if exceptions should be thrown</param>
+        /// <param name="ignoreExceptions">A boolean determining if exceptions should be thrown</param>
         /// <returns>The current options builder</returns>
-        public DotEnvOptionsBuilder AddThrowOnError(bool throwOnError)
+        public DotEnvOptionsBuilder AddIgnoreExceptionOptions(bool ignoreExceptions)
         {
-            _dotEnvOptions.IgnoreExceptions = throwOnError;
+            _dotEnvOptions.IgnoreExceptions = ignoreExceptions;
             return this;
         }
 

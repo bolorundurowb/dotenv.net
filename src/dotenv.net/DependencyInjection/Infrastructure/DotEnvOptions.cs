@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace dotenv.net.DependencyInjection.Infrastructure
 {
@@ -7,12 +8,12 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         /// <summary>
         /// A value to state whether to throw an exception if the env file doesn't exist. The default is true. <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptions"/>
         /// </summary>
-        public bool ThrowOnError { get; set; }
+        public bool IgnoreExceptions { get; set; }
 
         /// <summary>
-        /// The path to the env file. The default is ".env". <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptions"/>
+        /// The paths to the env files. <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptions"/>
         /// </summary>
-        public string EnvFile { get; set; }
+        public IEnumerable<string> EnvFilePaths { get; set; }
 
         /// <summary>
         /// The Encoding that the env file was created with. <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptions"/>

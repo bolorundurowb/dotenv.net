@@ -38,8 +38,8 @@ namespace dotenv.net.Tests
             var dotEnvOptions = new DotEnvOptions
             {
                 Encoding = Encoding.UTF8,
-                ThrowOnError = false,
-                EnvFile = NonExistentEnvFileName,
+                IgnoreExceptions = false,
+                EnvFilePaths = NonExistentEnvFileName,
                 TrimValues = true
             };
             Action action = () => DotEnv.Config(dotEnvOptions);

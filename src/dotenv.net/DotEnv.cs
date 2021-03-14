@@ -47,7 +47,7 @@ namespace dotenv.net
         /// <param name="options">Options on how to load the env file</param>
         public static void Config(DotEnvOptions options)
         {
-            ConfigRunner(options.ThrowOnError, options.EnvFile, options.Encoding, options.TrimValues);
+            ConfigRunner(options.IgnoreExceptions, options.EnvFilePaths, options.Encoding, options.TrimValues);
         }
 
         /// <summary>

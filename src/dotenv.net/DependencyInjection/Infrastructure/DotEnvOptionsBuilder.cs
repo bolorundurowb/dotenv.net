@@ -13,7 +13,7 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         /// <returns>The current options builder</returns>
         public DotEnvOptionsBuilder AddEnvFile(string file)
         {
-            _dotEnvOptions.EnvFile = file;
+            _dotEnvOptions.EnvFilePaths = file;
             return this;
         }
 
@@ -24,7 +24,7 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         /// <returns>The current options builder</returns>
         public DotEnvOptionsBuilder AddThrowOnError(bool throwOnError)
         {
-            _dotEnvOptions.ThrowOnError = throwOnError;
+            _dotEnvOptions.IgnoreExceptions = throwOnError;
             return this;
         }
 

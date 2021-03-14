@@ -21,9 +21,9 @@ namespace dotenv.net.Tests.DependencyInjection.Infrastructure
                 .Build();
 
            dotEnvOptions.Encoding.Should().Be(Encoding.UTF32);
-           dotEnvOptions.EnvFile.Should().Be(fileName);
+           dotEnvOptions.EnvFilePaths.Should().Be(fileName);
            dotEnvOptions.TrimValues.Should().BeTrue();
-           dotEnvOptions.ThrowOnError.Should().BeFalse();
+           dotEnvOptions.IgnoreExceptions.Should().BeFalse();
         }
     }
 }

@@ -6,29 +6,37 @@ namespace dotenv.net
 {
     internal static class Reader
     {
-        internal static ReadOnlySpan<string> Read(string filePath, bool throwOnError, Encoding encoding)
+        internal static ReadOnlySpan<string> Read(string envFilePath, bool ignoreExceptions, Encoding encoding)
         {
-            if (string.IsNullOrWhiteSpace(filePath))
+            try
             {
-                throw new ArgumentException("The file path cannot be null, empty or whitespace.", nameof(filePath));
-            }
-
-            // if configured to throw errors then throw otherwise return
-            if (!File.Exists(filePath))
-            {
-                if (throwOnError)
+                if (string.IsNullOrWhiteSpace(envFilePath))
                 {
-                    throw new FileNotFoundException($"An environment file with path \"{filePath}\" does not exist.");
+                    throw new ArgumentException("The file path cannot be null, empty or whitespace.", nameof(envFilePath));
                 }
 
-                return ReadOnlySpan<string>.Empty;
+                // if configured to throw errors then throw otherwise return
+                if (!File.Exists(envFilePath))
+                {
+                    throw new FileNotFoundException(
+                        $"An environment file with path \"{envFilePath}\" does not exist.");
+                }
+
+                // default to UTF8 if encoding is not provided
+                encoding ??= Encoding.UTF8;
+
+                // read all lines from the env file
+                return new ReadOnlySpan<string>(File.ReadAllLines(envFilePath, encoding));
             }
+            catch (Exception)
+            {
+                if (ignoreExceptions)
+                {
+                    return ReadOnlySpan<string>.Empty;
+                }
 
-            // default to UTF8 if encoding is not provided
-            encoding ??= Encoding.UTF8;
-
-            // read all lines from the env file
-            return new ReadOnlySpan<string>(File.ReadAllLines(filePath, encoding));
+                throw;
+            }
         }
     }
 }

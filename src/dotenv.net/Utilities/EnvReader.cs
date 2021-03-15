@@ -73,7 +73,7 @@ namespace dotenv.net.Utilities
         /// Retrieve a boolean value from the current environment
         /// </summary>
         /// <param name="key">The key to retrieve the value via</param>
-        /// <returns>A boolran representing the value</returns>
+        /// <returns>A boolean representing the value</returns>
         /// <exception cref="Exception">When the value could not be found or is not a valid bool</exception>
         public bool GetBooleanValue(string key)
         {

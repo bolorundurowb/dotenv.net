@@ -5,7 +5,7 @@ namespace dotenv.net
 {
     public class DotEnvOptions
     {
-        private const string DefaultEnvFileName = ".env";
+        public const string DefaultEnvFileName = ".env";
         private const int DefaultProbeDepth = 4;
 
         /// <summary>

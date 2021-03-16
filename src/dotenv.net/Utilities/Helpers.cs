@@ -20,14 +20,19 @@ namespace dotenv.net.Utilities
             return Parser.Parse(rawEnvRows, trimValues);
         }
 
-        public static IDictionary<string, string> ReadAndReturn(IEnumerable<string> envFilePaths,
-            bool ignoreExceptions, Encoding encoding, bool trimValues)
+        public static IDictionary<string, string> ReadAndReturn(DotEnvOptions options)
         {
             var response = new Dictionary<string, string>();
 
-            foreach (var envFilePath in envFilePaths)
+            if (options.ShouldProbeForEnv)
             {
-                var envRows = ReadAndParse(envFilePath, ignoreExceptions, encoding, trimValues);
+                options.EnvFilePaths = new[] {GetProbedEnvPath(options.ProbeDirectoryDepth)};
+            }
+
+            foreach (var envFilePath in options.EnvFilePaths)
+            {
+                var envRows = ReadAndParse(envFilePath, options.ShouldIgnoreExceptions, options.Encoding,
+                    options.ShouldTrimValues);
                 foreach (var envRow in envRows)
                 {
                     if (response.ContainsKey(envRow.Key))
@@ -44,40 +49,19 @@ namespace dotenv.net.Utilities
             return response;
         }
 
-        public static void ReadAndWrite(IEnumerable<string> envFilePaths,
-            bool ignoreExceptions, Encoding encoding, bool trimValues, bool overwriteExisting)
+        public static void ReadAndWrite(DotEnvOptions options)
         {
-            foreach (var envFilePath in envFilePaths)
-            {
-                var envRows = ReadAndParse(envFilePath, ignoreExceptions, encoding, trimValues);
-                foreach (var envRow in envRows)
-                {
-                    if (overwriteExisting)
-                    {
-                        Environment.SetEnvironmentVariable(envRow.Key, envRow.Value);
-                    }
-                    else if (!EnvReader.HasValue(envRow.Key))
-                    {
-                        Environment.SetEnvironmentVariable(envRow.Key, envRow.Value);
-                    }
-                }
-            }
-        }
+            var envVars = ReadAndReturn(options);
 
-        public static void ProbeAndWrite(int probeDirectoryLevels, bool ignoreExceptions, Encoding encoding,
-            bool trimValues, bool overwriteExisting)
-        {
-            var envFilePath = GetProbedEnvPath(probeDirectoryLevels);
-            var envRows = ReadAndParse(envFilePath, ignoreExceptions, encoding, trimValues);
-            foreach (var envRow in envRows)
+            foreach (var envVar in envVars)
             {
-                if (overwriteExisting)
+                if (options.ShouldOverwriteExistingVars)
                 {
-                    Environment.SetEnvironmentVariable(envRow.Key, envRow.Value);
+                    Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
                 }
-                else if (!EnvReader.HasValue(envRow.Key))
+                else if (!EnvReader.HasValue(envVar.Key))
                 {
-                    Environment.SetEnvironmentVariable(envRow.Key, envRow.Value);
+                    Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
                 }
             }
         }

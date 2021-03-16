@@ -66,18 +66,30 @@ namespace dotenv.net
             ProbeDirectoryDepth = probeDirectoryDepth;
         }
 
+        /// <summary>
+        /// Ignore exceptions thrown
+        /// </summary>
+        /// <returns>configured dot env options</returns>
         public DotEnvOptions IgnoreExceptions()
         {
             ShouldIgnoreExceptions = true;
             return this;
         }
 
+        /// <summary>
+        /// Throw exceptions when triggered
+        /// </summary>
+        /// <returns>configured dot env options</returns>
         public DotEnvOptions ThrowExceptions()
         {
             ShouldIgnoreExceptions = false;
             return this;
         }
 
+        /// <summary>
+        /// Search up the directory for a .env file. By default searches up 4 directories.
+        /// </summary>
+        /// <returns>configured dot env options</returns>
         public DotEnvOptions ProbeForEnv(int probeDepth = DefaultProbeDepth)
         {
             ShouldProbeForEnv = true;
@@ -85,6 +97,10 @@ namespace dotenv.net
             return this;
         }
 
+        /// <summary>
+        /// Rely on the provided env files. By default is false.
+        /// </summary>
+        /// <returns>configured dot env options</returns>
         public DotEnvOptions NoProbeForEnv()
         {
             ShouldProbeForEnv = true;
@@ -92,44 +108,75 @@ namespace dotenv.net
             return this;
         }
 
+        /// <summary>
+        /// Overwrite an environment variable even if it has been set
+        /// </summary>
+        /// <returns>configured dot env options</returns>
         public DotEnvOptions OverwriteExistingVars()
         {
             ShouldOverwriteExistingVars = true;
             return this;
         }
 
+        /// <summary>
+        /// Only write an environment variable if it hasnt been et
+        /// </summary>
+        /// <returns>configured dot env options</returns>
         public DotEnvOptions NoOverwriteExistingVars()
         {
             ShouldOverwriteExistingVars = false;
             return this;
         }
 
+        /// <summary>
+        /// Trim whitespace from the values read
+        /// </summary>
+        /// <returns>configured dot env options</returns>
         public DotEnvOptions TrimValues()
         {
             ShouldTrimValues = true;
             return this;
         }
 
+        /// <summary>
+        /// Leave read values as is
+        /// </summary>
+        /// <returns>configured dot env options</returns>
         public DotEnvOptions NoTrimValues()
         {
             ShouldTrimValues = false;
             return this;
         }
 
+        /// <summary>
+        /// Change the encoding for reading the env files
+        /// </summary>
+        /// <returns>configured dot env options</returns>
         public DotEnvOptions SetEncoding(Encoding encoding)
         {
             Encoding = encoding ?? Encoding.UTF8;
             return this;
         }
 
+        /// <summary>
+        /// Revert to the default encoding for reading the env files. The default encoding is UTF-8
+        /// </summary>
+        /// <returns>configured dot env options</returns>
         public DotEnvOptions DefaultEncoding()
         {
             Encoding = Encoding.UTF8;
             return this;
         }
 
-        public Dictionary<string, string> Read() => DotEnv.Read(this);
+        /// <summary>
+        /// Return the values in the env files without writing to the environment
+        /// </summary>
+        /// <returns>configured dot env options</returns>
+        public IDictionary<string, string> Read() => DotEnv.Read(this);
 
+        /// <summary>
+        /// Read the env files and write to the syetm environment variables
+        /// </summary>
         public void Load() => DotEnv.Load(this);
     }
 }

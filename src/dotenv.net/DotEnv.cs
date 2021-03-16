@@ -70,7 +70,7 @@ namespace dotenv.net
         }
 
         /// <summary>
-        /// Configure the environment variables from a .env file
+        /// Initialize the fluent configuration API
         /// </summary>
         /// <param name="throwOnError">A value stating whether the application should throw an exception on unexpected data</param>
         /// <param name="filePath">An optional env file path, if not provided it defaults to the one in the same folder as the output exe or dll</param>

@@ -127,5 +127,9 @@ namespace dotenv.net
             Encoding = Encoding.UTF8;
             return this;
         }
+
+        public Dictionary<string, string> Read() => DotEnv.Read(this);
+
+        public void Load() => DotEnv.Load(this);
     }
 }

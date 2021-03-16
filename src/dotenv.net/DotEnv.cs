@@ -8,26 +8,6 @@ namespace dotenv.net
 {
     public static class DotEnv
     {
-        private const string DefaultEnvFileName = ".env";
-
-        private static void ConfigRunner(bool throwOnError, string filePath, Encoding encoding, bool trimValues)
-        {
-            var rawEnvRows = Reader.Read(filePath, throwOnError, encoding);
-
-            if (rawEnvRows == ReadOnlySpan<string>.Empty)
-            {
-                return;
-            }
-
-            var processedEnvRows = Parser.Parse(rawEnvRows, trimValues);
-            foreach (var processedEnvRow in processedEnvRows)
-            {
-                Environment.SetEnvironmentVariable(processedEnvRow.Key, processedEnvRow.Value);
-            }
-        }
-
-       
-
         /// <summary>
         /// Initialize the fluent configuration API
         /// </summary>

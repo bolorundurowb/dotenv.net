@@ -1,5 +1,4 @@
 using System.Text;
-using dotenv.net.DependencyInjection.Infrastructure;
 using FluentAssertions;
 using Xunit;
 

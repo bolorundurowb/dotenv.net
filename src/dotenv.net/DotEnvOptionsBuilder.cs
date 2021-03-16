@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace dotenv.net.DependencyInjection.Infrastructure
+namespace dotenv.net
 {
     public class DotEnvOptionsBuilder
     {
         private readonly DotEnvOptions _dotEnvOptions = new();
 
         /// <summary>
-        /// Sets the environment file to be read <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
+        /// Sets the environment file to be read <see cref="T:dotenv.net.DotEnvOptionsBuilder"/>
         /// </summary>
         /// <param name="envFilePath">The env file path</param>
         /// <returns>The current options builder</returns>
@@ -19,7 +19,7 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         }
 
         /// <summary>
-        /// Sets the environment files to be read <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
+        /// Sets the environment files to be read <see cref="T:dotenv.net.DotEnvOptionsBuilder"/>
         /// </summary>
         /// <param name="envFilePaths">The env file paths</param>
         /// <returns>The current options builder</returns>
@@ -30,7 +30,7 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         }
 
         /// <summary>
-        /// Sets the option to throw an exception if an error should occur <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
+        /// Sets the option to throw an exception if an error should occur <see cref="T:dotenv.net.DotEnvOptionsBuilder"/>
         /// </summary>
         /// <param name="ignoreExceptions">A boolean determining if exceptions should be thrown</param>
         /// <returns>The current options builder</returns>
@@ -41,7 +41,7 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         }
 
         /// <summary>
-        /// Set the encoding to read the env file in. <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
+        /// Set the encoding to read the env file in. <see cref="T:dotenv.net.DotEnvOptionsBuilder"/>
         /// </summary>
         /// <param name="encoding">The encoding to use</param>
         /// <returns>The current options builder</returns>
@@ -52,7 +52,7 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         }
 
         /// <summary>
-        /// Set the option to trim whitespace from values. <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptionsBuilder"/>
+        /// Set the option to trim whitespace from values. <see cref="T:dotenv.net.DotEnvOptionsBuilder"/>
         /// </summary>
         /// <param name="trimValues">A boolean determining whether values read should be trimmed</param>
         /// <returns>The current options builder</returns>
@@ -65,7 +65,7 @@ namespace dotenv.net.DependencyInjection.Infrastructure
         /// <summary>
         /// 
         /// </summary>
-        /// <returns>The constructed <see cref="T:dotenv.net.DependencyInjection.Infrastructure.DotEnvOptions"/></returns>
+        /// <returns>The constructed <see cref="T:dotenv.net.DotEnvOptions"/></returns>
         public DotEnvOptions Build()
         {
             return _dotEnvOptions;

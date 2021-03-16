@@ -117,7 +117,7 @@ namespace dotenv.net
         }
 
         /// <summary>
-        /// Load the values in the provided env file into the environment variables
+        /// Read and return the values in the provided env file
         /// </summary>
         /// <param name="envFilePath">The path to the .env file to be read</param>
         /// <param name="encoding">The encoding that the env file was saved in</param>
@@ -129,11 +129,12 @@ namespace dotenv.net
         }
 
         /// <summary>
-        /// Load the values in the provided env files into the environment variables
+        /// Read and return the values in the provided env files
         /// </summary>
         /// <param name="envFilePaths">The paths to the .env files to be read</param>
         /// <param name="encoding">The encoding that the env file was saved in</param>
         /// <param name="ignoreExceptions">Determines if an exception should be thrown or swallowed</param>
+        /// <returns>An enumerable of dictionaries representing the contents of each env file</returns>
         public static IEnumerable<Dictionary<string, string>> Read(IEnumerable<string> envFilePaths = null, Encoding encoding = null,
             bool ignoreExceptions = true)
         {

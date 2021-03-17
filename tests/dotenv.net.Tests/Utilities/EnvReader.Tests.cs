@@ -107,5 +107,17 @@ namespace dotenv.net.Tests.Utilities
             action.Should()
                 .Throw<Exception>();
         }
+
+        [Fact]
+        public void ShouldTellIfAKeyHasAValue()
+        {
+            EnvReader.HasValue("IS_PRESENT")
+                .Should()
+                .BeTrue();
+
+            EnvReader.HasValue("NON_EXISTENT_KEY")
+                .Should()
+                .BeFalse();
+        }
     }
 }

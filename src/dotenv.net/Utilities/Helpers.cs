@@ -7,7 +7,7 @@ namespace dotenv.net.Utilities
 {
     internal static class Helpers
     {
-        public static ReadOnlySpan<KeyValuePair<string, string>> ReadAndParse(string envFilePath,
+        private static ReadOnlySpan<KeyValuePair<string, string>> ReadAndParse(string envFilePath,
             bool ignoreExceptions, Encoding encoding, bool trimValues)
         {
             var rawEnvRows = Reader.Read(envFilePath, ignoreExceptions, encoding);
@@ -20,19 +20,17 @@ namespace dotenv.net.Utilities
             return Parser.Parse(rawEnvRows, trimValues);
         }
 
-        public static IDictionary<string, string> ReadAndReturn(DotEnvOptions options)
+        internal static IDictionary<string, string> ReadAndReturn(DotEnvOptions options)
         {
             var response = new Dictionary<string, string>();
+            var envFilePaths = options.ProbeForEnv
+                ? new[] {GetProbedEnvPath(options.ProbeDirectoryDepth)}
+                : options.EnvFilePaths;
 
-            if (options.ShouldProbeForEnv)
+            foreach (var envFilePath in envFilePaths)
             {
-                options.EnvFilePaths = new[] {GetProbedEnvPath(options.ProbeDirectoryDepth)};
-            }
-
-            foreach (var envFilePath in options.EnvFilePaths)
-            {
-                var envRows = ReadAndParse(envFilePath, options.ShouldIgnoreExceptions, options.Encoding,
-                    options.ShouldTrimValues);
+                var envRows = ReadAndParse(envFilePath, options.IgnoreExceptions, options.Encoding,
+                    options.TrimValues);
                 foreach (var envRow in envRows)
                 {
                     if (response.ContainsKey(envRow.Key))
@@ -49,13 +47,13 @@ namespace dotenv.net.Utilities
             return response;
         }
 
-        public static void ReadAndWrite(DotEnvOptions options)
+        internal static void ReadAndWrite(DotEnvOptions options)
         {
             var envVars = ReadAndReturn(options);
 
             foreach (var envVar in envVars)
             {
-                if (options.ShouldOverwriteExistingVars)
+                if (options.OverwriteExistingVars)
                 {
                     Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
                 }

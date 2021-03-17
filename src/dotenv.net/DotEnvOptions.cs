@@ -11,37 +11,37 @@ namespace dotenv.net
         /// <summary>
         /// A value to state whether to throw or swallow exceptions. The default is true. <see cref="T:dotenv.net.DotEnvOptions"/>
         /// </summary>
-        public bool ShouldIgnoreExceptions { get; set; }
+        public bool IgnoreExceptions { get; private set; }
 
         /// <summary>
         /// The paths to the env files. The default is [.env] <see cref="T:dotenv.net.DotEnvOptions"/>
         /// </summary>
-        public IEnumerable<string> EnvFilePaths { get; set; }
+        public IEnumerable<string> EnvFilePaths { get; private set; }
 
         /// <summary>
         /// The Encoding that the env file was created with. The default is UTF-8. <see cref="T:dotenv.net.DotEnvOptions"/>
         /// </summary>
-        public Encoding Encoding { get; set; }
+        public Encoding Encoding { get; private set; }
 
         /// <summary>
         /// A value to state whether or not to trim whitespace from the values retrieved. The default is true. <see cref="T:dotenv.net.DotEnvOptions"/>
         /// </summary>
-        public bool ShouldTrimValues { get; set; }
+        public bool TrimValues { get; private set; }
 
         /// <summary>
         /// A value to state whether or not to override the env variable if it has been set. the default is true. <see cref="T:dotenv.net.DotEnvOptions"/>
         /// </summary>
-        public bool ShouldOverwriteExistingVars { get; set; }
+        public bool OverwriteExistingVars { get; private set; }
 
         /// <summary>
         /// A value to state whether we traverse up the directory structure. The default is false. <see cref="T:dotenv.net.DotEnvOptions"/>
         /// </summary>
-        public bool ShouldProbeForEnv { get; set; }
+        public bool ProbeForEnv { get; private set; }
 
         /// <summary>
         /// A value to state how far up the directory structure we should search for env files. <see cref="T:dotenv.net.DotEnvOptions"/>
         /// </summary>
-        public int ProbeDirectoryDepth { get; set; }
+        public int ProbeDirectoryDepth { get; private set; }
 
         /// <summary>
         /// Default constructor for the dot env options
@@ -57,12 +57,12 @@ namespace dotenv.net
             Encoding encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
             bool probeForEnv = false, int probeDirectoryDepth = DefaultProbeDepth)
         {
-            ShouldIgnoreExceptions = ignoreExceptions;
+            IgnoreExceptions = ignoreExceptions;
             EnvFilePaths = envFilePaths ?? new[] {DefaultEnvFileName};
             Encoding = encoding ?? Encoding.UTF8;
-            ShouldTrimValues = trimValues;
-            ShouldOverwriteExistingVars = overwriteExistingVars;
-            ShouldProbeForEnv = probeForEnv;
+            TrimValues = trimValues;
+            OverwriteExistingVars = overwriteExistingVars;
+            ProbeForEnv = probeForEnv;
             ProbeDirectoryDepth = probeDirectoryDepth;
         }
 
@@ -70,9 +70,9 @@ namespace dotenv.net
         /// Ignore exceptions thrown
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions IgnoreExceptions()
+        public DotEnvOptions WithExceptions()
         {
-            ShouldIgnoreExceptions = true;
+            IgnoreExceptions = true;
             return this;
         }
 
@@ -80,9 +80,9 @@ namespace dotenv.net
         /// Throw exceptions when triggered
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions ThrowExceptions()
+        public DotEnvOptions WithoutExceptions()
         {
-            ShouldIgnoreExceptions = false;
+            IgnoreExceptions = false;
             return this;
         }
 
@@ -90,9 +90,9 @@ namespace dotenv.net
         /// Search up the directory for a .env file. By default searches up 4 directories.
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions ProbeForEnv(int probeDepth = DefaultProbeDepth)
+        public DotEnvOptions WithProbeForEnv(int probeDepth = DefaultProbeDepth)
         {
-            ShouldProbeForEnv = true;
+            ProbeForEnv = true;
             ProbeDirectoryDepth = probeDepth;
             return this;
         }
@@ -101,9 +101,9 @@ namespace dotenv.net
         /// Rely on the provided env files. By default is false.
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions NoProbeForEnv()
+        public DotEnvOptions WithoutProbeForEnv()
         {
-            ShouldProbeForEnv = true;
+            ProbeForEnv = true;
             ProbeDirectoryDepth = DefaultProbeDepth;
             return this;
         }
@@ -112,9 +112,9 @@ namespace dotenv.net
         /// Overwrite an environment variable even if it has been set
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions OverwriteExistingVars()
+        public DotEnvOptions WithOverwriteExistingVars()
         {
-            ShouldOverwriteExistingVars = true;
+            OverwriteExistingVars = true;
             return this;
         }
 
@@ -122,9 +122,9 @@ namespace dotenv.net
         /// Only write an environment variable if it hasnt been et
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions NoOverwriteExistingVars()
+        public DotEnvOptions WithoutOverwriteExistingVars()
         {
-            ShouldOverwriteExistingVars = false;
+            OverwriteExistingVars = false;
             return this;
         }
 
@@ -132,9 +132,9 @@ namespace dotenv.net
         /// Trim whitespace from the values read
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions TrimValues()
+        public DotEnvOptions WithTrimValues()
         {
-            ShouldTrimValues = true;
+            TrimValues = true;
             return this;
         }
 
@@ -142,9 +142,9 @@ namespace dotenv.net
         /// Leave read values as is
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions NoTrimValues()
+        public DotEnvOptions WithoutTrimValues()
         {
-            ShouldTrimValues = false;
+            TrimValues = false;
             return this;
         }
 
@@ -152,7 +152,7 @@ namespace dotenv.net
         /// Change the encoding for reading the env files
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions SetEncoding(Encoding encoding)
+        public DotEnvOptions WithEncoding(Encoding encoding)
         {
             Encoding = encoding ?? Encoding.UTF8;
             return this;
@@ -162,7 +162,7 @@ namespace dotenv.net
         /// Revert to the default encoding for reading the env files. The default encoding is UTF-8
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions DefaultEncoding()
+        public DotEnvOptions WithDefaultEncoding()
         {
             Encoding = Encoding.UTF8;
             return this;

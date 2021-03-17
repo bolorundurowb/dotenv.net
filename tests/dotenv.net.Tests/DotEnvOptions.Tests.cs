@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using FluentAssertions;
 using Xunit;
 
@@ -33,12 +34,13 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
         public void Constructor_ShouldInitialize_WithSpecifiedValues()
         {
             var filePaths = new[] {"test.env"};
-            var options = new DotEnvOptions(encoding: Encoding.UTF32, trimValues: false, probeForEnv: true, probeDirectoryDepth: 5, overwriteExistingVars: false, ignoreExceptions: false, envFilePaths: filePaths);
+            var options = new DotEnvOptions(encoding: Encoding.UTF32, trimValues: false, probeForEnv: true,
+                probeDirectoryDepth: 5, overwriteExistingVars: false, ignoreExceptions: false, envFilePaths: filePaths);
 
             options.IgnoreExceptions
                 .Should()
@@ -62,9 +64,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain("test.env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithExceptions()
+        public void ShouldGenerateOptions_WithExceptions()
         {
             var options = new DotEnvOptions()
                 .WithExceptions();
@@ -91,9 +93,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithoutExceptions()
+        public void ShouldGenerateOptions_WithoutExceptions()
         {
             var options = new DotEnvOptions()
                 .WithoutExceptions();
@@ -120,9 +122,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithProbeForEnv()
+        public void ShouldGenerateOptions_WithProbeForEnv()
         {
             var options = new DotEnvOptions()
                 .WithProbeForEnv(7);
@@ -149,9 +151,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithoutProbeForEnv()
+        public void ShouldGenerateOptions_WithoutProbeForEnv()
         {
             var options = new DotEnvOptions()
                 .WithoutProbeForEnv();
@@ -178,9 +180,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithOverwriteExistingVars()
+        public void ShouldGenerateOptions_WithOverwriteExistingVars()
         {
             var options = new DotEnvOptions()
                 .WithOverwriteExistingVars();
@@ -207,9 +209,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithoutOverwriteExistingVars()
+        public void ShouldGenerateOptions_WithoutOverwriteExistingVars()
         {
             var options = new DotEnvOptions()
                 .WithoutOverwriteExistingVars();
@@ -236,9 +238,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithTrimValues()
+        public void ShouldGenerateOptions_WithTrimValues()
         {
             var options = new DotEnvOptions()
                 .WithTrimValues();
@@ -265,9 +267,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithoutTrimValues()
+        public void ShouldGenerateOptions_WithoutTrimValues()
         {
             var options = new DotEnvOptions()
                 .WithoutTrimValues();
@@ -294,9 +296,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithEncoding()
+        public void ShouldGenerateOptions_WithEncoding()
         {
             var options = new DotEnvOptions()
                 .WithEncoding(Encoding.Latin1);
@@ -323,9 +325,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithDefaultEncoding()
+        public void ShouldGenerateOptions_WithDefaultEncoding()
         {
             var options = new DotEnvOptions()
                 .WithDefaultEncoding();
@@ -352,9 +354,9 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
-        
+
         [Fact]
-        public void WithExceptions_ShouldGenerateOptions_WithEnvFiles()
+        public void ShouldGenerateOptions_WithEnvFiles()
         {
             var envFiles = new[] {"test.env", "other.env"};
             var options = new DotEnvOptions()
@@ -381,6 +383,31 @@ namespace dotenv.net.Tests
             options.EnvFilePaths
                 .Should()
                 .BeEquivalentTo(envFiles);
+        }
+
+        [Fact]
+        public void ShouldGenerateOptions_Read()
+        {
+            var envFiles = new[] {"quotations.env"};
+            var values = new DotEnvOptions()
+                .WithEnvFiles(envFiles)
+                .Read();
+
+            values.Count
+                .Should()
+                .BeGreaterThan(0);
+        }
+
+        [Fact]
+        public void ShouldGenerateOptions_Load()
+        {
+            var envFiles = new[] {"quotations.env"};
+            var action = new Action(() => new DotEnvOptions()
+                .WithEnvFiles(envFiles)
+                .Load());
+
+            action.Should()
+                .NotThrow();
         }
     }
 }

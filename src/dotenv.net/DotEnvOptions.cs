@@ -72,7 +72,7 @@ namespace dotenv.net
         /// <returns>configured dot env options</returns>
         public DotEnvOptions WithExceptions()
         {
-            IgnoreExceptions = true;
+            IgnoreExceptions = false;
             return this;
         }
 
@@ -82,7 +82,7 @@ namespace dotenv.net
         /// <returns>configured dot env options</returns>
         public DotEnvOptions WithoutExceptions()
         {
-            IgnoreExceptions = false;
+            IgnoreExceptions = true;
             return this;
         }
 
@@ -103,7 +103,7 @@ namespace dotenv.net
         /// <returns>configured dot env options</returns>
         public DotEnvOptions WithoutProbeForEnv()
         {
-            ProbeForEnv = true;
+            ProbeForEnv = false;
             ProbeDirectoryDepth = DefaultProbeDepth;
             return this;
         }

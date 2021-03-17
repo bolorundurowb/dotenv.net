@@ -80,5 +80,15 @@ namespace dotenv.net.Tests
                 .Should()
                 .Be("true");
         }
+
+        [Fact]
+        public void Read_Should_ThrowAnException_WithEmptyFileNameAndConfig()
+        {
+            var action = new Action(() =>
+                DotEnv.Read(new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] {string.Empty})));
+
+            action.Should()
+                .ThrowExactly<ArgumentException>();
+        }
     }
 }

@@ -50,9 +50,9 @@ namespace dotenv.net.Tests
             var success = DotEnv.AutoConfig();
 
             success.Should().BeTrue();
-            // EnvReader.GetStringValue("hello")
-            //     .Should()
-            //     .Be("world");
+            EnvReader.GetStringValue("uniquekey")
+                .Should()
+                .Be("kjdjkd");
         }
 
         [Fact]

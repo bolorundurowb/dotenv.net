@@ -14,17 +14,9 @@ jobs:
           command:
             dotnet build
       - run:
-          name: Core Test
+          name: Tests
           command:
-            dotnet test tests/dotenv.net.Tests/dotenv.net.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/"
-      - run:
-          name: Autofac Extension Test
-          command:
-            dotnet test tests/dotenv.net.DependencyInjection.Autofac.Tests/dotenv.net.DependencyInjection.Autofac.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/" /p:MergeWith="./../../results/coverage.json"
-      - run:
-          name: MS DI Test
-          command:
-            dotnet test tests/dotenv.net.DependencyInjection.Microsoft.Tests/dotenv.net.DependencyInjection.Microsoft.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput="./../../results/" /p:MergeWith="./../../results/coverage.json" /p:CoverletOutputFormat="opencover"
+            dotnet test tests/dotenv.net.Tests/dotenv.net.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./../../results/"
       - run:
           name: Install Coveralls
           command:

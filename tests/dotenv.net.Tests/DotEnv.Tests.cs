@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using dotenv.net.DependencyInjection.Infrastructure;
+using dotenv.net.Utilities;
 using FluentAssertions;
 using Xunit;
 
@@ -16,101 +16,90 @@ namespace dotenv.net.Tests
         private const string QuotationsEnvFileName = "quotations.env";
 
         [Fact]
-        public void ShouldThrowExceptionWhenFileNameEmptyOrNull()
+        public void Config_ShouldInitializeEnvOptions_WithDefaultOptions()
         {
-            Action action = () => DotEnv.Config(true, null);
-            action.Should().ThrowExactly<ArgumentException>()
-                .WithMessage(
-                    "The file path cannot be null, empty or whitespace. (Parameter 'filePath')");
+            var config = DotEnv.Config();
+
+            config.Encoding
+                .Should()
+                .Be(Encoding.UTF8);
         }
 
         [Fact]
-        public void ThrowsExceptionWithNonExistentEnvFileWhenThrowErrorIsTrue()
+        public void Config_ShouldNotLoadEnv_WithDefaultOptions_AsThereIsNoEnvFile()
         {
-            Action action = () => DotEnv.Config(true, NonExistentEnvFileName);
-            action.Should().ThrowExactly<FileNotFoundException>()
-                .WithMessage($"An environment file with path \"{NonExistentEnvFileName}\" does not exist.");
+            var action = new Action(() => DotEnv.Config(new DotEnvOptions(ignoreExceptions: false)));
+
+            action.Should()
+                .ThrowExactly<FileNotFoundException>();
         }
 
         [Fact]
-        public void DoesNotThrowExceptionWithNonExistentEnvFileWhenThrowErrorIsFalse()
+        public void Config_ShouldLoadEnv_WithProbeEnvOptions()
         {
-            var dotEnvOptions = new DotEnvOptions
-            {
-                Encoding = Encoding.UTF8,
-                ThrowOnError = false,
-                EnvFile = NonExistentEnvFileName,
-                TrimValues = true
-            };
-            Action action = () => DotEnv.Config(dotEnvOptions);
-            action.Should().NotThrow();
+            DotEnv.Config(new DotEnvOptions(probeForEnv: true));
+
+            EnvReader.GetStringValue("hello")
+                .Should()
+                .Be("world");
         }
 
         [Fact]
-        public void AddsEnvironmentVariablesIfADefaultEnvFileExists()
+        public void AutoConfig_ShouldLocateAndLoadEnv()
         {
-            Action action = () => DotEnv.Config();
-            action.Should().NotThrow();
+            var success = DotEnv.AutoConfig();
 
-            Environment.GetEnvironmentVariable("hello").Should().Be("world");
+            success.Should().BeTrue();
+            EnvReader.GetStringValue("uniquekey")
+                .Should()
+                .Be("kjdjkd");
         }
 
         [Fact]
-        public void AddsEnvironmentVariablesAndSetsValueAsNullIfNoneExists()
+        public void Read_Should_ReturnTheReadValues()
         {
-            Action action = () => DotEnv.Config();
-            action.Should().NotThrow();
+            var values =
+                DotEnv.Read(new DotEnvOptions(trimValues: true, envFilePaths: new[] {WhitespacesEnvFileName}));
 
-            Environment.GetEnvironmentVariable("strongestavenger").Should().Be(null);
+            values.Count
+                .Should()
+                .BeGreaterThan(0);
+            values["DB_CONNECTION"]
+                .Should()
+                .Be("mysql");
+            values["DB_PORT"]
+                .Should()
+                .Be("3306");
+            values["DB_HOST"]
+                .Should()
+                .Be("127.0.0.1");
+            values["DB_DATABASE"]
+                .Should()
+                .Be("laravel");
+            values["IS_PRESENT"]
+                .Should()
+                .Be("true");
         }
 
         [Fact]
-        public void AllowsEnvFilePathToBeSpecified()
+        public void Read_Should_ThrowAnException_WithEmptyFileNameAndConfig()
         {
-            Action action = () => DotEnv.Config(true, ValuesAndCommentsEnvFileName);
-            action.Should().NotThrow();
+            var action = new Action(() =>
+                DotEnv.Read(new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] {string.Empty})));
 
-            Environment.GetEnvironmentVariable("me").Should().Be("winner");
+            action.Should()
+                .ThrowExactly<ArgumentException>();
         }
 
         [Fact]
-        public void ShouldReturnUntrimmedValuesWhenTrimIsFalse()
+        public void Read_Should_IgnoreFieldsThatHaveExistingValues_WithConfig()
         {
-            DotEnv.Config(true, WhitespacesEnvFileName, Encoding.UTF8, false);
+            Environment.SetEnvironmentVariable("me", "whoIam");
+           DotEnv.Load(new DotEnvOptions(overwriteExistingVars: false, envFilePaths: new[] {ValuesAndCommentsEnvFileName}));
 
-            Environment.GetEnvironmentVariable("DB_CONNECTION").Should().Be("mysql  ");
-            Environment.GetEnvironmentVariable("DB_HOST").Should().Be("127.0.0.1");
-            Environment.GetEnvironmentVariable("DB_PORT").Should().Be("  3306");
-            Environment.GetEnvironmentVariable("DB_DATABASE").Should().Be("laravel");
-        }
-
-        [Fact]
-        public void ShouldReturnTrimmedValuesWhenTrimIsTrue()
-        {
-            DotEnv.Config(true, WhitespacesCopyEnvFileName, Encoding.UTF8, true);
-
-            Environment.GetEnvironmentVariable("B_CONNECTION").Should().Be("mysql");
-            Environment.GetEnvironmentVariable("B_HOST").Should().Be("127.0.0.1");
-            Environment.GetEnvironmentVariable("B_PORT").Should().Be("3306");
-            Environment.GetEnvironmentVariable("B_DATABASE").Should().Be("laravel");
-        }
-
-        [Fact]
-        public void ShouldReturnValidValuesWhenValuesAreQuoted()
-        {
-            DotEnv.Config(true, QuotationsEnvFileName, Encoding.UTF8);
-
-            Environment.GetEnvironmentVariable("SINGLE").Should().Be("single");
-            Environment.GetEnvironmentVariable("DOUBLE").Should().Be("double");
-        }
-
-        [Fact]
-        public void ShouldReturnValidValuesWithAutoConfig()
-        {
-           var success = DotEnv.AutoConfig();
-           
-           success.Should().BeTrue();
-            Environment.GetEnvironmentVariable("hello").Should().Be("world");
+           EnvReader.GetStringValue("me")
+               .Should()
+               .Be("whoIam");
         }
     }
 }

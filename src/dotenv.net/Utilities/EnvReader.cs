@@ -1,9 +1,11 @@
 using System;
-using dotenv.net.Interfaces;
 
 namespace dotenv.net.Utilities
 {
-    public class EnvReader : IEnvReader
+    /// <summary>
+    /// Holds reader helper methods
+    /// </summary>
+    public static class EnvReader
     {
         /// <summary>
         /// Retrieve a string value from the current environment
@@ -11,7 +13,7 @@ namespace dotenv.net.Utilities
         /// <param name="key">The key to retrieve the value via</param>
         /// <returns>A string representing the value</returns>
         /// <exception cref="Exception">When the value could not be found</exception>
-        public string GetStringValue(string key)
+        public static string GetStringValue(string key)
         {
             if (TryGetStringValue(key, out var value))
             {
@@ -27,7 +29,7 @@ namespace dotenv.net.Utilities
         /// <param name="key">The key to retrieve the value via</param>
         /// <returns>An integer representing the value</returns>
         /// <exception cref="Exception">When the value could not be found or is not an integer</exception>
-        public int GetIntValue(string key)
+        public static int GetIntValue(string key)
         {
             if (TryGetIntValue(key, out var value))
             {
@@ -43,7 +45,7 @@ namespace dotenv.net.Utilities
         /// <param name="key">The key to retrieve the value via</param>
         /// <returns>A double representing the value</returns>
         /// <exception cref="Exception">When the value could not be found or is not a valid double</exception>
-        public double GetDoubleValue(string key)
+        public static double GetDoubleValue(string key)
         {
             if (TryGetDoubleValue(key, out var value))
             {
@@ -59,7 +61,7 @@ namespace dotenv.net.Utilities
         /// <param name="key">The key to retrieve the value via</param>
         /// <returns>A decimal representing the value</returns>
         /// <exception cref="Exception">When the value could not be found or is not a valid decimal</exception>
-        public decimal GetDecimalValue(string key)
+        public static decimal GetDecimalValue(string key)
         {
             if (TryGetDecimalValue(key, out var value))
             {
@@ -73,9 +75,9 @@ namespace dotenv.net.Utilities
         /// Retrieve a boolean value from the current environment
         /// </summary>
         /// <param name="key">The key to retrieve the value via</param>
-        /// <returns>A boolran representing the value</returns>
+        /// <returns>A boolean representing the value</returns>
         /// <exception cref="Exception">When the value could not be found or is not a valid bool</exception>
-        public bool GetBooleanValue(string key)
+        public static bool GetBooleanValue(string key)
         {
             if (TryGetBooleanValue(key, out var value))
             {
@@ -91,7 +93,7 @@ namespace dotenv.net.Utilities
         /// <param name="key">The key to retrieve the value via</param>
         /// <param name="value">The string value retrieved or null</param>
         /// <returns>A value representing the retrieval success status</returns>
-        public bool TryGetStringValue(string key, out string value)
+        public static bool TryGetStringValue(string key, out string value)
         {
             var retrievedValue = Environment.GetEnvironmentVariable(key);
 
@@ -111,7 +113,7 @@ namespace dotenv.net.Utilities
         /// <param name="key">The key to retrieve the value via</param>
         /// <param name="value">The int value retrieved or null</param>
         /// <returns>A value representing the retrieval success status</returns>
-        public bool TryGetIntValue(string key, out int value)
+        public static bool TryGetIntValue(string key, out int value)
         {
             var retrievedValue = Environment.GetEnvironmentVariable(key);
 
@@ -130,7 +132,7 @@ namespace dotenv.net.Utilities
         /// <param name="key">The key to retrieve the value via</param>
         /// <param name="value">The double value retrieved or null</param>
         /// <returns>A value representing the retrieval success status</returns>
-        public bool TryGetDoubleValue(string key, out double value)
+        public static bool TryGetDoubleValue(string key, out double value)
         {
             var retrievedValue = Environment.GetEnvironmentVariable(key);
 
@@ -149,7 +151,7 @@ namespace dotenv.net.Utilities
         /// <param name="key">The key to retrieve the value via</param>
         /// <param name="value">The decimal value retrieved or null</param>
         /// <returns>A value representing the retrieval success status</returns>
-        public bool TryGetDecimalValue(string key, out decimal value)
+        public static bool TryGetDecimalValue(string key, out decimal value)
         {
             var retrievedValue = Environment.GetEnvironmentVariable(key);
 
@@ -168,7 +170,7 @@ namespace dotenv.net.Utilities
         /// <param name="key">The key to retrieve the value via</param>
         /// <param name="value">The boolean value retrieved or null</param>
         /// <returns>A value representing the retrieval success status</returns>
-        public bool TryGetBooleanValue(string key, out bool value)
+        public static bool TryGetBooleanValue(string key, out bool value)
         {
             var retrievedValue = Environment.GetEnvironmentVariable(key);
 
@@ -179,6 +181,17 @@ namespace dotenv.net.Utilities
 
             value = false;
             return false;
+        }
+
+        /// <summary>
+        /// Determine if an environment key has a set value or not
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
+        /// <returns>A value determining if a value is set or not</returns>
+        public static bool HasValue(string key)
+        {
+            var retrievedValue = Environment.GetEnvironmentVariable(key);
+            return !string.IsNullOrEmpty(retrievedValue);
         }
     }
 }

@@ -90,5 +90,16 @@ namespace dotenv.net.Tests
             action.Should()
                 .ThrowExactly<ArgumentException>();
         }
+
+        [Fact]
+        public void Read_Should_IgnoreFieldsThatHaveExistingValues_WithConfig()
+        {
+            Environment.SetEnvironmentVariable("me", "whoIam");
+           DotEnv.Load(new DotEnvOptions(overwriteExistingVars: false, envFilePaths: new[] {ValuesAndCommentsEnvFileName}));
+
+           EnvReader.GetStringValue("me")
+               .Should()
+               .Be("whoIam");
+        }
     }
 }

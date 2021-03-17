@@ -16,7 +16,7 @@ jobs:
       - run:
           name: Tests
           command:
-            dotnet test tests/dotenv.net.Tests/dotenv.net.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+            dotnet test tests/dotenv.net.Tests/dotenv.net.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./../../results/"
       - run:
           name: Install Coveralls
           command:

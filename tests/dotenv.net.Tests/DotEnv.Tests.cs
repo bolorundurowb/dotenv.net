@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using dotenv.net.Utilities;
 using FluentAssertions;
@@ -27,11 +28,10 @@ namespace dotenv.net.Tests
         [Fact]
         public void Config_ShouldNotLoadEnv_WithDefaultOptions_AsThereIsNoEnvFile()
         {
-            DotEnv.Config(new DotEnvOptions());
+            var action = new Action(() => DotEnv.Config(new DotEnvOptions(ignoreExceptions: false)));
 
-            EnvReader.HasValue("hello")
-                .Should()
-                .BeFalse();
+            action.Should()
+                .ThrowExactly<FileNotFoundException>();
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace dotenv.net.Tests
         public void Read_Should_ReturnTheReadValues()
         {
             var values =
-                DotEnv.Read(new DotEnvOptions(trimValues: true, envFilePaths: new[] {"values-with-whitespaces.env"}));
+                DotEnv.Read(new DotEnvOptions(trimValues: true, envFilePaths: new[] {ValuesAndCommentsEnvFileName}));
 
             values.Count
                 .Should()

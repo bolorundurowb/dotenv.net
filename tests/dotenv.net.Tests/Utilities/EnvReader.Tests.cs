@@ -1,30 +1,25 @@
 using System;
-using System.Text;
+using dotenv.net.Tests.TestFixtures;
 using dotenv.net.Utilities;
 using FluentAssertions;
 using Xunit;
 
 namespace dotenv.net.Tests.Utilities
 {
-    public class EnvReaderTests
+    public class EnvReaderTests : IClassFixture<VariousValueTypesFixture>
     {
-        private const string ValueTypesEnvFileName = "various-value-types.env";
-
         [Fact]
         public void ShouldReadStringValues()
         {
-            DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
-            var envReader = new EnvReader();
-
-            envReader.GetStringValue("CONNECTION")
+            EnvReader.GetStringValue("CONNECTION")
                 .Should()
                 .Be("mysql");
 
-            envReader.TryGetStringValue("NON_EXISTENT_KEY", out _)
+            EnvReader.TryGetStringValue("NON_EXISTENT_KEY", out _)
                 .Should()
                 .BeFalse();
 
-            Action action = () => envReader.GetStringValue("NON_EXISTENT_KEY");
+            Action action = () => EnvReader.GetStringValue("NON_EXISTENT_KEY");
             action.Should()
                 .Throw<Exception>();
         }
@@ -32,18 +27,15 @@ namespace dotenv.net.Tests.Utilities
         [Fact]
         public void ShouldReadBooleanValues()
         {
-            DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
-            var envReader = new EnvReader();
-
-            envReader.GetBooleanValue("IS_PRESENT")
+            EnvReader.GetBooleanValue("IS_PRESENT")
                 .Should()
                 .BeTrue();
 
-            envReader.TryGetBooleanValue("NON_EXISTENT_KEY", out _)
+            EnvReader.TryGetBooleanValue("NON_EXISTENT_KEY", out _)
                 .Should()
                 .BeFalse();
 
-            Action action = () => envReader.GetBooleanValue("NON_EXISTENT_KEY");
+            Action action = () => EnvReader.GetBooleanValue("NON_EXISTENT_KEY");
             action.Should()
                 .Throw<Exception>();
         }
@@ -51,18 +43,15 @@ namespace dotenv.net.Tests.Utilities
         [Fact]
         public void ShouldReadDoubleValues()
         {
-            DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
-            var envReader = new EnvReader();
-
-            envReader.GetDoubleValue("DOUBLE")
+            EnvReader.GetDoubleValue("DOUBLE")
                 .Should()
                 .Be(2762821981981.37627828722);
 
-            envReader.TryGetDoubleValue("NON_EXISTENT_KEY", out _)
+            EnvReader.TryGetDoubleValue("NON_EXISTENT_KEY", out _)
                 .Should()
                 .BeFalse();
 
-            Action action = () => envReader.GetDoubleValue("NON_EXISTENT_KEY");
+            Action action = () => EnvReader.GetDoubleValue("NON_EXISTENT_KEY");
             action.Should()
                 .Throw<Exception>();
         }
@@ -70,18 +59,15 @@ namespace dotenv.net.Tests.Utilities
         [Fact]
         public void ShouldReadDecimalValues()
         {
-            DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
-            var envReader = new EnvReader();
-
-            envReader.GetDecimalValue("DECIMAL")
+            EnvReader.GetDecimalValue("DECIMAL")
                 .Should()
                 .Be(34.56m);
 
-            envReader.TryGetDecimalValue("NON_EXISTENT_KEY", out _)
+            EnvReader.TryGetDecimalValue("NON_EXISTENT_KEY", out _)
                 .Should()
                 .BeFalse();
 
-            Action action = () => envReader.GetDecimalValue("NON_EXISTENT_KEY");
+            Action action = () => EnvReader.GetDecimalValue("NON_EXISTENT_KEY");
             action.Should()
                 .Throw<Exception>();
         }
@@ -89,18 +75,15 @@ namespace dotenv.net.Tests.Utilities
         [Fact]
         public void ShouldReadIntValues()
         {
-            DotEnv.Config(true, ValueTypesEnvFileName, Encoding.UTF8);
-            var envReader = new EnvReader();
-
-            envReader.GetIntValue("PORT")
+            EnvReader.GetIntValue("PORT")
                 .Should()
                 .Be(3306);
 
-            envReader.TryGetIntValue("NON_EXISTENT_KEY", out _)
+            EnvReader.TryGetIntValue("NON_EXISTENT_KEY", out _)
                 .Should()
                 .BeFalse();
 
-            Action action = () => envReader.GetIntValue("NON_EXISTENT_KEY");
+            Action action = () => EnvReader.GetIntValue("NON_EXISTENT_KEY");
             action.Should()
                 .Throw<Exception>();
         }

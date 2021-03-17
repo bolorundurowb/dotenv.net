@@ -35,6 +35,16 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
+        public void Config_ShouldLoadEnv_WithProbeEnvOptions()
+        {
+            DotEnv.Config(new DotEnvOptions(probeForEnv: true));
+
+            EnvReader.GetStringValue("hello")
+                .Should()
+                .Be("world");
+        }
+
+        [Fact]
         public void ShouldReturnValidValuesWithAutoConfig()
         {
            var success = DotEnv.AutoConfig();

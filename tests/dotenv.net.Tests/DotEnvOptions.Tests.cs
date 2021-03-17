@@ -178,5 +178,209 @@ namespace dotenv.net.Tests
                 .Should()
                 .Contain(".env");
         }
+        
+        [Fact]
+        public void WithExceptions_ShouldGenerateOptions_WithOverwriteExistingVars()
+        {
+            var options = new DotEnvOptions()
+                .WithOverwriteExistingVars();
+
+            options.IgnoreExceptions
+                .Should()
+                .BeTrue();
+            options.Encoding
+                .Should()
+                .Be(Encoding.UTF8);
+            options.TrimValues
+                .Should()
+                .BeFalse();
+            options.OverwriteExistingVars
+                .Should()
+                .BeTrue();
+            options.ProbeForEnv
+                .Should()
+                .BeFalse();
+            options.ProbeDirectoryDepth
+                .Should()
+                .Be(4);
+            options.EnvFilePaths
+                .Should()
+                .Contain(".env");
+        }
+        
+        [Fact]
+        public void WithExceptions_ShouldGenerateOptions_WithoutOverwriteExistingVars()
+        {
+            var options = new DotEnvOptions()
+                .WithoutOverwriteExistingVars();
+
+            options.IgnoreExceptions
+                .Should()
+                .BeTrue();
+            options.Encoding
+                .Should()
+                .Be(Encoding.UTF8);
+            options.TrimValues
+                .Should()
+                .BeFalse();
+            options.OverwriteExistingVars
+                .Should()
+                .BeFalse();
+            options.ProbeForEnv
+                .Should()
+                .BeFalse();
+            options.ProbeDirectoryDepth
+                .Should()
+                .Be(4);
+            options.EnvFilePaths
+                .Should()
+                .Contain(".env");
+        }
+        
+        [Fact]
+        public void WithExceptions_ShouldGenerateOptions_WithTrimValues()
+        {
+            var options = new DotEnvOptions()
+                .WithTrimValues();
+
+            options.IgnoreExceptions
+                .Should()
+                .BeTrue();
+            options.Encoding
+                .Should()
+                .Be(Encoding.UTF8);
+            options.TrimValues
+                .Should()
+                .BeTrue();
+            options.OverwriteExistingVars
+                .Should()
+                .BeTrue();
+            options.ProbeForEnv
+                .Should()
+                .BeFalse();
+            options.ProbeDirectoryDepth
+                .Should()
+                .Be(4);
+            options.EnvFilePaths
+                .Should()
+                .Contain(".env");
+        }
+        
+        [Fact]
+        public void WithExceptions_ShouldGenerateOptions_WithoutTrimValues()
+        {
+            var options = new DotEnvOptions()
+                .WithoutTrimValues();
+
+            options.IgnoreExceptions
+                .Should()
+                .BeTrue();
+            options.Encoding
+                .Should()
+                .Be(Encoding.UTF8);
+            options.TrimValues
+                .Should()
+                .BeFalse();
+            options.OverwriteExistingVars
+                .Should()
+                .BeTrue();
+            options.ProbeForEnv
+                .Should()
+                .BeFalse();
+            options.ProbeDirectoryDepth
+                .Should()
+                .Be(4);
+            options.EnvFilePaths
+                .Should()
+                .Contain(".env");
+        }
+        
+        [Fact]
+        public void WithExceptions_ShouldGenerateOptions_WithEncoding()
+        {
+            var options = new DotEnvOptions()
+                .WithEncoding(Encoding.Latin1);
+
+            options.IgnoreExceptions
+                .Should()
+                .BeTrue();
+            options.Encoding
+                .Should()
+                .Be(Encoding.Latin1);
+            options.TrimValues
+                .Should()
+                .BeFalse();
+            options.OverwriteExistingVars
+                .Should()
+                .BeTrue();
+            options.ProbeForEnv
+                .Should()
+                .BeFalse();
+            options.ProbeDirectoryDepth
+                .Should()
+                .Be(4);
+            options.EnvFilePaths
+                .Should()
+                .Contain(".env");
+        }
+        
+        [Fact]
+        public void WithExceptions_ShouldGenerateOptions_WithDefaultEncoding()
+        {
+            var options = new DotEnvOptions()
+                .WithDefaultEncoding();
+
+            options.IgnoreExceptions
+                .Should()
+                .BeTrue();
+            options.Encoding
+                .Should()
+                .Be(Encoding.UTF8);
+            options.TrimValues
+                .Should()
+                .BeFalse();
+            options.OverwriteExistingVars
+                .Should()
+                .BeTrue();
+            options.ProbeForEnv
+                .Should()
+                .BeFalse();
+            options.ProbeDirectoryDepth
+                .Should()
+                .Be(4);
+            options.EnvFilePaths
+                .Should()
+                .Contain(".env");
+        }
+        
+        [Fact]
+        public void WithExceptions_ShouldGenerateOptions_WithEnvFiles()
+        {
+            var envFiles = new[] {"test.env", "other.env"};
+            var options = new DotEnvOptions()
+                .WithEnvFiles(envFiles);
+
+            options.IgnoreExceptions
+                .Should()
+                .BeTrue();
+            options.Encoding
+                .Should()
+                .Be(Encoding.UTF8);
+            options.TrimValues
+                .Should()
+                .BeFalse();
+            options.OverwriteExistingVars
+                .Should()
+                .BeTrue();
+            options.ProbeForEnv
+                .Should()
+                .BeFalse();
+            options.ProbeDirectoryDepth
+                .Should()
+                .Be(4);
+            options.EnvFilePaths
+                .Should()
+                .BeEquivalentTo(envFiles);
+        }
     }
 }

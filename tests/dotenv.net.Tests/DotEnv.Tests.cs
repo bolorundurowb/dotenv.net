@@ -45,12 +45,40 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldReturnValidValuesWithAutoConfig()
+        public void AutoConfig_ShouldLocateAndLoadEnv()
         {
-           var success = DotEnv.AutoConfig();
-           
-           success.Should().BeTrue();
-            Environment.GetEnvironmentVariable("hello").Should().Be("world");
+            var success = DotEnv.AutoConfig();
+
+            success.Should().BeTrue();
+            // EnvReader.GetStringValue("hello")
+            //     .Should()
+            //     .Be("world");
+        }
+
+        [Fact]
+        public void Read_Should_ReturnTheReadValues()
+        {
+            var values =
+                DotEnv.Read(new DotEnvOptions(trimValues: true, envFilePaths: new[] {"values-with-whitespaces.env"}));
+
+            values.Count
+                .Should()
+                .BeGreaterThan(0);
+            values["DB_CONNECTION"]
+                .Should()
+                .Be("mysql");
+            values["DB_PORT"]
+                .Should()
+                .Be("3306");
+            values["DB_HOST"]
+                .Should()
+                .Be("127.0.0.1");
+            values["DB_DATABASE"]
+                .Should()
+                .Be("laravel");
+            values["IS_PRESENT"]
+                .Should()
+                .Be("true");
         }
     }
 }

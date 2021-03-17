@@ -18,9 +18,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Update=".env">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="values-and-comments.env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

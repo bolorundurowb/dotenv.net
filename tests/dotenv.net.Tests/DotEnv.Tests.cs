@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Text;
+using dotenv.net.Utilities;
 using FluentAssertions;
 using Xunit;
 
@@ -22,6 +22,16 @@ namespace dotenv.net.Tests
             config.Encoding
                 .Should()
                 .Be(Encoding.UTF8);
+        }
+
+        [Fact]
+        public void Config_ShouldNotLoadEnv_WithDefaultOptions_AsThereIsNoEnvFile()
+        {
+            DotEnv.Config(new DotEnvOptions());
+
+            EnvReader.HasValue("hello")
+                .Should()
+                .BeFalse();
         }
 
         [Fact]

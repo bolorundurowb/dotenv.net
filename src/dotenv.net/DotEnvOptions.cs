@@ -169,6 +169,16 @@ namespace dotenv.net
         }
 
         /// <summary>
+        /// Set the env files to be read, if none is provided, we revert to the default '.env'
+        /// </summary>
+        /// <returns>configured dot env options</returns>
+        public DotEnvOptions WithEnvFiles(params string[] envFilePaths)
+        {
+            EnvFilePaths = envFilePaths?.Length == 0 ? new []{DefaultEnvFileName} : envFilePaths;
+            return this;
+        }
+
+        /// <summary>
         /// Return the values in the env files without writing to the environment
         /// </summary>
         /// <returns>configured dot env options</returns>

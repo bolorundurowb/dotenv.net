@@ -59,7 +59,7 @@ namespace dotenv.net.Tests
         public void Read_Should_ReturnTheReadValues()
         {
             var values =
-                DotEnv.Read(new DotEnvOptions(trimValues: true, envFilePaths: new[] {ValuesAndCommentsEnvFileName}));
+                DotEnv.Read(new DotEnvOptions(trimValues: true, envFilePaths: new[] {WhitespacesEnvFileName}));
 
             values.Count
                 .Should()

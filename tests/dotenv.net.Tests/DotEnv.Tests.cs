@@ -9,29 +9,30 @@ namespace dotenv.net.Tests
 {
     public class DotEnvTests
     {
-        private const string WhitespacesEnvFileName = "values-with-whitespaces.env";
+        private const string WhitespacesEnvFileName = "whitespaces.env";
         private const string WhitespacesCopyEnvFileName = "values-with-whitespaces-too.env";
         private const string ValuesAndCommentsEnvFileName = "values-and-comments.env";
         private const string NonExistentEnvFileName = "non-existent.env";
         private const string QuotationsEnvFileName = "quotations.env";
+        private const string AsciiEnvFileName = "ascii.env";
 
         [Fact]
-        public void Config_ShouldNotLoadEnv_WithDefaultOptions_AsThereIsNoEnvFile()
+        public void ConfigShouldThrowWithNonExistentEnvAndTrackedExceptions()
         {
-            var action = new Action(() => DotEnv.Config(new DotEnvOptions(ignoreExceptions: false)));
+            var action = new Action(() => DotEnv.Config(new DotEnvOptions(ignoreExceptions: false, envFilePaths: new [] {NonExistentEnvFileName})));
 
             action.Should()
                 .ThrowExactly<FileNotFoundException>();
         }
 
         [Fact]
-        public void Config_ShouldLoadEnv_WithProbeEnvOptions()
+        public void ConfigShouldLoadEnvWithProvidedEncoding()
         {
-            DotEnv.Config(new DotEnvOptions(probeForEnv: true));
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {AsciiEnvFileName}, encoding: Encoding.ASCII));
 
-            EnvReader.GetStringValue("hello")
+            EnvReader.GetStringValue("ENCODING")
                 .Should()
-                .Be("world");
+                .Be("ASCII");
         }
 
         [Fact]

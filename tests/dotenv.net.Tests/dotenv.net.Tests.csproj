@@ -21,7 +21,7 @@
     <None Update="values-and-comments.env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="values-with-whitespaces.env">
+    <None Update="whitespaces.env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="various-value-types.env">
@@ -32,6 +32,9 @@
     </None>
     <None Update="quotations.env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ascii.env">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

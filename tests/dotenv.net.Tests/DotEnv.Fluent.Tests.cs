@@ -9,7 +9,7 @@ namespace dotenv.net.Tests
 {
     public class DotEnvFluentTests
     {
-        private const string WhitespacesEnvFileName = "values-with-whitespaces.env";
+        private const string WhitespacesEnvFileName = "whitespaces.env";
         private const string WhitespacesCopyEnvFileName = "values-with-whitespaces-too.env";
         private const string ValuesAndCommentsEnvFileName = "values-and-comments.env";
         private const string NonExistentEnvFileName = "non-existent.env";
@@ -64,21 +64,9 @@ namespace dotenv.net.Tests
             values.Count
                 .Should()
                 .BeGreaterThan(0);
-            values["DB_CONNECTION"]
-                .Should()
-                .Be("mysql");
-            values["DB_PORT"]
-                .Should()
-                .Be("3306");
-            values["DB_HOST"]
-                .Should()
-                .Be("127.0.0.1");
             values["DB_DATABASE"]
                 .Should()
                 .Be("laravel");
-            values["IS_PRESENT"]
-                .Should()
-                .Be("true");
         }
 
         [Fact]

@@ -33,6 +33,9 @@
     <None Update="generic.env">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="incomplete.env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\dotenv.net\dotenv.net.csproj" />

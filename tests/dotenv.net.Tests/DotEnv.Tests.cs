@@ -14,6 +14,7 @@ namespace dotenv.net.Tests
         private const string QuotationsEnvFileName = "quotations.env";
         private const string AsciiEnvFileName = "ascii.env";
         private const string GenericEnvFileName = "generic.env";
+        private const string IncompleteEnvFileName = "incomplete.env";
 
         [Fact]
         public void ConfigShouldThrowWithNonExistentEnvAndTrackedExceptions()
@@ -97,6 +98,16 @@ namespace dotenv.net.Tests
             EnvReader.GetStringValue("SINGLE")
                 .Should()
                 .Be("single");
+        }
+
+        [Fact]
+        public void ConfigShouldLoadEnvWithInvalidEnvEntries()
+        {
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {IncompleteEnvFileName}, trimValues: false));
+
+            EnvReader.HasValue("KeyWithNoValue")
+                .Should()
+                .BeFalse();
         }
 
         [Fact]

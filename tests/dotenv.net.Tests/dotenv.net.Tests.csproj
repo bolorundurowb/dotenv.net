@@ -18,17 +18,11 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Update="values-and-comments.env">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="whitespaces.env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="various-value-types.env">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="values-with-whitespaces-too.env">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="value-types.env">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="quotations.env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

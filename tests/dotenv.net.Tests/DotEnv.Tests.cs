@@ -10,8 +10,6 @@ namespace dotenv.net.Tests
     public class DotEnvTests
     {
         private const string WhitespacesEnvFileName = "whitespaces.env";
-        private const string WhitespacesCopyEnvFileName = "values-with-whitespaces-too.env";
-        private const string ValuesAndCommentsEnvFileName = "values-and-comments.env";
         private const string NonExistentEnvFileName = "non-existent.env";
         private const string QuotationsEnvFileName = "quotations.env";
         private const string AsciiEnvFileName = "ascii.env";
@@ -89,6 +87,19 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
+        public void ConfigShouldLoadEnvWithQuotedValues()
+        {
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {QuotationsEnvFileName}, trimValues: true));
+
+            EnvReader.GetStringValue("DOUBLE")
+                .Should()
+                .Be("double");
+            EnvReader.GetStringValue("SINGLE")
+                .Should()
+                .Be("single");
+        }
+
+        [Fact]
         public void AutoConfigShouldLoadDefaultEnvWithProbeOptions()
         {
            Action action = () => DotEnv.AutoConfig(5);
@@ -99,65 +110,6 @@ namespace dotenv.net.Tests
             EnvReader.GetStringValue("hello")
                 .Should()
                 .Be("world");
-        }
-
-        [Fact]
-        public void AutoConfig_ShouldLocateAndLoadEnv()
-        {
-            var success = DotEnv.AutoConfig();
-
-            success.Should().BeTrue();
-            EnvReader.GetStringValue("uniquekey")
-                .Should()
-                .Be("kjdjkd");
-        }
-
-        [Fact]
-        public void Read_Should_ReturnTheReadValues()
-        {
-            var values =
-                DotEnv.Read(new DotEnvOptions(trimValues: true, envFilePaths: new[] {WhitespacesEnvFileName}));
-
-            values.Count
-                .Should()
-                .BeGreaterThan(0);
-            values["DB_CONNECTION"]
-                .Should()
-                .Be("mysql");
-            values["DB_PORT"]
-                .Should()
-                .Be("3306");
-            values["DB_HOST"]
-                .Should()
-                .Be("127.0.0.1");
-            values["DB_DATABASE"]
-                .Should()
-                .Be("laravel");
-            values["IS_PRESENT"]
-                .Should()
-                .Be("true");
-        }
-
-        [Fact]
-        public void Read_Should_ThrowAnException_WithEmptyFileNameAndConfig()
-        {
-            var action = new Action(() =>
-                DotEnv.Read(new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] {string.Empty})));
-
-            action.Should()
-                .ThrowExactly<ArgumentException>();
-        }
-
-        [Fact]
-        public void Load_Should_IgnoreFieldsThatHaveExistingValues_WithConfig()
-        {
-            Environment.SetEnvironmentVariable("me", "whoIam");
-            DotEnv.Load(new DotEnvOptions(overwriteExistingVars: false,
-                envFilePaths: new[] {ValuesAndCommentsEnvFileName}));
-
-            EnvReader.GetStringValue("me")
-                .Should()
-                .Be("whoIam");
         }
     }
 }

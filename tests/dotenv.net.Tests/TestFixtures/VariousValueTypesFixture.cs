@@ -7,7 +7,7 @@ namespace dotenv.net.Tests.TestFixtures
         public VariousValueTypesFixture()
         {
             DotEnv.Fluent()
-                .WithEnvFiles("various-value-types.env")
+                .WithEnvFiles("value-types.env")
                 .Load();
         }
 

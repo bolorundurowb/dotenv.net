@@ -89,6 +89,19 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
+        public void AutoConfigShouldLoadDefaultEnvWithProbeOptions()
+        {
+           Action action = () => DotEnv.AutoConfig(5);
+
+            action.Should()
+                .NotThrow();
+
+            EnvReader.GetStringValue("hello")
+                .Should()
+                .Be("world");
+        }
+
+        [Fact]
         public void AutoConfig_ShouldLocateAndLoadEnv()
         {
             var success = DotEnv.AutoConfig();

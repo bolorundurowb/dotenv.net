@@ -18,7 +18,7 @@ namespace dotenv.net.Tests
         [Fact]
         public void Config_ShouldInitializeEnvOptions_WithDefaultOptions()
         {
-            var config = DotEnv.Config();
+            var config = DotEnv.Fluent();
 
             config.Encoding
                 .Should()

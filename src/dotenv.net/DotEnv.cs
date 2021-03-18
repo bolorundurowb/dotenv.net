@@ -7,21 +7,23 @@ namespace dotenv.net
     public static class DotEnv
     {
         /// <summary>
-        /// Configure the environment variables from a .env file
+        /// [Deprecated] Configure the environment variables from a .env file
         /// </summary>
         /// <param name="options">Options on how to load the env file</param>
-        [Obsolete]
+        [Obsolete(
+            "This method would be removed in the next major release. Use the Fluent API, Load() or Read() methods instead.")]
         public static void Config(DotEnvOptions options)
         {
             Helpers.ReadAndWrite(options);
         }
 
         /// <summary>
-        /// Searches the current directory and three directories up and loads the environment variables
+        /// [Deprecated] Searches the current directory and three directories up and loads the environment variables
         /// </summary>
         /// <param name="levelsToSearch">The number of top-level directories to search; the default is 4 top-level directories.</param>
         /// <returns>States whether or not the operation succeeded</returns>
-        [Obsolete]
+        [Obsolete(
+            "This method would be removed in the next major release. Use the Fluent API, Load() or Read() methods instead.")]
         public static bool AutoConfig(int levelsToSearch = 4)
         {
             Helpers.ReadAndWrite(new DotEnvOptions(probeDirectoryDepth: levelsToSearch));
@@ -31,7 +33,7 @@ namespace dotenv.net
         /// <summary>
         /// Initialize the fluent configuration API
         /// </summary>
-        public static DotEnvOptions Config()
+        public static DotEnvOptions Fluent()
         {
             return new DotEnvOptions();
         }

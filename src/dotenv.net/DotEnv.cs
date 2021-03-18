@@ -7,14 +7,6 @@ namespace dotenv.net
     public static class DotEnv
     {
         /// <summary>
-        /// Initialize the fluent configuration API
-        /// </summary>
-        public static DotEnvOptions Config()
-        {
-            return new DotEnvOptions();
-        }
-
-        /// <summary>
         /// Configure the environment variables from a .env file
         /// </summary>
         /// <param name="options">Options on how to load the env file</param>
@@ -34,6 +26,14 @@ namespace dotenv.net
         {
             Helpers.ReadAndWrite(new DotEnvOptions(probeDirectoryDepth: levelsToSearch));
             return true;
+        }
+
+        /// <summary>
+        /// Initialize the fluent configuration API
+        /// </summary>
+        public static DotEnvOptions Config()
+        {
+            return new DotEnvOptions();
         }
 
         /// <summary>

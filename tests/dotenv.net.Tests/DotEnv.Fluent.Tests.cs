@@ -7,13 +7,23 @@ using Xunit;
 
 namespace dotenv.net.Tests
 {
-    public class DotEnvTests
+    public class DotEnvFluentTests
     {
         private const string WhitespacesEnvFileName = "values-with-whitespaces.env";
         private const string WhitespacesCopyEnvFileName = "values-with-whitespaces-too.env";
         private const string ValuesAndCommentsEnvFileName = "values-and-comments.env";
         private const string NonExistentEnvFileName = "non-existent.env";
         private const string QuotationsEnvFileName = "quotations.env";
+
+        [Fact]
+        public void Config_ShouldInitializeEnvOptions_WithDefaultOptions()
+        {
+            var config = DotEnv.Config();
+
+            config.Encoding
+                .Should()
+                .Be(Encoding.UTF8);
+        }
 
         [Fact]
         public void Config_ShouldNotLoadEnv_WithDefaultOptions_AsThereIsNoEnvFile()

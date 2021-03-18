@@ -92,10 +92,10 @@ namespace dotenv.net.Tests
         {
             DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {QuotationsEnvFileName}, trimValues: true));
 
-            EnvReader.GetStringValue("DOUBLE")
+            EnvReader.GetStringValue("DOUBLE_QUOTES")
                 .Should()
                 .Be("double");
-            EnvReader.GetStringValue("SINGLE")
+            EnvReader.GetStringValue("SINGLE_QUOTES")
                 .Should()
                 .Be("single");
         }

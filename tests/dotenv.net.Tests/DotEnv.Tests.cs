@@ -15,6 +15,7 @@ namespace dotenv.net.Tests
         private const string NonExistentEnvFileName = "non-existent.env";
         private const string QuotationsEnvFileName = "quotations.env";
         private const string AsciiEnvFileName = "ascii.env";
+        private const string GenericEnvFileName = "generic.env";
 
         [Fact]
         public void ConfigShouldThrowWithNonExistentEnvAndTrackedExceptions()
@@ -49,6 +50,24 @@ namespace dotenv.net.Tests
             EnvReader.GetStringValue("DB_DATABASE")
                 .Should()
                 .Be(" laravel  ");
+        }
+
+        [Fact]
+        public void ConfigShouldLoadEnvWithExistingVarOverwriteOptions()
+        {
+            Environment.SetEnvironmentVariable("Generic", "Existing");
+            
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {GenericEnvFileName}, overwriteExistingVars: false));
+
+            EnvReader.GetStringValue("Generic")
+                .Should()
+                .Be("Existing");
+            
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {GenericEnvFileName}, overwriteExistingVars: true));
+
+            EnvReader.GetStringValue("Generic")
+                .Should()
+                .Be("Value");
         }
 
         [Fact]

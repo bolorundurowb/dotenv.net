@@ -35,7 +35,7 @@ namespace dotenv.net
         /// </summary>
         public static DotEnvOptions Fluent()
         {
-            return new DotEnvOptions();
+            return new();
         }
 
         /// <summary>

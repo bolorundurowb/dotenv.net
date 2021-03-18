@@ -45,7 +45,7 @@ namespace dotenv.net
             return untrimmedKey.Trim().ToString();
         }
 
-        private static string Value(this ReadOnlySpan<char> row, int index, bool trimValue = false)
+        private static string Value(this ReadOnlySpan<char> row, int index, bool trimValue)
         {
             var untrimmedValue = row.Slice(index + 1);
             var value = untrimmedValue.ToString();

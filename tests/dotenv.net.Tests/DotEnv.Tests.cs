@@ -36,6 +36,22 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
+        public void ConfigShouldLoadEnvWithTrimOptions()
+        {
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {WhitespacesEnvFileName}, trimValues: true));
+
+            EnvReader.GetStringValue("DB_DATABASE")
+                .Should()
+                .Be("laravel");
+            
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {WhitespacesEnvFileName}, trimValues: false));
+
+            EnvReader.GetStringValue("DB_DATABASE")
+                .Should()
+                .Be(" laravel  ");
+        }
+
+        [Fact]
         public void AutoConfig_ShouldLocateAndLoadEnv()
         {
             var success = DotEnv.AutoConfig();

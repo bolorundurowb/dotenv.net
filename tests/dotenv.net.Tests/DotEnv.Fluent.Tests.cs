@@ -10,34 +10,101 @@ namespace dotenv.net.Tests
     public class DotEnvFluentTests
     {
         private const string WhitespacesEnvFileName = "whitespaces.env";
-        private const string WhitespacesCopyEnvFileName = "values-with-whitespaces-too.env";
-        private const string ValuesAndCommentsEnvFileName = "values-and-comments.env";
         private const string NonExistentEnvFileName = "non-existent.env";
         private const string QuotationsEnvFileName = "quotations.env";
+        private const string AsciiEnvFileName = "ascii.env";
+        private const string GenericEnvFileName = "generic.env";
+        private const string IncompleteEnvFileName = "incomplete.env";
 
         [Fact]
-        public void Config_ShouldInitializeEnvOptions_WithDefaultOptions()
+        public void ConfigShouldThrowWithNonExistentEnvAndTrackedExceptions()
         {
-            var config = DotEnv.Fluent();
-
-            config.Encoding
-                .Should()
-                .Be(Encoding.UTF8);
-        }
-
-        [Fact]
-        public void Config_ShouldNotLoadEnv_WithDefaultOptions_AsThereIsNoEnvFile()
-        {
-            var action = new Action(() => DotEnv.Config(new DotEnvOptions(ignoreExceptions: false)));
+            var action = new Action(() => DotEnv.Fluent()
+                .WithExceptions()
+                .WithEnvFiles(NonExistentEnvFileName)
+                .Load());
 
             action.Should()
                 .ThrowExactly<FileNotFoundException>();
         }
 
         [Fact]
-        public void Config_ShouldLoadEnv_WithProbeEnvOptions()
+        public void ConfigShouldLoadEnvWithProvidedEncoding()
         {
-            DotEnv.Config(new DotEnvOptions(probeForEnv: true));
+            DotEnv.Fluent()
+                .WithEncoding(Encoding.ASCII)
+                .WithEnvFiles(AsciiEnvFileName)
+                .Load();
+
+            EnvReader.GetStringValue("ENCODING")
+                .Should()
+                .Be("ASCII");
+        }
+
+        [Fact]
+        public void ConfigShouldLoadEnvWithTrimOptions()
+        {
+            DotEnv.Fluent()
+                .WithEnvFiles(WhitespacesEnvFileName)
+                .WithTrimValues()
+                .Load();
+
+            EnvReader.GetStringValue("DB_DATABASE")
+                .Should()
+                .Be("laravel");
+            
+            DotEnv.Fluent()
+                .WithEnvFiles(WhitespacesEnvFileName)
+                .WithoutTrimValues()
+                .Load();
+
+            EnvReader.GetStringValue("DB_DATABASE")
+                .Should()
+                .Be(" laravel  ");
+        }
+
+        [Fact]
+        public void ConfigShouldLoadEnvWithExistingVarOverwriteOptions()
+        {
+            Environment.SetEnvironmentVariable("Generic", "Existing");
+            
+            DotEnv.Fluent()
+                .WithEnvFiles(GenericEnvFileName)
+                .WithoutOverwriteExistingVars()
+                .Load();
+
+            EnvReader.GetStringValue("Generic")
+                .Should()
+                .Be("Existing");
+            
+            DotEnv.Fluent()
+                .WithEnvFiles(GenericEnvFileName)
+                .WithOverwriteExistingVars()
+                .Load();
+
+            EnvReader.GetStringValue("Generic")
+                .Should()
+                .Be("Value");
+        }
+
+        [Fact]
+        public void ConfigShouldLoadDefaultEnvWithProbeOptions()
+        {
+            var action = new Action(() => DotEnv.Fluent()
+                .WithProbeForEnv(2)
+                .WithExceptions()
+                .Load());
+
+            action.Should()
+                .ThrowExactly<ArgumentException>();
+            
+            action = () => DotEnv.Fluent()
+                .WithProbeForEnv(5)
+                .WithExceptions()
+                .Load();
+
+            action.Should()
+                .NotThrow();
 
             EnvReader.GetStringValue("hello")
                 .Should()
@@ -45,50 +112,32 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void AutoConfig_ShouldLocateAndLoadEnv()
+        public void ConfigShouldLoadEnvWithQuotedValues()
         {
-            var success = DotEnv.AutoConfig();
+            DotEnv.Fluent()
+                .WithEnvFiles(QuotationsEnvFileName)
+                .WithTrimValues()
+                .Load();
 
-            success.Should().BeTrue();
-            EnvReader.GetStringValue("uniquekey")
+            EnvReader.GetStringValue("DOUBLE")
                 .Should()
-                .Be("kjdjkd");
+                .Be("double");
+            EnvReader.GetStringValue("SINGLE")
+                .Should()
+                .Be("single");
         }
 
         [Fact]
-        public void Read_Should_ReturnTheReadValues()
+        public void ConfigShouldLoadEnvWithInvalidEnvEntries()
         {
-            var values =
-                DotEnv.Read(new DotEnvOptions(trimValues: true, envFilePaths: new[] {WhitespacesEnvFileName}));
+            DotEnv.Fluent()
+                .WithEnvFiles(IncompleteEnvFileName)
+                .WithoutTrimValues()
+                .Load();
 
-            values.Count
+            EnvReader.HasValue("KeyWithNoValue")
                 .Should()
-                .BeGreaterThan(0);
-            values["DB_DATABASE"]
-                .Should()
-                .Be("laravel");
-        }
-
-        [Fact]
-        public void Read_Should_ThrowAnException_WithEmptyFileNameAndConfig()
-        {
-            var action = new Action(() =>
-                DotEnv.Read(new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] {string.Empty})));
-
-            action.Should()
-                .ThrowExactly<ArgumentException>();
-        }
-
-        [Fact]
-        public void Load_Should_IgnoreFieldsThatHaveExistingValues_WithConfig()
-        {
-            Environment.SetEnvironmentVariable("me", "whoIam");
-            DotEnv.Load(new DotEnvOptions(overwriteExistingVars: false,
-                envFilePaths: new[] {ValuesAndCommentsEnvFileName}));
-
-            EnvReader.GetStringValue("me")
-                .Should()
-                .Be("whoIam");
+                .BeFalse();
         }
     }
 }

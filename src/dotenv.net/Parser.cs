@@ -5,6 +5,9 @@ namespace dotenv.net
 {
     internal static class Parser
     {
+        private static readonly char[] SingleQuote = {'\''};
+        private static readonly char[] DoubleQuotes = {'"'};
+        
         internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> dotEnvRows,
             bool shouldTrimValue)
         {
@@ -39,25 +42,25 @@ namespace dotenv.net
             return index <= 0;
         }
 
+        private static bool IsQuoted(this ReadOnlySpan<char> row) => (row.StartsWith(SingleQuote) && row.EndsWith(SingleQuote))
+                                                                     || (row.StartsWith(DoubleQuotes) && row.EndsWith(DoubleQuotes));
+
+        private static ReadOnlySpan<char> StripQuotes(this ReadOnlySpan<char> row) => row.Trim('\'').Trim('\"');
+
         private static string Key(this ReadOnlySpan<char> row, int index)
         {
             var untrimmedKey = row.Slice(0, index);
             return untrimmedKey.Trim().ToString();
         }
 
-        private static string Value(this ReadOnlySpan<char> row, int index, bool trimValue = false)
+        private static string Value(this ReadOnlySpan<char> row, int index, bool trimValue)
         {
-            var untrimmedValue = row.Slice(index + 1);
-            var value = untrimmedValue.ToString();
-            
+            var value = row.Slice(index + 1);
+
             // handle quoted values
-            if (value.StartsWith("'") && value.EndsWith("'"))
+            if (value.IsQuoted())
             {
-                value = value.Trim('\'');
-            }
-            else if (value.StartsWith("\"") && value.EndsWith("\""))
-            {
-                value = value.Trim('\"');
+                value = value.StripQuotes();
             }
 
             // trim output if requested
@@ -66,7 +69,7 @@ namespace dotenv.net
                 value = value.Trim();
             }
 
-            return value;
+            return value.ToString();
         }
     }
 }

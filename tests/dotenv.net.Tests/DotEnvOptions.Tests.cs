@@ -8,7 +8,7 @@ namespace dotenv.net.Tests
     public class DotEnvOptionsTests
     {
         [Fact]
-        public void Constructor_ShouldInitialize_WithDefaults()
+        public void ConstructorShouldInitializeWithDefaults()
         {
             var options = new DotEnvOptions();
 
@@ -36,7 +36,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void Constructor_ShouldInitialize_WithSpecifiedValues()
+        public void ConstructorShouldInitializeWithSpecifiedValues()
         {
             var filePaths = new[] {"test.env"};
             var options = new DotEnvOptions(encoding: Encoding.UTF32, trimValues: false, probeForEnv: true,
@@ -66,7 +66,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithExceptions()
+        public void ShouldGenerateOptionsWithExceptions()
         {
             var options = new DotEnvOptions()
                 .WithExceptions();
@@ -95,7 +95,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithoutExceptions()
+        public void ShouldGenerateOptionsWithoutExceptions()
         {
             var options = new DotEnvOptions()
                 .WithoutExceptions();
@@ -124,7 +124,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithProbeForEnv()
+        public void ShouldGenerateOptionsWithProbeForEnv()
         {
             var options = new DotEnvOptions()
                 .WithProbeForEnv(7);
@@ -153,7 +153,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithoutProbeForEnv()
+        public void ShouldGenerateOptionsWithoutProbeForEnv()
         {
             var options = new DotEnvOptions()
                 .WithoutProbeForEnv();
@@ -182,7 +182,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithOverwriteExistingVars()
+        public void ShouldGenerateOptionsWithOverwriteExistingVars()
         {
             var options = new DotEnvOptions()
                 .WithOverwriteExistingVars();
@@ -211,7 +211,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithoutOverwriteExistingVars()
+        public void ShouldGenerateOptionsWithoutOverwriteExistingVars()
         {
             var options = new DotEnvOptions()
                 .WithoutOverwriteExistingVars();
@@ -240,7 +240,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithTrimValues()
+        public void ShouldGenerateOptionsWithTrimValues()
         {
             var options = new DotEnvOptions()
                 .WithTrimValues();
@@ -269,7 +269,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithoutTrimValues()
+        public void ShouldGenerateOptionsWithoutTrimValues()
         {
             var options = new DotEnvOptions()
                 .WithoutTrimValues();
@@ -298,7 +298,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithEncoding()
+        public void ShouldGenerateOptionsWithEncoding()
         {
             var options = new DotEnvOptions()
                 .WithEncoding(Encoding.Latin1);
@@ -327,7 +327,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithDefaultEncoding()
+        public void ShouldGenerateOptionsWithDefaultEncoding()
         {
             var options = new DotEnvOptions()
                 .WithDefaultEncoding();
@@ -356,7 +356,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_WithEnvFiles()
+        public void ShouldGenerateOptionsWithEnvFiles()
         {
             var envFiles = new[] {"test.env", "other.env"};
             var options = new DotEnvOptions()
@@ -386,7 +386,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_Read()
+        public void ShouldGenerateOptionsRead()
         {
             var envFiles = new[] {"quotations.env"};
             var values = new DotEnvOptions()
@@ -399,7 +399,7 @@ namespace dotenv.net.Tests
         }
 
         [Fact]
-        public void ShouldGenerateOptions_Load()
+        public void ShouldGenerateOptionsLoad()
         {
             var envFiles = new[] {"quotations.env"};
             var action = new Action(() => new DotEnvOptions()

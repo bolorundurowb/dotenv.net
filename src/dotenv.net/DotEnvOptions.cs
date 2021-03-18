@@ -6,7 +6,7 @@ namespace dotenv.net
     public class DotEnvOptions
     {
         public const string DefaultEnvFileName = ".env";
-        private const int DefaultProbeDepth = 4;
+        public const int DefaultProbeDepth = 4;
 
         /// <summary>
         /// A value to state whether to throw or swallow exceptions. The default is true. <see cref="T:dotenv.net.DotEnvOptions"/>
@@ -24,7 +24,7 @@ namespace dotenv.net
         public Encoding Encoding { get; private set; }
 
         /// <summary>
-        /// A value to state whether or not to trim whitespace from the values retrieved. The default is true. <see cref="T:dotenv.net.DotEnvOptions"/>
+        /// A value to state whether or not to trim whitespace from the values retrieved. The default is false. <see cref="T:dotenv.net.DotEnvOptions"/>
         /// </summary>
         public bool TrimValues { get; private set; }
 

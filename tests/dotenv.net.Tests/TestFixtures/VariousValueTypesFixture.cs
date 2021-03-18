@@ -6,8 +6,8 @@ namespace dotenv.net.Tests.TestFixtures
     {
         public VariousValueTypesFixture()
         {
-            DotEnv.Config()
-                .WithEnvFiles("various-value-types.env")
+            DotEnv.Fluent()
+                .WithEnvFiles("value-types.env")
                 .Load();
         }
 

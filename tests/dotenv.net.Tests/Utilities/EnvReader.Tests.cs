@@ -11,11 +11,11 @@ namespace dotenv.net.Tests.Utilities
         [Fact]
         public void ShouldReadStringValues()
         {
-            EnvReader.GetStringValue("CONNECTION")
+            EnvReader.GetStringValue("STRING")
                 .Should()
-                .Be("mysql");
+                .Be("laravel");
 
-            EnvReader.TryGetStringValue("CONNECTION", out _)
+            EnvReader.TryGetStringValue("STRING", out _)
                 .Should()
                 .BeTrue();
 
@@ -31,11 +31,11 @@ namespace dotenv.net.Tests.Utilities
         [Fact]
         public void ShouldReadIntValues()
         {
-            EnvReader.GetIntValue("PORT")
+            EnvReader.GetIntValue("INTEGER")
                 .Should()
                 .Be(3306);
 
-            EnvReader.TryGetIntValue("PORT", out _)
+            EnvReader.TryGetIntValue("INTEGER", out _)
                 .Should()
                 .BeTrue();
 
@@ -91,11 +91,11 @@ namespace dotenv.net.Tests.Utilities
         [Fact]
         public void ShouldReadBooleanValues()
         {
-            EnvReader.GetBooleanValue("IS_PRESENT")
+            EnvReader.GetBooleanValue("BOOLEAN")
                 .Should()
                 .BeTrue();
 
-            EnvReader.TryGetBooleanValue("IS_PRESENT", out _)
+            EnvReader.TryGetBooleanValue("BOOLEAN", out _)
                 .Should()
                 .BeTrue();
 
@@ -111,7 +111,7 @@ namespace dotenv.net.Tests.Utilities
         [Fact]
         public void ShouldTellIfAKeyHasAValue()
         {
-            EnvReader.HasValue("IS_PRESENT")
+            EnvReader.HasValue("BOOLEAN")
                 .Should()
                 .BeTrue();
 

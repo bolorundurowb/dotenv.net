@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace dotenv.net
 {
     public class DotEnvOptions
     {
-        public const string DefaultEnvFileName = ".env";
-        public const int DefaultProbeDepth = 4;
+        private static readonly string[] DefaultEnvPath = {DefaultEnvFileName};
+        internal const string DefaultEnvFileName = ".env";
+        internal const int DefaultProbeDepth = 4;
 
         /// <summary>
         /// A value to state whether to throw or swallow exceptions. The default is true. <see cref="T:dotenv.net.DotEnvOptions"/>
@@ -41,29 +43,29 @@ namespace dotenv.net
         /// <summary>
         /// A value to state how far up the directory structure we should search for env files. <see cref="T:dotenv.net.DotEnvOptions"/>
         /// </summary>
-        public int ProbeDirectoryDepth { get; private set; }
+        public int ProbeLevelsToSearch { get; private set; }
 
         /// <summary>
         /// Default constructor for the dot env options
         /// </summary>
-        /// <param name="ignoreExceptions">A boolean </param>
-        /// <param name="envFilePaths"></param>
-        /// <param name="encoding"></param>
-        /// <param name="trimValues"></param>
-        /// <param name="overwriteExistingVars"></param>
-        /// <param name="probeForEnv"></param>
-        /// <param name="probeDirectoryDepth"></param>
+        /// <param name="ignoreExceptions">Whether or not to ignore exceptions</param>
+        /// <param name="encoding">The encoding the env files are in</param>
+        /// <param name="trimValues">Whether or not to trim whitespace from the read values</param>
+        /// <param name="overwriteExistingVars">Whether or not to overwrite </param>
+        /// <param name="probeForEnv">Whether or not to search up the directories looking for an env file</param>
+        /// <param name="probeLevelsToSearch">How high up the directory chain to search</param>
+        /// <param name="envFilePaths">The env file paths to load</param>
         public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string> envFilePaths = null,
             Encoding encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
-            bool probeForEnv = false, int probeDirectoryDepth = DefaultProbeDepth)
+            bool probeForEnv = false, int probeLevelsToSearch = DefaultProbeDepth)
         {
             IgnoreExceptions = ignoreExceptions;
-            EnvFilePaths = envFilePaths ?? new[] {DefaultEnvFileName};
+            EnvFilePaths = envFilePaths?.Any() != true ? DefaultEnvPath : envFilePaths;
             Encoding = encoding ?? Encoding.UTF8;
             TrimValues = trimValues;
             OverwriteExistingVars = overwriteExistingVars;
             ProbeForEnv = probeForEnv;
-            ProbeDirectoryDepth = probeDirectoryDepth;
+            ProbeLevelsToSearch = probeLevelsToSearch;
         }
 
         /// <summary>
@@ -93,7 +95,7 @@ namespace dotenv.net
         public DotEnvOptions WithProbeForEnv(int probeDepth = DefaultProbeDepth)
         {
             ProbeForEnv = true;
-            ProbeDirectoryDepth = probeDepth;
+            ProbeLevelsToSearch = probeDepth;
             return this;
         }
 
@@ -104,7 +106,7 @@ namespace dotenv.net
         public DotEnvOptions WithoutProbeForEnv()
         {
             ProbeForEnv = false;
-            ProbeDirectoryDepth = DefaultProbeDepth;
+            ProbeLevelsToSearch = DefaultProbeDepth;
             return this;
         }
 
@@ -174,7 +176,7 @@ namespace dotenv.net
         /// <returns>configured dot env options</returns>
         public DotEnvOptions WithEnvFiles(params string[] envFilePaths)
         {
-            EnvFilePaths = envFilePaths?.Length == 0 ? new []{DefaultEnvFileName} : envFilePaths;
+            EnvFilePaths = envFilePaths?.Any() != true ? DefaultEnvPath : envFilePaths;
             return this;
         }
 

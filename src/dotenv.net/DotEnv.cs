@@ -26,7 +26,7 @@ namespace dotenv.net
             "This method would be removed in the next major release. Use the Fluent API, Load() or Read() methods instead.")]
         public static bool AutoConfig(int levelsToSearch = DotEnvOptions.DefaultProbeDepth)
         {
-            Helpers.ReadAndWrite(new DotEnvOptions(probeDirectoryDepth: levelsToSearch));
+            Helpers.ReadAndWrite(new DotEnvOptions(probeLevelsToSearch: levelsToSearch));
             return true;
         }
 

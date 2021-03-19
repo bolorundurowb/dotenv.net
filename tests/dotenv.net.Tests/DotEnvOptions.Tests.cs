@@ -27,7 +27,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths
@@ -40,7 +40,7 @@ namespace dotenv.net.Tests
         {
             var filePaths = new[] {"test.env"};
             var options = new DotEnvOptions(encoding: Encoding.UTF32, trimValues: false, probeForEnv: true,
-                probeDirectoryDepth: 5, overwriteExistingVars: false, ignoreExceptions: false, envFilePaths: filePaths);
+                probeLevelsToSearch: 5, overwriteExistingVars: false, ignoreExceptions: false, envFilePaths: filePaths);
 
             options.IgnoreExceptions
                 .Should()
@@ -57,7 +57,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeTrue();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(5);
             options.EnvFilePaths
@@ -86,7 +86,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths
@@ -115,7 +115,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths
@@ -144,7 +144,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeTrue();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(7);
             options.EnvFilePaths
@@ -173,7 +173,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths
@@ -202,7 +202,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths
@@ -231,7 +231,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths
@@ -260,7 +260,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths
@@ -289,7 +289,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths
@@ -318,7 +318,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths
@@ -347,7 +347,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths
@@ -377,7 +377,7 @@ namespace dotenv.net.Tests
             options.ProbeForEnv
                 .Should()
                 .BeFalse();
-            options.ProbeDirectoryDepth
+            options.ProbeLevelsToSearch
                 .Should()
                 .Be(4);
             options.EnvFilePaths

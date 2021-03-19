@@ -26,7 +26,7 @@ namespace dotenv.net
             "This method would be removed in the next major release. Use the Fluent API, Load() or Read() methods instead.")]
         public static bool AutoConfig(int levelsToSearch = DotEnvOptions.DefaultProbeDepth)
         {
-            Helpers.ReadAndWrite(new DotEnvOptions(probeDirectoryDepth: levelsToSearch));
+            Helpers.ReadAndWrite(new DotEnvOptions(probeLevelsToSearch: levelsToSearch));
             return true;
         }
 
@@ -43,18 +43,18 @@ namespace dotenv.net
         /// </summary>
         /// <param name="options">The options required to configure the env loader</param>
         /// <returns>The key value pairs read from the env files</returns>
-        public static IDictionary<string, string> Read(DotEnvOptions options)
+        public static IDictionary<string, string> Read(DotEnvOptions options = null)
         {
-            return Helpers.ReadAndReturn(options);
+            return Helpers.ReadAndReturn(options ?? new DotEnvOptions());
         }
 
         /// <summary>
         /// Load the values in the provided env files into the environment variables
         /// </summary>
         /// <param name="options">The options required to configure the env loader</param>
-        public static void Load(DotEnvOptions options)
+        public static void Load(DotEnvOptions options = null)
         {
-            Helpers.ReadAndWrite(options);
+            Helpers.ReadAndWrite(options ?? new DotEnvOptions());
         }
     }
 }

@@ -6,7 +6,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>dotenv.net</PackageId>
     <Description>A library to read variables from a .env file and populate the environment variables.</Description>
-    <PackageIconUrl>https://raw.githubusercontent.com/motdotla/dotenv/master/dotenv.png</PackageIconUrl>
+    <PackageIconUrl>https://res.cloudinary.com/dg2dgzbt4/image/upload/v1587070177/external_assets/open_source/icons/dotenv.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/bolorundurowb/dotenv.net</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/bolorundurowb/dotenv.net/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>

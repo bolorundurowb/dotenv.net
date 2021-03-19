@@ -72,12 +72,12 @@ namespace dotenv.net.Tests
         [Fact]
         public void ConfigShouldLoadDefaultEnvWithProbeOptions()
         {
-            var action = new Action(() => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeDirectoryDepth: 2, ignoreExceptions: false)));
+            var action = new Action(() => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 2, ignoreExceptions: false)));
 
             action.Should()
                 .ThrowExactly<ArgumentException>();
             
-            action = () => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeDirectoryDepth: 5, ignoreExceptions: false));
+            action = () => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 5, ignoreExceptions: false));
 
             action.Should()
                 .NotThrow();

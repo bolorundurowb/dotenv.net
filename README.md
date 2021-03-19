@@ -4,7 +4,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) 
 [![Coverage Status](https://coveralls.io/repos/github/bolorundurowb/dotenv.net/badge.svg?branch=master)](https://coveralls.io/github/bolorundurowb/dotenv.net?branch=master)
 [![NuGet Badge](https://buildstats.info/nuget/dotenv.net)](https://www.nuget.org/packages/dotenv.net)
-[![Made in Nigeria](https://img.shields.io/badge/made%20in-nigeria-008751.svg?style=flat-square)](https://github.com/acekyd/made-in-nigeria)
 
 [![project icon](https://res.cloudinary.com/dg2dgzbt4/image/upload/v1587070177/external_assets/open_source/icons/dotenv.png)]()
 
@@ -107,6 +106,37 @@ hase the added advantage of not modifying your system environment variables. The
 var envVars = DotEnv.Read();
 Console.WriteLine(envVars["KEY"]); // would print out whatever value was associated with the 'KEY'
 ```
+
+<br>
+
+### Fluent API
+
+There is a fluent API analogue to the static methods documented above and can be terminated with a `Read()` or `Load()` call to return the env value or
+write to the environment variables . 
+
+```csharp
+// to load env vars with the specified options
+DotEnv.Fluent()
+    .WithExceptions()
+    .WithEnvFiles("./path/to/env")
+    .WithTrimValues()
+    .WithEncoding()
+    .WithOverwriteExistingVars()
+    .WithProbeForEnv(probeLevelsToSearch: 6)
+    .Load();
+
+// to read the env vars with the specified options
+var envVars = DotEnv.Fluent()
+    .WithoutExceptions()
+    .WithEnvFiles() // revert to the default .env file
+    .WithoutTrimValues()
+    .WithDefaultEncoding()
+    .WithoutOverwriteExistingVars()
+    .WithoutProbeForEnv()
+    .Read();
+```
+
+<br>
 
 ### Environment Variable Helpers
 

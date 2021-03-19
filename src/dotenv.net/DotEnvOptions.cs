@@ -92,10 +92,10 @@ namespace dotenv.net
         /// Search up the directory for a .env file. By default searches up 4 directories.
         /// </summary>
         /// <returns>configured dot env options</returns>
-        public DotEnvOptions WithProbeForEnv(int probeDepth = DefaultProbeDepth)
+        public DotEnvOptions WithProbeForEnv(int probeLevelsToSearch = DefaultProbeDepth)
         {
             ProbeForEnv = true;
-            ProbeLevelsToSearch = probeDepth;
+            ProbeLevelsToSearch = probeLevelsToSearch;
             return this;
         }
 

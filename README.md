@@ -107,138 +107,35 @@ hase the added advantage of not modifying your system environment variables. The
 var envVars = DotEnv.Read();
 Console.WriteLine(envVars["KEY"]); // would print out whatever value was associated with the 'KEY'
 ```
-### Options
 
-#### AutoConfig
+### Environment Variable Helpers
 
-You can specify if you want the library to search for .env files up the directory chain
-
-```csharp
-DotEnv.AutoConfig(); //silent if no .env file found up the chain
-```
-
-#### ThrowError
-
-Default: `true`
-
-You can specify if you want the library to error out if any issue arises or fail silently.
-
-```csharp
-DotEnv.Config(false); //fails silently
-```
-
-#### Path
-
-Default: `.env`
-
-You can specify a custom path if your file containing environment variables is named or located differently.
-
-```csharp
-DotEnv.Config(true, "/custom/path/to/your/env/vars");
-```
-
-#### Encoding
-
-Default: `Encoding.UTF8`
-
-You may specify the encoding of your file containing environment variables using this option.
-
-```csharp
-DotEnv.Config(true, ".env", Encoding.Unicode);
-```
-
-#### Trim Values
-
-Default: `true`
-
-You may specify whether or not you want the values retrieved to be trimmed i.e have all leading and trailing whitepaces
-removed.
-
-```csharp
-DotEnv.Config(true, ".env", Encoding.Unicode, false);
-```
-
-## Support For `IEnvReader`
-
-With `v1.0.6` and above an interface `IEnvReader` has been introduced that specifies methods that help with reading
-typed values from the environment easily. The library has a default implementation `EnvReader`.
-
-### Using `EnvReader`
+The `Utilities` namespace provides additional classes to aid in reading environment in a typed manner as well as other sundry assistive methods.
+Ensure you have declared the necessary namespace at the head of your class file:
 
 ```csharp
 using dotenv.net.Utilities;
 ...
-
-var envReader = new EnvReader();
-var value = envReader.GetValue("KEY");
+var value = EnvReader.GetStringValue("KEY");
 ```
 
-### IEnvReader Methods
+#### EnvReader Methods
 
-#### string GetStringValue(string key)
+|  Method Name  |  Description  |  Return Type  | Default (if applicable) |
+| ------------- | ------------- | ------------- |:-----------------------:|
+| HasValue(string key)      | States whether the given key has a value set or not. | `bool` | `N/A` |
+| GetStringValue(string key)      | Retrieve a value from the current environment by the given key and throws an exception if not found. | `string` | `N/A` |
+| GetIntValue(string key)      | Retrieve a value from the current environment by the given key and throws an exception if not found. | `int` | `N/A` |
+| GetDoubleValue(string key)      | Retrieve a value from the current environment by the given key and throws an exception if not found. | `double` | `N/A` |
+| GetDecimalValue(string key)      | Retrieve a value from the current environment by the given key and throws an exception if not found. | `decimal` | `N/A` |
+| GetBooleanValue(string key)      | Retrieve a value from the current environment by the given key and throws an exception if not found. | `bool` | `N/A` |
+| TryGetStringValue(string key, out string value)      | A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required. | `bool` | `null` |
+| TryGetIntValue(string key, out int value)      | A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required. | `bool` | `0` |
+| TryGetDoubleValue(string key, out double value)     | A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required. | `bool` | `0.0` |
+| TryGetDecimalValue(string key, out decimal value)      | A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required. | `bool` | `0.0m` |
+| TryGetBooleanValue(string key, out bool value)     | A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it successfully retrieved the value required. | `bool` | `false` |
 
-Default: `null`
-
-Retrieve a value from the current environment by the given key and throws an exception if not found.
-
-#### int GetIntValue(string key)
-
-Default: `0`
-
-Retrieve a value from the current environment by the given key and throws an exception if not found.
-
-#### double GetDoubleValue(string key)
-
-Default: `0.0`
-
-Retrieve a value from the current environment by the given key and throws an exception if not found.
-
-#### decimal GetDecimalValue(string key)
-
-Default: `0.0m`
-
-Retrieve a value from the current environment by the given key and throws an exception if not found.
-
-#### bool GetBooleanValue(string key)
-
-Default: `false`
-
-Retrieve a value from the current environment by the given key and throws an exception if not found.
-
-#### bool TryGetStringValue(string key, out string value)
-
-Default: `null`
-
-A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it
-successfully retrieved the value required.
-
-#### bool TryGetIntValue(string key, out int value)
-
-Default: `0`
-
-A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it
-successfully retrieved the value required.
-
-#### bool TryGetDoubleValue(string key, out double value)
-
-Default: `0.0`
-
-A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it
-successfully retrieved the value required.
-
-#### bool TryGetDecimalValue(string key, out decimal value)
-
-Default: `0.0m`
-
-A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it
-successfully retrieved the value required.
-
-#### bool TryGetBooleanValue(string key, out bool value)
-
-Default: `false`
-
-A safer method to use when retrieving values from the environment as it returns a boolean value stating whether it
-successfully retrieved the value required.
+<br>
 
 ## Contributors
 

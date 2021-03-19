@@ -1,7 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Copyright>Copyright 2021</Copyright>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>- remove deprecated methods
+- add a new fluent API
+- add new updated static methods
+- add option to retrieve the env values as a dictionary</PackageReleaseNotes>
     <Authors>Winner-Timothy Bolorunduro</Authors>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>dotenv.net</PackageId>

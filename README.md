@@ -41,6 +41,59 @@ dotnet add package dotenv.net
 
 ## Usage
 
+Ensure you have declared the necessary namespace at the head of your class file:
+
+```csharp
+using dotenv.net;
+```
+
+**Load Env**
+
+Calling the `Load()` method with no parameters would locate and load the `.env` file in the same directory that the library is if one exists:
+
+```csharp
+DotEnv.Load();
+```
+
+If you want to be notified of exceptions that occur in the process of loading env files then you can specify that via the configuration options:
+
+```csharp
+DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false));
+```
+
+You can specify the env files to be loaded. One or more can be loaded. *The default is `.env`*:
+
+```csharp
+DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] {"./path/to/env", "./path/to/second/env"}));
+```
+
+To search up from the executing library's directory for an env file. The directories would be searched upwards i.e given a directory path `/path/to/var`,
+The `var` directory would be searched first, then the `to` directory and then the `path` directory. The options allow for probing the directories as well
+as specifying how high up to search.  *The defaults are `true` and `4 directories up`*:
+
+```csharp
+DotEnv.Load(options: new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 2)); // this would only search 2 directories up from the executing directory.
+```
+
+If the provided env files are not `UTF-8` encoded, then the encoding to use in reading the files can be specified. *The default is `UTF-8`*:
+
+```csharp
+using System.Text;
+...
+DotEnv.Load(options: new DotEnvOptions(encoding: Encoding.ASCII));
+```
+
+To trim extraneous whitespace from the values read from the file(s). *The default is `false`*:
+
+```csharp
+DotEnv.Load(options: new DotEnvOptions(trimValues: true));
+```
+
+To skip overwriting an environment variable if it is set. *The default is `true`*:
+
+```csharp
+DotEnv.Load(options: new DotEnvOptions(overwriteExistingVars: false));
+```
 ### Options
 
 #### AutoConfig

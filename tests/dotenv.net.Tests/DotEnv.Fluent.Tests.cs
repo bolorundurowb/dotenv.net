@@ -96,7 +96,7 @@ namespace dotenv.net.Tests
                 .Load());
 
             action.Should()
-                .ThrowExactly<ArgumentException>();
+                .ThrowExactly<FileNotFoundException>();
             
             action = () => DotEnv.Fluent()
                 .WithProbeForEnv(5)

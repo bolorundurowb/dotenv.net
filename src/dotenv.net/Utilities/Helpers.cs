@@ -31,6 +31,7 @@ namespace dotenv.net.Utilities
             {
                 var envRows = ReadAndParse(envFilePath, options.IgnoreExceptions, options.Encoding,
                     options.TrimValues);
+
                 foreach (var envRow in envRows)
                 {
                     if (response.ContainsKey(envRow.Key))

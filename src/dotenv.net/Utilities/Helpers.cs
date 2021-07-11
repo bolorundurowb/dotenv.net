@@ -68,6 +68,7 @@ namespace dotenv.net.Utilities
         private static string GetProbedEnvPath(int levelsToSearch, bool ignoreExceptions)
         {
             var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
+            var count = levelsToSearch;
             var foundEnvPath = SearchPaths();
 
             if (string.IsNullOrEmpty(foundEnvPath) && !ignoreExceptions)
@@ -84,8 +85,8 @@ namespace dotenv.net.Utilities
             string SearchPaths()
             {
                 for (;
-                    currentDirectory != null && levelsToSearch > 0;
-                    levelsToSearch--, currentDirectory = currentDirectory.Parent)
+                    currentDirectory != null && count > 0;
+                    count--, currentDirectory = currentDirectory.Parent)
                 {
                     foreach (var file in currentDirectory.GetFiles(DotEnvOptions.DefaultEnvFileName,
                         SearchOption.TopDirectoryOnly))

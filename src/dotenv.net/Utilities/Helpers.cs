@@ -24,7 +24,7 @@ namespace dotenv.net.Utilities
         {
             var response = new Dictionary<string, string>();
             var envFilePaths = options.ProbeForEnv
-                ? new[] {GetProbedEnvPath(options.ProbeLevelsToSearch)}
+                ? new[] {GetProbedEnvPath(options.ProbeLevelsToSearch, options.IgnoreExceptions)}
                 : options.EnvFilePaths;
 
             foreach (var envFilePath in envFilePaths)
@@ -65,22 +65,37 @@ namespace dotenv.net.Utilities
             }
         }
 
-        private static string GetProbedEnvPath(int levelsToSearch)
+        private static string GetProbedEnvPath(int levelsToSearch, bool ignoreExceptions)
         {
             var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
+            var foundEnvPath = SearchPaths();
 
-            for (;
-                currentDirectory != null && levelsToSearch > 0;
-                levelsToSearch--, currentDirectory = currentDirectory.Parent)
+            if (string.IsNullOrEmpty(foundEnvPath) && !ignoreExceptions)
             {
-                foreach (var file in currentDirectory.GetFiles(DotEnvOptions.DefaultEnvFileName,
-                    SearchOption.TopDirectoryOnly))
-                {
-                    return file.FullName;
-                }
+                throw new FileNotFoundException(
+                    $"Failed to find a file matching the '{DotEnvOptions.DefaultEnvFileName}' search pattern." +
+                    $"{Environment.NewLine}Current Directory: {currentDirectory}" +
+                    $"{Environment.NewLine}Levels Searched: {levelsToSearch}");
             }
 
-            return null;
+            return foundEnvPath;
+
+
+            string SearchPaths()
+            {
+                for (;
+                    currentDirectory != null && levelsToSearch > 0;
+                    levelsToSearch--, currentDirectory = currentDirectory.Parent)
+                {
+                    foreach (var file in currentDirectory.GetFiles(DotEnvOptions.DefaultEnvFileName,
+                        SearchOption.TopDirectoryOnly))
+                    {
+                        return file.FullName;
+                    }
+                }
+
+                return null;
+            }
         }
     }
 }

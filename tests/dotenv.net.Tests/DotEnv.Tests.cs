@@ -75,7 +75,7 @@ namespace dotenv.net.Tests
             var action = new Action(() => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 2, ignoreExceptions: false)));
 
             action.Should()
-                .ThrowExactly<ArgumentException>();
+                .ThrowExactly<FileNotFoundException>();
             
             action = () => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 5, ignoreExceptions: false));
 

@@ -20,7 +20,7 @@ mostly stayed unchanged meaning at it's heart, is still the same ol' reliable.
 
 ## Installation
 
-if you are hardcore and want to go the manual route. Then add the following to your `csproj` file:
+If you are hardcore and want to go the manual route. Then add the following to your `csproj` file:
 
 ```xml
 <PackageReference Include="dotenv.net" Version="3.0.0"/>
@@ -32,7 +32,7 @@ If you're using the Visual Studio package manager console, then run the followin
 Install-Package dotenv.net
 ```
 
-if you are making use of the dotnet CLI, then run the following in your terminal:
+If you are making use of the dotnet CLI, then run the following in your terminal:
 
 ```bash
 dotnet add package dotenv.net

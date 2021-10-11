@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Copyright>Copyright 2021</Copyright>
-    <PackageReleaseNotes>- remove deprecated methods
-- add a new fluent API
-- add new updated static methods
-- add option to retrieve the env values as a dictionary</PackageReleaseNotes>
+    <Copyright>© 2017 , Bolorunduro Winner-Timothy. All Rights reserved.</Copyright>
+    <PackageReleaseNotes>
+      - fix imports
+    </PackageReleaseNotes>
     <Authors>Winner-Timothy Bolorunduro</Authors>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>dotenv.net</PackageId>
@@ -21,7 +20,15 @@
     <AssemblyVersion>3.1.0</AssemblyVersion>
     <FileVersion>3.1.0</FileVersion>
     <NeutralLanguage>en-NG</NeutralLanguage>
-    <TargetFrameworks>net5.0;net5.0-windows;netstandard1.6;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6;netstandard2.0;netstandard2.1</TargetFrameworks>
     <Title>dotenv.net</Title>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+    <PackageReference Include="System.Memory" Version="4.5.4" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Memory" Version="4.5.4" />
+  </ItemGroup>
 </Project>

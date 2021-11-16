@@ -2,6 +2,8 @@ namespace dotenv.net.Interfaces
 {
     public interface IEnvReader
     {
+        string this[string key] { get; }
+
         string GetStringValue(string key);
 
         int GetIntValue(string key);

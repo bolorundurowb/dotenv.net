@@ -9,6 +9,14 @@ namespace dotenv.net.Utilities
         /// Retrieve a string value from the current environment
         /// </summary>
         /// <param name="key">The key to retrieve the value via</param>
+        /// <value>A string representing the value</value>
+        /// <exception cref="Exception">When the value could not be found</exception>
+        public string this[string key] => GetStringValue(key);
+
+        /// <summary>
+        /// Retrieve a string value from the current environment
+        /// </summary>
+        /// <param name="key">The key to retrieve the value via</param>
         /// <returns>A string representing the value</returns>
         /// <exception cref="Exception">When the value could not be found</exception>
         public string GetStringValue(string key)

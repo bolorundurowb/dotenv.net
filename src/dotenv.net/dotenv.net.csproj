@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Copyright>© 2017 , Bolorunduro Winner-Timothy. All Rights reserved.</Copyright>
     <PackageReleaseNotes>
-      - fix imports
+      - fix env search
     </PackageReleaseNotes>
     <Authors>Winner-Timothy Bolorunduro</Authors>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -13,12 +13,12 @@
     <PackageLicenseUrl>https://github.com/bolorundurowb/dotenv.net/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
     <LangVersion>default</LangVersion>
-    <PackageVersion>3.1.1</PackageVersion>
+    <PackageVersion>3.1.2</PackageVersion>
     <RepositoryType>git</RepositoryType>
     <PackageTags>dotnet, environment, variables, env, dotenv, net core, autofac</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>3.1.1</AssemblyVersion>
-    <FileVersion>3.1.1</FileVersion>
+    <AssemblyVersion>3.1.2</AssemblyVersion>
+    <FileVersion>3.1.2</FileVersion>
     <NeutralLanguage>en-NG</NeutralLanguage>
     <TargetFrameworks>netstandard1.6;netstandard2.0;netstandard2.1</TargetFrameworks>
     <Title>dotenv.net</Title>

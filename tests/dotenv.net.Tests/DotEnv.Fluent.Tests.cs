@@ -12,6 +12,7 @@ namespace dotenv.net.Tests
         private const string WhitespacesEnvFileName = "whitespaces.env";
         private const string NonExistentEnvFileName = "non-existent.env";
         private const string QuotationsEnvFileName = "quotations.env";
+        private const string MultiLinesEnvFileName = "multi-lines.env";
         private const string AsciiEnvFileName = "ascii.env";
         private const string GenericEnvFileName = "generic.env";
         private const string IncompleteEnvFileName = "incomplete.env";
@@ -52,7 +53,7 @@ namespace dotenv.net.Tests
             EnvReader.GetStringValue("DB_DATABASE")
                 .Should()
                 .Be("laravel");
-            
+
             DotEnv.Fluent()
                 .WithEnvFiles(WhitespacesEnvFileName)
                 .WithoutTrimValues()
@@ -67,7 +68,7 @@ namespace dotenv.net.Tests
         public void ConfigShouldLoadEnvWithExistingVarOverwriteOptions()
         {
             Environment.SetEnvironmentVariable("Generic", "Existing");
-            
+
             DotEnv.Fluent()
                 .WithEnvFiles(GenericEnvFileName)
                 .WithoutOverwriteExistingVars()
@@ -76,7 +77,7 @@ namespace dotenv.net.Tests
             EnvReader.GetStringValue("Generic")
                 .Should()
                 .Be("Existing");
-            
+
             DotEnv.Fluent()
                 .WithEnvFiles(GenericEnvFileName)
                 .WithOverwriteExistingVars()
@@ -97,7 +98,7 @@ namespace dotenv.net.Tests
 
             action.Should()
                 .ThrowExactly<FileNotFoundException>();
-            
+
             action = () => DotEnv.Fluent()
                 .WithProbeForEnv(5)
                 .WithExceptions()
@@ -125,6 +126,25 @@ namespace dotenv.net.Tests
             EnvReader.GetStringValue("SINGLE_QUOTES")
                 .Should()
                 .Be("single");
+        }
+
+        [Fact]
+        public void ConfigLoadsMultilineEnvs()
+        {
+            DotEnv.Fluent()
+                .WithEnvFiles(MultiLinesEnvFileName)
+                .WithTrimValues()
+                .Load();
+
+            EnvReader.GetStringValue("DOUBLE_QUOTE")
+                .Should()
+                .Be("double");
+            EnvReader.GetStringValue("DOUBLE_QUOTE_MULTI_LINE")
+                .Should()
+                .Be("doubler");
+            EnvReader.GetStringValue("DOUBLE_QUOTE_EVEN_MORE_LINES")
+                .Should()
+                .Be("doublest");
         }
 
         [Fact]

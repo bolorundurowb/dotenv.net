@@ -52,7 +52,7 @@ namespace dotenv.net.Tests
             EnvReader.GetStringValue("DB_DATABASE")
                 .Should()
                 .Be("laravel");
-            
+
             DotEnv.Fluent()
                 .WithEnvFiles(WhitespacesEnvFileName)
                 .WithoutTrimValues()
@@ -67,7 +67,7 @@ namespace dotenv.net.Tests
         public void ConfigShouldLoadEnvWithExistingVarOverwriteOptions()
         {
             Environment.SetEnvironmentVariable("Generic", "Existing");
-            
+
             DotEnv.Fluent()
                 .WithEnvFiles(GenericEnvFileName)
                 .WithoutOverwriteExistingVars()
@@ -76,7 +76,7 @@ namespace dotenv.net.Tests
             EnvReader.GetStringValue("Generic")
                 .Should()
                 .Be("Existing");
-            
+
             DotEnv.Fluent()
                 .WithEnvFiles(GenericEnvFileName)
                 .WithOverwriteExistingVars()
@@ -97,7 +97,7 @@ namespace dotenv.net.Tests
 
             action.Should()
                 .ThrowExactly<FileNotFoundException>();
-            
+
             action = () => DotEnv.Fluent()
                 .WithProbeForEnv(5)
                 .WithExceptions()

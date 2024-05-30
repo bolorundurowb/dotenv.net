@@ -5,9 +5,9 @@ namespace dotenv.net
 {
     internal static class Parser
     {
-        private static readonly char[] SingleQuote = {'\''};
-        private static readonly char[] DoubleQuotes = {'"'};
-        
+        private static readonly char[] SingleQuote = { '\'' };
+        private static readonly char[] DoubleQuotes = { '"' };
+
         internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> dotEnvRows,
             bool shouldTrimValue)
         {

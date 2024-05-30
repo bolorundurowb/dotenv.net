@@ -38,7 +38,7 @@ namespace dotenv.net.Tests
         [Fact]
         public void ConstructorShouldInitializeWithSpecifiedValues()
         {
-            var filePaths = new[] {"test.env"};
+            var filePaths = new[] { "test.env" };
             var options = new DotEnvOptions(encoding: Encoding.UTF32, trimValues: false, probeForEnv: true,
                 probeLevelsToSearch: 5, overwriteExistingVars: false, ignoreExceptions: false, envFilePaths: filePaths);
 
@@ -358,7 +358,7 @@ namespace dotenv.net.Tests
         [Fact]
         public void ShouldGenerateOptionsWithEnvFiles()
         {
-            var envFiles = new[] {"test.env", "other.env"};
+            var envFiles = new[] { "test.env", "other.env" };
             var options = new DotEnvOptions()
                 .WithEnvFiles(envFiles);
 
@@ -388,7 +388,7 @@ namespace dotenv.net.Tests
         [Fact]
         public void ShouldGenerateOptionsRead()
         {
-            var envFiles = new[] {"quotations.env"};
+            var envFiles = new[] { "quotations.env" };
             var values = new DotEnvOptions()
                 .WithEnvFiles(envFiles)
                 .Read();
@@ -401,7 +401,7 @@ namespace dotenv.net.Tests
         [Fact]
         public void ShouldGenerateOptionsLoad()
         {
-            var envFiles = new[] {"quotations.env"};
+            var envFiles = new[] { "quotations.env" };
             var action = new Action(() => new DotEnvOptions()
                 .WithEnvFiles(envFiles)
                 .Load());

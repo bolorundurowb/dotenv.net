@@ -19,7 +19,7 @@ namespace dotenv.net.Tests
         [Fact]
         public void ConfigShouldThrowWithNonExistentEnvAndTrackedExceptions()
         {
-            var action = new Action(() => DotEnv.Config(new DotEnvOptions(ignoreExceptions: false, envFilePaths: new [] {NonExistentEnvFileName})));
+            var action = new Action(() => DotEnv.Config(new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { NonExistentEnvFileName })));
 
             action.Should()
                 .ThrowExactly<FileNotFoundException>();
@@ -28,7 +28,7 @@ namespace dotenv.net.Tests
         [Fact]
         public void ConfigShouldLoadEnvWithProvidedEncoding()
         {
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {AsciiEnvFileName}, encoding: Encoding.ASCII));
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { AsciiEnvFileName }, encoding: Encoding.ASCII));
 
             EnvReader.GetStringValue("ENCODING")
                 .Should()
@@ -38,13 +38,13 @@ namespace dotenv.net.Tests
         [Fact]
         public void ConfigShouldLoadEnvWithTrimOptions()
         {
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {WhitespacesEnvFileName}, trimValues: true));
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { WhitespacesEnvFileName }, trimValues: true));
 
             EnvReader.GetStringValue("DB_DATABASE")
                 .Should()
                 .Be("laravel");
-            
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {WhitespacesEnvFileName}, trimValues: false));
+
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { WhitespacesEnvFileName }, trimValues: false));
 
             EnvReader.GetStringValue("DB_DATABASE")
                 .Should()
@@ -55,14 +55,14 @@ namespace dotenv.net.Tests
         public void ConfigShouldLoadEnvWithExistingVarOverwriteOptions()
         {
             Environment.SetEnvironmentVariable("Generic", "Existing");
-            
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {GenericEnvFileName}, overwriteExistingVars: false));
+
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { GenericEnvFileName }, overwriteExistingVars: false));
 
             EnvReader.GetStringValue("Generic")
                 .Should()
                 .Be("Existing");
-            
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {GenericEnvFileName}, overwriteExistingVars: true));
+
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { GenericEnvFileName }, overwriteExistingVars: true));
 
             EnvReader.GetStringValue("Generic")
                 .Should()
@@ -76,7 +76,7 @@ namespace dotenv.net.Tests
 
             action.Should()
                 .ThrowExactly<FileNotFoundException>();
-            
+
             action = () => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 5, ignoreExceptions: false));
 
             action.Should()
@@ -90,7 +90,7 @@ namespace dotenv.net.Tests
         [Fact]
         public void ConfigShouldLoadEnvWithQuotedValues()
         {
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {QuotationsEnvFileName}, trimValues: true));
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { QuotationsEnvFileName }, trimValues: true));
 
             EnvReader.GetStringValue("DOUBLE_QUOTES")
                 .Should()
@@ -103,7 +103,7 @@ namespace dotenv.net.Tests
         [Fact]
         public void ConfigShouldLoadEnvWithInvalidEnvEntries()
         {
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new [] {IncompleteEnvFileName}, trimValues: false));
+            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { IncompleteEnvFileName }, trimValues: false));
 
             EnvReader.HasValue("KeyWithNoValue")
                 .Should()
@@ -113,7 +113,7 @@ namespace dotenv.net.Tests
         [Fact]
         public void AutoConfigShouldLoadDefaultEnvWithProbeOptions()
         {
-           Action action = () => DotEnv.AutoConfig(5);
+            Action action = () => DotEnv.AutoConfig(5);
 
             action.Should()
                 .NotThrow();

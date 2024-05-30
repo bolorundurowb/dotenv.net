@@ -24,7 +24,7 @@ namespace dotenv.net.Utilities
         {
             var response = new Dictionary<string, string>();
             var envFilePaths = options.ProbeForEnv
-                ? new[] {GetProbedEnvPath(options.ProbeLevelsToSearch, options.IgnoreExceptions)}
+                ? new[] { GetProbedEnvPath(options.ProbeLevelsToSearch, options.IgnoreExceptions) }
                 : options.EnvFilePaths;
 
             foreach (var envFilePath in envFilePaths)

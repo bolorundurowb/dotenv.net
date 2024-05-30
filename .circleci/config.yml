@@ -1,4 +1,5 @@
 version: 2.1
+
 jobs:
   build:
     docker:
@@ -6,22 +7,18 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Restore Packages
-          command:
-            dotnet restore
+          name: Restore dependencies
+          command: dotnet restore
       - run:
-          name: Build Projects
-          command:
-            dotnet build
+          name: Build the project
+          command: dotnet build --configuration Release --no-restore
       - run:
-          name: Tests
-          command:
-            dotnet test tests/dotenv.net.Tests/dotenv.net.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./../../results/"
+          name: Run tests and generate coverage report
+          command: |
+            dotnet test --configuration Release --no-build --logger trx --results-directory TestResults /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/coverage.cobertura.xml
       - run:
-          name: Install Coveralls
-          command:
-            dotnet tool install coveralls.net --version 3.0.0 --tool-path tools
+          name: Install coveralls.net
+          command: dotnet tool install --global coveralls.net
       - run:
-          name: Report Coverage
-          command:
-            ./tools/csmacnz.Coveralls --opencover -i ./results/coverage.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths
+          name: Report coverage to Coveralls
+          command: coveralls.net --repoToken $COVERALLS_REPO_TOKEN --input TestResults/coverage.cobertura.xml --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths

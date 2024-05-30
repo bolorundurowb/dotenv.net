@@ -18,7 +18,9 @@ jobs:
             dotnet test --configuration Release --no-build --logger trx --results-directory TestResults /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/coverage.cobertura.xml
       - run:
           name: Install coveralls.net
-          command: dotnet tool install --global coveralls.net
+          command: |
+            export PATH="$PATH:/root/.dotnet/tools"
+            dotnet tool install --global coveralls.net
       - run:
           name: Report coverage to Coveralls
           command: coveralls.net --repoToken $COVERALLS_REPO_TOKEN --input TestResults/coverage.cobertura.xml --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths

@@ -6,7 +6,7 @@ namespace dotenv.net;
 
 public class DotEnvOptions
 {
-    private static readonly string[] DefaultEnvPath = [DefaultEnvFileName];
+    private static readonly string[] DefaultEnvPath = { DefaultEnvFileName };
     internal const string DefaultEnvFileName = ".env";
     internal const int DefaultProbeDepth = 4;
 

@@ -12,12 +12,9 @@ internal static class Helpers
     {
         var rawEnvRows = Reader.Read(envFilePath, ignoreExceptions, encoding);
 
-        if (rawEnvRows == ReadOnlySpan<string>.Empty)
-        {
-            return ReadOnlySpan<KeyValuePair<string, string>>.Empty;
-        }
-
-        return Parser.Parse(rawEnvRows, trimValues);
+        return rawEnvRows == ReadOnlySpan<string>.Empty
+            ? ReadOnlySpan<KeyValuePair<string, string>>.Empty
+            : Parser.Parse(rawEnvRows, trimValues);
     }
 
     internal static IDictionary<string, string> ReadAndReturn(DotEnvOptions options)
@@ -33,16 +30,7 @@ internal static class Helpers
                 options.TrimValues);
 
             foreach (var envRow in envRows)
-            {
-                if (response.ContainsKey(envRow.Key))
-                {
-                    response[envRow.Key] = envRow.Value;
-                }
-                else
-                {
-                    response.Add(envRow.Key, envRow.Value);
-                }
-            }
+                response[envRow.Key] = envRow.Value;
         }
 
         return response;
@@ -55,13 +43,9 @@ internal static class Helpers
         foreach (var envVar in envVars)
         {
             if (options.OverwriteExistingVars)
-            {
                 Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
-            }
             else if (!EnvReader.HasValue(envVar.Key))
-            {
                 Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
-            }
         }
     }
 
@@ -86,13 +70,13 @@ internal static class Helpers
         {
             for (;
                  currentDirectory != null && count > 0;
-                 count--, currentDirectory = currentDirectory.Parent)
+                 count--, currentDirectory = currentDirectory.Parent
+                )
             {
-                foreach (var file in currentDirectory.GetFiles(DotEnvOptions.DefaultEnvFileName,
-                             SearchOption.TopDirectoryOnly))
-                {
+                foreach (var file in currentDirectory.GetFiles(
+                             DotEnvOptions.DefaultEnvFileName, SearchOption.TopDirectoryOnly)
+                        )
                     return file.FullName;
-                }
             }
 
             return null;

@@ -14,9 +14,7 @@ internal static class Reader
         if (string.IsNullOrWhiteSpace(envFilePath))
         {
             if (ignoreExceptions)
-            {
                 return defaultResponse;
-            }
 
             throw new ArgumentException("The file path cannot be null, empty or whitespace.", nameof(envFilePath));
         }
@@ -25,9 +23,7 @@ internal static class Reader
         if (!File.Exists(envFilePath))
         {
             if (ignoreExceptions)
-            {
                 return defaultResponse;
-            }
 
             throw new FileNotFoundException($"A file with provided path \"{envFilePath}\" does not exist.");
         }

@@ -6,7 +6,7 @@ namespace dotenv.net;
 
 public class DotEnvOptions
 {
-    private static readonly string[] DefaultEnvPath = { DefaultEnvFileName };
+    private static readonly string[] DefaultEnvPath = [DefaultEnvFileName];
     internal const string DefaultEnvFileName = ".env";
     internal const int DefaultProbeDepth = 4;
 
@@ -26,12 +26,12 @@ public class DotEnvOptions
     public Encoding Encoding { get; private set; }
 
     /// <summary>
-    /// A value to state whether or not to trim whitespace from the values retrieved. The default is false. <see cref="T:dotenv.net.DotEnvOptions"/>
+    /// A value to state whether to trim whitespace from the values retrieved. The default is false. <see cref="T:dotenv.net.DotEnvOptions"/>
     /// </summary>
     public bool TrimValues { get; private set; }
 
     /// <summary>
-    /// A value to state whether or not to override the env variable if it has been set. the default is true. <see cref="T:dotenv.net.DotEnvOptions"/>
+    /// A value to state whether to override the env variable if it has been set. the default is true. <see cref="T:dotenv.net.DotEnvOptions"/>
     /// </summary>
     public bool OverwriteExistingVars { get; private set; }
 

@@ -5,8 +5,8 @@ namespace dotenv.net;
 
 internal static class Parser
 {
-    private static readonly char[] SingleQuote = { '\'' };
-    private static readonly char[] DoubleQuotes = { '"' };
+    private static readonly char[] SingleQuote = ['\''];
+    private static readonly char[] DoubleQuotes = ['"'];
 
     internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> dotEnvRows,
         bool shouldTrimValue)
@@ -42,8 +42,9 @@ internal static class Parser
         return index <= 0;
     }
 
-    private static bool IsQuoted(this ReadOnlySpan<char> row) => (row.StartsWith(SingleQuote) && row.EndsWith(SingleQuote))
-                                                                 || (row.StartsWith(DoubleQuotes) && row.EndsWith(DoubleQuotes));
+    private static bool IsQuoted(this ReadOnlySpan<char> row) =>
+        (row.StartsWith(SingleQuote) && row.EndsWith(SingleQuote))
+        || (row.StartsWith(DoubleQuotes) && row.EndsWith(DoubleQuotes));
 
     private static ReadOnlySpan<char> StripQuotes(this ReadOnlySpan<char> row) => row.Trim('\'').Trim('\"');
 
@@ -58,16 +59,12 @@ internal static class Parser
         var value = row.Slice(index + 1);
 
         // handle quoted values
-        if (value.IsQuoted())
-        {
+        if (value.IsQuoted()) 
             value = value.StripQuotes();
-        }
 
         // trim output if requested
-        if (trimValue)
-        {
+        if (trimValue) 
             value = value.Trim();
-        }
 
         return value.ToString();
     }

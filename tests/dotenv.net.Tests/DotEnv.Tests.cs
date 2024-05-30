@@ -5,122 +5,121 @@ using dotenv.net.Utilities;
 using FluentAssertions;
 using Xunit;
 
-namespace dotenv.net.Tests
+namespace dotenv.net.Tests;
+
+public class DotEnvTests
 {
-    public class DotEnvTests
+    private const string WhitespacesEnvFileName = "whitespaces.env";
+    private const string NonExistentEnvFileName = "non-existent.env";
+    private const string QuotationsEnvFileName = "quotations.env";
+    private const string AsciiEnvFileName = "ascii.env";
+    private const string GenericEnvFileName = "generic.env";
+    private const string IncompleteEnvFileName = "incomplete.env";
+
+    [Fact]
+    public void ConfigShouldThrowWithNonExistentEnvAndTrackedExceptions()
     {
-        private const string WhitespacesEnvFileName = "whitespaces.env";
-        private const string NonExistentEnvFileName = "non-existent.env";
-        private const string QuotationsEnvFileName = "quotations.env";
-        private const string AsciiEnvFileName = "ascii.env";
-        private const string GenericEnvFileName = "generic.env";
-        private const string IncompleteEnvFileName = "incomplete.env";
+        var action = new Action(() => DotEnv.Config(new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { NonExistentEnvFileName })));
 
-        [Fact]
-        public void ConfigShouldThrowWithNonExistentEnvAndTrackedExceptions()
-        {
-            var action = new Action(() => DotEnv.Config(new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { NonExistentEnvFileName })));
+        action.Should()
+            .ThrowExactly<FileNotFoundException>();
+    }
 
-            action.Should()
-                .ThrowExactly<FileNotFoundException>();
-        }
+    [Fact]
+    public void ConfigShouldLoadEnvWithProvidedEncoding()
+    {
+        DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { AsciiEnvFileName }, encoding: Encoding.ASCII));
 
-        [Fact]
-        public void ConfigShouldLoadEnvWithProvidedEncoding()
-        {
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { AsciiEnvFileName }, encoding: Encoding.ASCII));
+        EnvReader.GetStringValue("ENCODING")
+            .Should()
+            .Be("ASCII");
+    }
 
-            EnvReader.GetStringValue("ENCODING")
-                .Should()
-                .Be("ASCII");
-        }
+    [Fact]
+    public void ConfigShouldLoadEnvWithTrimOptions()
+    {
+        DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { WhitespacesEnvFileName }, trimValues: true));
 
-        [Fact]
-        public void ConfigShouldLoadEnvWithTrimOptions()
-        {
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { WhitespacesEnvFileName }, trimValues: true));
+        EnvReader.GetStringValue("DB_DATABASE")
+            .Should()
+            .Be("laravel");
 
-            EnvReader.GetStringValue("DB_DATABASE")
-                .Should()
-                .Be("laravel");
+        DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { WhitespacesEnvFileName }, trimValues: false));
 
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { WhitespacesEnvFileName }, trimValues: false));
+        EnvReader.GetStringValue("DB_DATABASE")
+            .Should()
+            .Be(" laravel  ");
+    }
 
-            EnvReader.GetStringValue("DB_DATABASE")
-                .Should()
-                .Be(" laravel  ");
-        }
+    [Fact]
+    public void ConfigShouldLoadEnvWithExistingVarOverwriteOptions()
+    {
+        Environment.SetEnvironmentVariable("Generic", "Existing");
 
-        [Fact]
-        public void ConfigShouldLoadEnvWithExistingVarOverwriteOptions()
-        {
-            Environment.SetEnvironmentVariable("Generic", "Existing");
+        DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { GenericEnvFileName }, overwriteExistingVars: false));
 
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { GenericEnvFileName }, overwriteExistingVars: false));
+        EnvReader.GetStringValue("Generic")
+            .Should()
+            .Be("Existing");
 
-            EnvReader.GetStringValue("Generic")
-                .Should()
-                .Be("Existing");
+        DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { GenericEnvFileName }, overwriteExistingVars: true));
 
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { GenericEnvFileName }, overwriteExistingVars: true));
+        EnvReader.GetStringValue("Generic")
+            .Should()
+            .Be("Value");
+    }
 
-            EnvReader.GetStringValue("Generic")
-                .Should()
-                .Be("Value");
-        }
+    [Fact]
+    public void ConfigShouldLoadDefaultEnvWithProbeOptions()
+    {
+        var action = new Action(() => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 2, ignoreExceptions: false)));
 
-        [Fact]
-        public void ConfigShouldLoadDefaultEnvWithProbeOptions()
-        {
-            var action = new Action(() => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 2, ignoreExceptions: false)));
+        action.Should()
+            .ThrowExactly<FileNotFoundException>();
 
-            action.Should()
-                .ThrowExactly<FileNotFoundException>();
+        action = () => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 5, ignoreExceptions: false));
 
-            action = () => DotEnv.Config(new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 5, ignoreExceptions: false));
+        action.Should()
+            .NotThrow();
 
-            action.Should()
-                .NotThrow();
+        EnvReader.GetStringValue("hello")
+            .Should()
+            .Be("world");
+    }
 
-            EnvReader.GetStringValue("hello")
-                .Should()
-                .Be("world");
-        }
+    [Fact]
+    public void ConfigShouldLoadEnvWithQuotedValues()
+    {
+        DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { QuotationsEnvFileName }, trimValues: true));
 
-        [Fact]
-        public void ConfigShouldLoadEnvWithQuotedValues()
-        {
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { QuotationsEnvFileName }, trimValues: true));
+        EnvReader.GetStringValue("DOUBLE_QUOTES")
+            .Should()
+            .Be("double");
+        EnvReader.GetStringValue("SINGLE_QUOTES")
+            .Should()
+            .Be("single");
+    }
 
-            EnvReader.GetStringValue("DOUBLE_QUOTES")
-                .Should()
-                .Be("double");
-            EnvReader.GetStringValue("SINGLE_QUOTES")
-                .Should()
-                .Be("single");
-        }
+    [Fact]
+    public void ConfigShouldLoadEnvWithInvalidEnvEntries()
+    {
+        DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { IncompleteEnvFileName }, trimValues: false));
 
-        [Fact]
-        public void ConfigShouldLoadEnvWithInvalidEnvEntries()
-        {
-            DotEnv.Config(new DotEnvOptions(envFilePaths: new[] { IncompleteEnvFileName }, trimValues: false));
+        EnvReader.HasValue("KeyWithNoValue")
+            .Should()
+            .BeFalse();
+    }
 
-            EnvReader.HasValue("KeyWithNoValue")
-                .Should()
-                .BeFalse();
-        }
+    [Fact]
+    public void AutoConfigShouldLoadDefaultEnvWithProbeOptions()
+    {
+        Action action = () => DotEnv.AutoConfig(5);
 
-        [Fact]
-        public void AutoConfigShouldLoadDefaultEnvWithProbeOptions()
-        {
-            Action action = () => DotEnv.AutoConfig(5);
+        action.Should()
+            .NotThrow();
 
-            action.Should()
-                .NotThrow();
-
-            EnvReader.GetStringValue("hello")
-                .Should()
-                .Be("world");
-        }
+        EnvReader.GetStringValue("hello")
+            .Should()
+            .Be("world");
     }
 }

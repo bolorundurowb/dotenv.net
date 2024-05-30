@@ -4,13 +4,13 @@ using dotenv.net.Utilities;
 using FluentAssertions;
 using Xunit;
 
-namespace dotenv.net.Tests.Utilities
+namespace dotenv.net.Tests.Utilities;
+
+public class EnvReaderTests : IClassFixture<VariousValueTypesFixture>
 {
-    public class EnvReaderTests : IClassFixture<VariousValueTypesFixture>
+    [Fact]
+    public void ShouldReadStringValues()
     {
-        [Fact]
-        public void ShouldReadStringValues()
-        {
             EnvReader.GetStringValue("STRING")
                 .Should()
                 .Be("laravel");
@@ -28,9 +28,9 @@ namespace dotenv.net.Tests.Utilities
                 .Throw<Exception>();
         }
 
-        [Fact]
-        public void ShouldReadIntValues()
-        {
+    [Fact]
+    public void ShouldReadIntValues()
+    {
             EnvReader.GetIntValue("INTEGER")
                 .Should()
                 .Be(3306);
@@ -48,9 +48,9 @@ namespace dotenv.net.Tests.Utilities
                 .Throw<Exception>();
         }
 
-        [Fact]
-        public void ShouldReadDoubleValues()
-        {
+    [Fact]
+    public void ShouldReadDoubleValues()
+    {
             EnvReader.GetDoubleValue("DOUBLE")
                 .Should()
                 .Be(2762821981981.37627828722);
@@ -68,9 +68,9 @@ namespace dotenv.net.Tests.Utilities
                 .Throw<Exception>();
         }
 
-        [Fact]
-        public void ShouldReadDecimalValues()
-        {
+    [Fact]
+    public void ShouldReadDecimalValues()
+    {
             EnvReader.GetDecimalValue("DECIMAL")
                 .Should()
                 .Be(34.56m);
@@ -88,9 +88,9 @@ namespace dotenv.net.Tests.Utilities
                 .Throw<Exception>();
         }
 
-        [Fact]
-        public void ShouldReadBooleanValues()
-        {
+    [Fact]
+    public void ShouldReadBooleanValues()
+    {
             EnvReader.GetBooleanValue("BOOLEAN")
                 .Should()
                 .BeTrue();
@@ -108,9 +108,9 @@ namespace dotenv.net.Tests.Utilities
                 .Throw<Exception>();
         }
 
-        [Fact]
-        public void ShouldTellIfAKeyHasAValue()
-        {
+    [Fact]
+    public void ShouldTellIfAKeyHasAValue()
+    {
             EnvReader.HasValue("BOOLEAN")
                 .Should()
                 .BeTrue();
@@ -119,5 +119,4 @@ namespace dotenv.net.Tests.Utilities
                 .Should()
                 .BeFalse();
         }
-    }
 }

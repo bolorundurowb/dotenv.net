@@ -3,100 +3,99 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace dotenv.net.Utilities
+namespace dotenv.net.Utilities;
+
+internal static class Helpers
 {
-    internal static class Helpers
+    private static ReadOnlySpan<KeyValuePair<string, string>> ReadAndParse(string envFilePath,
+        bool ignoreExceptions, Encoding encoding, bool trimValues)
     {
-        private static ReadOnlySpan<KeyValuePair<string, string>> ReadAndParse(string envFilePath,
-            bool ignoreExceptions, Encoding encoding, bool trimValues)
+        var rawEnvRows = Reader.Read(envFilePath, ignoreExceptions, encoding);
+
+        if (rawEnvRows == ReadOnlySpan<string>.Empty)
         {
-            var rawEnvRows = Reader.Read(envFilePath, ignoreExceptions, encoding);
-
-            if (rawEnvRows == ReadOnlySpan<string>.Empty)
-            {
-                return ReadOnlySpan<KeyValuePair<string, string>>.Empty;
-            }
-
-            return Parser.Parse(rawEnvRows, trimValues);
+            return ReadOnlySpan<KeyValuePair<string, string>>.Empty;
         }
 
-        internal static IDictionary<string, string> ReadAndReturn(DotEnvOptions options)
+        return Parser.Parse(rawEnvRows, trimValues);
+    }
+
+    internal static IDictionary<string, string> ReadAndReturn(DotEnvOptions options)
+    {
+        var response = new Dictionary<string, string>();
+        var envFilePaths = options.ProbeForEnv
+            ? new[] { GetProbedEnvPath(options.ProbeLevelsToSearch, options.IgnoreExceptions) }
+            : options.EnvFilePaths;
+
+        foreach (var envFilePath in envFilePaths)
         {
-            var response = new Dictionary<string, string>();
-            var envFilePaths = options.ProbeForEnv
-                ? new[] { GetProbedEnvPath(options.ProbeLevelsToSearch, options.IgnoreExceptions) }
-                : options.EnvFilePaths;
+            var envRows = ReadAndParse(envFilePath, options.IgnoreExceptions, options.Encoding,
+                options.TrimValues);
 
-            foreach (var envFilePath in envFilePaths)
+            foreach (var envRow in envRows)
             {
-                var envRows = ReadAndParse(envFilePath, options.IgnoreExceptions, options.Encoding,
-                    options.TrimValues);
-
-                foreach (var envRow in envRows)
+                if (response.ContainsKey(envRow.Key))
                 {
-                    if (response.ContainsKey(envRow.Key))
-                    {
-                        response[envRow.Key] = envRow.Value;
-                    }
-                    else
-                    {
-                        response.Add(envRow.Key, envRow.Value);
-                    }
+                    response[envRow.Key] = envRow.Value;
                 }
-            }
-
-            return response;
-        }
-
-        internal static void ReadAndWrite(DotEnvOptions options)
-        {
-            var envVars = ReadAndReturn(options);
-
-            foreach (var envVar in envVars)
-            {
-                if (options.OverwriteExistingVars)
+                else
                 {
-                    Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
-                }
-                else if (!EnvReader.HasValue(envVar.Key))
-                {
-                    Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
+                    response.Add(envRow.Key, envRow.Value);
                 }
             }
         }
 
-        private static string GetProbedEnvPath(int levelsToSearch, bool ignoreExceptions)
+        return response;
+    }
+
+    internal static void ReadAndWrite(DotEnvOptions options)
+    {
+        var envVars = ReadAndReturn(options);
+
+        foreach (var envVar in envVars)
         {
-            var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
-            var count = levelsToSearch;
-            var foundEnvPath = SearchPaths();
-
-            if (string.IsNullOrEmpty(foundEnvPath) && !ignoreExceptions)
+            if (options.OverwriteExistingVars)
             {
-                throw new FileNotFoundException(
-                    $"Failed to find a file matching the '{DotEnvOptions.DefaultEnvFileName}' search pattern." +
-                    $"{Environment.NewLine}Current Directory: {currentDirectory}" +
-                    $"{Environment.NewLine}Levels Searched: {levelsToSearch}");
+                Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
             }
-
-            return foundEnvPath;
-
-
-            string SearchPaths()
+            else if (!EnvReader.HasValue(envVar.Key))
             {
-                for (;
-                    currentDirectory != null && count > 0;
-                    count--, currentDirectory = currentDirectory.Parent)
+                Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
+            }
+        }
+    }
+
+    private static string GetProbedEnvPath(int levelsToSearch, bool ignoreExceptions)
+    {
+        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
+        var count = levelsToSearch;
+        var foundEnvPath = SearchPaths();
+
+        if (string.IsNullOrEmpty(foundEnvPath) && !ignoreExceptions)
+        {
+            throw new FileNotFoundException(
+                $"Failed to find a file matching the '{DotEnvOptions.DefaultEnvFileName}' search pattern." +
+                $"{Environment.NewLine}Current Directory: {currentDirectory}" +
+                $"{Environment.NewLine}Levels Searched: {levelsToSearch}");
+        }
+
+        return foundEnvPath;
+
+
+        string SearchPaths()
+        {
+            for (;
+                 currentDirectory != null && count > 0;
+                 count--, currentDirectory = currentDirectory.Parent)
+            {
+                foreach (var file in currentDirectory.GetFiles(DotEnvOptions.DefaultEnvFileName,
+                             SearchOption.TopDirectoryOnly))
                 {
-                    foreach (var file in currentDirectory.GetFiles(DotEnvOptions.DefaultEnvFileName,
-                        SearchOption.TopDirectoryOnly))
-                    {
-                        return file.FullName;
-                    }
+                    return file.FullName;
                 }
-
-                return null;
             }
+
+            return null;
         }
     }
 }

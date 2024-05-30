@@ -1,19 +1,18 @@
 ﻿using System;
 
-namespace dotenv.net.Tests.TestFixtures
+namespace dotenv.net.Tests.TestFixtures;
+
+public class VariousValueTypesFixture : IDisposable
 {
-    public class VariousValueTypesFixture : IDisposable
+    public VariousValueTypesFixture()
     {
-        public VariousValueTypesFixture()
-        {
             DotEnv.Fluent()
                 .WithEnvFiles("value-types.env")
                 .Load();
         }
 
-        public void Dispose()
-        {
+    public void Dispose()
+    {
             // do nothing
         }
-    }
 }

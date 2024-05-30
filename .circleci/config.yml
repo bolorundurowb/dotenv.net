@@ -1,29 +1,27 @@
 version: 2.1
-
 jobs:
   build:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:6.0
+      - image: mcr.microsoft.com/dotnet/sdk:5.0
     steps:
       - checkout
       - run:
-          name: Restore dependencies
-          command: dotnet restore
+          name: Restore Packages
+          command:
+            dotnet restore
       - run:
-          name: Build the project
-          command: dotnet build --configuration Release --no-restore
+          name: Build Projects
+          command:
+            dotnet build
       - run:
-          name: Run tests and generate coverage report
-          command: |
-            dotnet test --configuration Release --no-build --logger trx --results-directory TestResults /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/coverage.cobertura.xml
+          name: Tests
+          command:
+            dotnet test tests/dotenv.net.Tests/dotenv.net.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./../../results/"
       - run:
-          name: Install coveralls.net
-          command: |
-            # export PATH="$PATH:/root/.dotnet/tools"
-            # dotnet tool install --global coveralls.net
+          name: Install Coveralls
+          command:
+            dotnet tool install coveralls.net --version 3.0.0 --tool-path tools
       - run:
-          name: Report coverage to Coveralls
-          command: |
-            export PATH="$PATH:/root/.dotnet/tools"
-            dotnet tool install --global coveralls.net
-            csmacnz.Coveralls --repoToken $COVERALLS_REPO_TOKEN --input TestResults/coverage.cobertura.xml --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths
+          name: Report Coverage
+          command:
+            ./tools/csmacnz.Coveralls --opencover -i ./results/coverage.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths

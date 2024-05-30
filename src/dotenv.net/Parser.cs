@@ -1,89 +1,75 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace dotenv.net
 {
     internal static class Parser
     {
-        private const string SingleQuote = "'";
-        private const string DoubleQuotes = "\"";
-
-        internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> rawEnvRows,
-            bool trimValues)
+        private static readonly char[] SingleQuote = {'\''};
+        private static readonly char[] DoubleQuotes = {'"'};
+        
+        internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> dotEnvRows,
+            bool shouldTrimValue)
         {
-            var keyValuePairs = new List<KeyValuePair<string, string>>();
+            var validEntries = new List<KeyValuePair<string, string>>();
 
-            for (var i = 0; i < rawEnvRows.Length; i++)
+            foreach (var dotEnvRow in dotEnvRows)
             {
-                var rawEnvRow = rawEnvRows[i];
+                var row = new ReadOnlySpan<char>(dotEnvRow.TrimStart().ToCharArray());
 
-                if(rawEnvRow.StartsWith("#")) continue;
+                if (row.IsEmpty)
+                    continue;
 
-                if (rawEnvRow.Contains("=\""))
-                {
-                    var key = rawEnvRow.Substring(0, rawEnvRow.IndexOf("=\"", StringComparison.Ordinal));
-                    var valueStringBuilder = new StringBuilder();
-                    valueStringBuilder.Append(rawEnvRow.Substring(rawEnvRow.IndexOf("=\"", StringComparison.Ordinal) + 2));
+                if (row.IsComment())
+                    continue;
 
-                    while (!rawEnvRow.EndsWith("\""))
-                    {
-                        i++;
-                        if (i >= rawEnvRows.Length)
-                        {
-                            break;
-                        }
-                        rawEnvRow = rawEnvRows[i];
-                        valueStringBuilder.Append(rawEnvRow);
-                    }
-                    //Remove last "
-                    valueStringBuilder.Remove(valueStringBuilder.Length - 1, 1);
+                if (row.HasNoKey(out var index))
+                    continue;
 
-                    var value = valueStringBuilder.ToString();
-                    if (trimValues)
-                    {
-                        value = value.Trim();
-                    }
-
-                    keyValuePairs.Add(new KeyValuePair<string, string>(key, value));
-                }
-                else
-                {
-                    //Check that line is not empty
-                    var rawEnvEmpty = rawEnvRow.Trim();
-                    if(string.IsNullOrEmpty(rawEnvEmpty)) continue;
-
-                    // Regular key-value pair
-                    var keyValue = rawEnvRow.Split(new[] { '=' }, 2);
-
-                    var key = keyValue[0].Trim();
-                    var value = keyValue[1];
-
-                    if(string.IsNullOrEmpty(key)) continue;
-
-                    if (IsQuoted(value))
-                    {
-                        value = StripQuotes(value);
-                    }
-
-                    if (trimValues)
-                    {
-                        value = value.Trim();
-                    }
-
-                    keyValuePairs.Add(new KeyValuePair<string, string>(key, value));
-                }
+                var key = row.Key(index);
+                var value = row.Value(index, shouldTrimValue);
+                validEntries.Add(new KeyValuePair<string, string>(key, value));
             }
 
-            return keyValuePairs.ToArray();
+            return new ReadOnlySpan<KeyValuePair<string, string>>(validEntries.ToArray());
         }
 
-        private static bool IsQuoted(string value) => (value.StartsWith(SingleQuote) && value.EndsWith(SingleQuote))
-                                                                     || (value.StartsWith(DoubleQuotes) && value.EndsWith(DoubleQuotes));
+        private static bool IsComment(this ReadOnlySpan<char> row) => row[0] == '#';
 
-        private static string StripQuotes(string value)
+        private static bool HasNoKey(this ReadOnlySpan<char> row, out int index)
         {
-            return value.Substring(1, value.Length - 2);
+            index = row.IndexOf('=');
+            return index <= 0;
+        }
+
+        private static bool IsQuoted(this ReadOnlySpan<char> row) => (row.StartsWith(SingleQuote) && row.EndsWith(SingleQuote))
+                                                                     || (row.StartsWith(DoubleQuotes) && row.EndsWith(DoubleQuotes));
+
+        private static ReadOnlySpan<char> StripQuotes(this ReadOnlySpan<char> row) => row.Trim('\'').Trim('\"');
+
+        private static string Key(this ReadOnlySpan<char> row, int index)
+        {
+            var untrimmedKey = row.Slice(0, index);
+            return untrimmedKey.Trim().ToString();
+        }
+
+        private static string Value(this ReadOnlySpan<char> row, int index, bool trimValue)
+        {
+            var value = row.Slice(index + 1);
+
+            // handle quoted values
+            if (value.IsQuoted())
+            {
+                value = value.StripQuotes();
+            }
+
+            // trim output if requested
+            if (trimValue)
+            {
+                value = value.Trim();
+            }
+
+            return value.ToString();
         }
     }
 }

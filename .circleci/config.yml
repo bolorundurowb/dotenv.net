@@ -23,4 +23,7 @@ jobs:
             dotnet tool install --global coveralls.net
       - run:
           name: Report coverage to Coveralls
-          command: dotnet csmacnz.Coveralls --repoToken $COVERALLS_REPO_TOKEN --input TestResults/coverage.cobertura.xml --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths
+          command: |
+            export PATH="$PATH:/root/.dotnet/tools"
+            dotnet tool install --global coveralls.net
+            dotnet csmacnz.Coveralls --repoToken $COVERALLS_REPO_TOKEN --input TestResults/coverage.cobertura.xml --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor "$CIRCLE_USERNAME" --jobId $CIRCLE_BUILD_NUM --serviceName "circleci" --useRelativePaths

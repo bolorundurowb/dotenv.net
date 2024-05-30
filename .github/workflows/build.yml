@@ -1,0 +1,27 @@
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # You can adjust the runner OS if needed
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use .NET Core SDK
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '>= 8.0'  # Update this if needed for your project
+
+      - name: Restore dependencies
+        run: dotnet restore ./src/**/*.csproj
+
+      - name: Build all projects
+        run: dotnet build ./src/**/*.csproj -c Release --no-restore
+
+      - name: Run tests with code coverage
+        run: dotnet test ./src/**/*.csproj -c Release --no-restore \
+          --collect-coverage true --coverage-directory ./coverage \
+          --coverage-format lcov
+
+      - name: Upload coverage to Coveralls
+        uses: coveralls-actions/coveralls-action@v1.3.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          coveralls-file: ./coverage/coverage.info

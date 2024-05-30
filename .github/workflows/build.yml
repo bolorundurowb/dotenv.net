@@ -1,13 +1,21 @@
+name: CI - Build, Test & Coverage
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:  # Allows manual triggering
+
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest  # You can adjust the runner OS if needed
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Use .NET Core SDK
+      - name: Use .NET 8 SDK
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '>= 8.0'  # Update this if needed for your project
+          dotnet-version: 8.0
 
       - name: Restore dependencies
         run: dotnet restore ./src/**/*.csproj

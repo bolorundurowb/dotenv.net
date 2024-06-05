@@ -21,7 +21,7 @@ jobs:
         run: dotnet restore ./src/**/*.csproj
 
       - name: Build all projects
-        run: dotnet build dotenv.net.sln -c Release --no-restore
+        run: dotnet build ./src/**/*.csproj -c Release --no-restore
 
       - name: Run tests with code coverage
         run: dotnet test dotenv.net.sln -c Release --no-restore /p:CollectCoverage=true /p:CoverletOutput=./coverage/ /p:CoverletOutputFormat=lcov

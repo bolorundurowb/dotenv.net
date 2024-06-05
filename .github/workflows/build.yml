@@ -29,7 +29,6 @@ jobs:
           --coverage-format lcov
 
       - name: Upload coverage to Coveralls
-        uses: coveralls-actions/coveralls-action@v1.3.1
+        uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ github.token }}
-          coveralls-file: ./coverage/coverage.info

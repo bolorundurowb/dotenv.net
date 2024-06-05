@@ -24,12 +24,12 @@ jobs:
         run: dotnet build ./src/**/*.csproj -c Release --no-restore
 
       - name: Run tests with code coverage
-        run: dotnet test dotenv.net.sln -c Release --no-restore /p:CollectCoverage=true /p:CoverletOutput=./coverage/ /p:CoverletOutputFormat=lcov
+        run: dotnet test dotenv.net.sln -c Release --no-build /p:CollectCoverage=true /p:CoverletOutput="$GITHUB_WORKSPACE/coverage/lcov.info" /p:MergeWith="$GITHUB_WORKSPACE/coverage/lcov.info" /p:CoverletOutputFormat=lcov
       - name: List generated coverage files
-        run: ls -R ./coverage
+        run: ls -R ${{ github.workspace }}/coverage
       
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ github.token }}
-          path-to-lcov: ./coverage/coverage.info
+          path-to-lcov: ${{ github.workspace }}/coverage/lcov.info

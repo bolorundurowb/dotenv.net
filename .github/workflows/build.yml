@@ -28,7 +28,7 @@ jobs:
       - name: List generated coverage files
         run: ls /home/runner/work/dotenv.net            
       - name: List generated coverage files
-        run: ls /home/runner/work/dotenv.net/dotenv.net
+        run: ls /home/runner/work/dotenv.net/dotenv.net/tests/dotenv.net.Tests
       - name: List generated coverage files
         run: ls /home/runner/work/dotenv.net/dotenv.net/coverage
       

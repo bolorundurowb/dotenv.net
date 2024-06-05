@@ -26,7 +26,11 @@ jobs:
       - name: Run tests with code coverage
         run: dotnet test dotenv.net.sln -c Release --no-build /p:CollectCoverage=true /p:CoverletOutput="$GITHUB_WORKSPACE/coverage/lcov.info" /p:MergeWith="$GITHUB_WORKSPACE/coverage/lcov.info" /p:CoverletOutputFormat=lcov
       - name: List generated coverage files
-        run: ls -R ${{ github.workspace }}/coverage
+        run: ls /home/runner/work/dotenv.net            
+      - name: List generated coverage files
+        run: ls /home/runner/work/dotenv.net/dotenv.net
+      - name: List generated coverage files
+        run: ls /home/runner/work/dotenv.net/dotenv.net/coverage
       
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v1.1.2

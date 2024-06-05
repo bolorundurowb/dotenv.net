@@ -31,5 +31,5 @@ jobs:
       - name: Upload coverage to Coveralls
         uses: coveralls-actions/coveralls-action@v1.3.1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
           coveralls-file: ./coverage/coverage.info

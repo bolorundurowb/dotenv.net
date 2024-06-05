@@ -24,9 +24,9 @@ jobs:
         run: dotnet build ./src/**/*.csproj -c Release --no-restore
 
       - name: Run tests with code coverage
-        run: dotnet test ./tests/dotenv.net.Tests/dotenv.net.Tests.csproj -c Release --no-restore \
-          --collect-coverage true --coverage-directory ./coverage \
-          --coverage-format lcov
+        run: dotnet test ./src/**/*.csproj -c Release --no-restore \
+          /p:CollectCoverage=true /p:CoverletOutput=./coverage/ /p:CoverletOutputFormat=lcov
+
       
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v1.1.2

@@ -24,7 +24,7 @@ jobs:
         run: dotnet build ./src/**/*.csproj -c Release --no-restore
 
       - name: Run tests with code coverage
-        run: dotnet test dotenv.net.sln -c Release --no-build /p:CollectCoverage=true /p:CoverletOutput="$GITHUB_WORKSPACE/lcov.info" /p:CoverletOutputFormat=lcov
+        run: dotnet test dotenv.net.sln -c Release --no-build /p:CollectCoverage=true /p:CoverletOutput="$GITHUB_WORKSPACE/lcov.info" /p:MergeWith="$GITHUB_WORKSPACE/lcov.info" /p:CoverletOutputFormat=lcov -v diag
       - name: List generated coverage files
         run: ls $GITHUB_WORKSPACE     
       

@@ -13,9 +13,9 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Use .NET 8 SDK
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0
+          dotnet-version: 8.0.x
 
       - name: Restore dependencies
         run: dotnet restore ./src/**/*.csproj
@@ -24,12 +24,10 @@ jobs:
         run: dotnet build ./src/**/*.csproj -c Release --no-restore
 
       - name: Run tests with code coverage
-        run: dotnet test ./src/**/*.csproj -c Release --no-restore \
-          --collect-coverage true --coverage-directory ./coverage \
-          --coverage-format lcov
+        run: dotnet test dotenv.net.sln /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverage/
 
       - name: Upload coverage to Coveralls
-        uses: coveralls-actions/coveralls-action@v1.3.1
+        uses: coverallsapp/github-action@v1.1.2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          coveralls-file: ./coverage/coverage.info
+          github-token: ${{ github.token }}
+          path-to-lcov: ${{ github.workspace }}/tests/dotenv.net.Tests/coverage/coverage.info

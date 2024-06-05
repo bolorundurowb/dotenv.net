@@ -25,7 +25,7 @@ jobs:
 
       - name: Run tests with code coverage
         run: |
-          dotnet test dotenv.net.sln -c Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverage/
+          dotnet test dotenv.net.sln /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverage/
           ls ${{ github.workspace }}/tests/dotenv.net.Tests/coverage
 
       - name: Upload coverage to Coveralls

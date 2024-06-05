@@ -26,11 +26,10 @@ jobs:
       - name: Run tests with code coverage
         run: |
           dotnet test dotenv.net.sln /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverager/
-          ls .
-          ls ./tests/dotenv.net.Tests/coverager
+          ls ${{ github.workspace }}/tests/dotenv.net.Tests/coverager/coverage
 
-#      - name: Upload coverage to Coveralls
-#        uses: coverallsapp/github-action@v1.1.2
-#        with:
-#          github-token: ${{ github.token }}
-#          path-to-lcov: ${{ github.workspace }}/coverage/lcov.info
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ github.token }}
+          path-to-lcov: ${{ github.workspace }}/tests/dotenv.net.Tests/coverager/coverage.info

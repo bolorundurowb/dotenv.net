@@ -141,10 +141,10 @@ public class DotEnvFluentTests
             .Be("double");
         EnvReader.GetStringValue("DOUBLE_QUOTE_MULTI_LINE")
             .Should()
-            .Be("doubler");
+            .Be("dou\r\nbler");
         EnvReader.GetStringValue("DOUBLE_QUOTE_EVEN_MORE_LINES")
             .Should()
-            .Be("doublest");
+            .Be("dou\r\n\r\nb\r\n\r\nlest");
     }
 
     [Fact]

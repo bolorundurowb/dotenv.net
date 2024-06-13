@@ -34,6 +34,7 @@ internal static class Parser
                         break;
                     }
                     rawEnvRow = rawEnvRows[i];
+                    valueStringBuilder.AppendLine();
                     valueStringBuilder.Append(rawEnvRow);
                 }
                 //Remove last "

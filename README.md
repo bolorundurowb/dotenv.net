@@ -107,6 +107,21 @@ var envVars = DotEnv.Read();
 Console.WriteLine(envVars["KEY"]); // would print out whatever value was associated with the 'KEY'
 ```
 
+### Defining env variables
+
+Environment variables can be defined in various ways:
+
+* \# I am comment
+* hello=world
+* SINGLE_QUOTES='single'
+* DOUBLE_QUOTES="double"
+
+Any variable starting with # will be ignored by the parser. 
+
+Any variable containing no quotes or single quotes will be read as a variable.
+
+Any variable containing double quotes will be considered a multi-line variable, and can thus either be finished in the same line - or another line.
+
 <br>
 
 ### Fluent API

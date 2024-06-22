@@ -184,7 +184,7 @@ var value = EnvReader.GetStringValue("KEY");
 
 ## Contributors
 
-Big ups to those who have contributed to these libraries. :clap:
+:clap: :clap: :clap: Huge thanks to those who have contributed to these libraries.
 
 [@bolorundurowb](https://github.com/bolorundurowb) [@joliveros](https://github.com/joliveros) [@vizeke](https://github.com/vizeke)
 [@merqlove](https://github.com/merqlove) [@tracker1](https://github.com/tracker1)  [@NaturalWill](https://github.com/NaturalWill)

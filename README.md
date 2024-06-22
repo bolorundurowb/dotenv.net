@@ -1,6 +1,6 @@
 # dotenv.net
 
-[![CircleCI](https://circleci.com/gh/bolorundurowb/dotenv.net.svg?style=svg)](https://circleci.com/gh/bolorundurowb/dotenv.net)
+[![CI - Build, Test & Coverage](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build.yml/badge.svg)](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) 
 [![Coverage Status](https://coveralls.io/repos/github/bolorundurowb/dotenv.net/badge.svg?branch=master)](https://coveralls.io/github/bolorundurowb/dotenv.net?branch=master)
 [![NuGet Badge](https://buildstats.info/nuget/dotenv.net)](https://www.nuget.org/packages/dotenv.net)

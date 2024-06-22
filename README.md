@@ -189,4 +189,5 @@ Big ups to those who have contributed to these libraries. :clap:
 [@bolorundurowb](https://github.com/bolorundurowb) [@joliveros](https://github.com/joliveros) [@vizeke](https://github.com/vizeke)
 [@merqlove](https://github.com/merqlove) [@tracker1](https://github.com/tracker1)  [@NaturalWill](https://github.com/NaturalWill)
 [@texyh](https://github.com/texyh) [@jonlabelle](https://github.com/jonlabelle) [@Gounlaf](https://github.com/Gounlaf)
-[@DTTerastar](https://github.com/DTTerastar) [@Mondonno](https://github.com/Mondonno) [@caveman-d**k](https://github.com/caveman-dick)
+[@DTTerastar](https://github.com/DTTerastar) [@Mondonno](https://github.com/Mondonno) [@caveman-d**k](https://github.com/caveman-dick) 
+[@VijoPlays](https://github.com/VijoPlays)

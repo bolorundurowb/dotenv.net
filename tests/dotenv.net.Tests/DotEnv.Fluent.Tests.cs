@@ -145,6 +145,12 @@ public class DotEnvFluentTests
         EnvReader.GetStringValue("DOUBLE_QUOTE_EVEN_MORE_LINES")
             .Should()
             .Be($"dou{Environment.NewLine}{Environment.NewLine}b{Environment.NewLine}{Environment.NewLine}lest");
+        EnvReader.GetStringValue("DOUBLE_QUOTE_WHITESPACE_LINES")
+            .Should()
+            .Be($"dou{Environment.NewLine}{Environment.NewLine}b{Environment.NewLine}{Environment.NewLine}lest");
+        EnvReader.GetStringValue("DOUBLE_QUOTE_NO_CLOSE")
+            .Should()
+            .Be($"\"dou{Environment.NewLine}{Environment.NewLine}b{Environment.NewLine}{Environment.NewLine}lest the more");
     }
 
     [Fact]

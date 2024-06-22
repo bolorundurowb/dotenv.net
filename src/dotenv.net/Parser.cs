@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace dotenv.net;
 
@@ -8,6 +9,9 @@ internal static class Parser
 {
     private const string SingleQuote = "'";
     private const string DoubleQuotes = "\"";
+
+    private static readonly Regex IsQuotedLineStart = new("^[a-zA-Z0-9_ ]+=\\s*\".*$", RegexOptions.Compiled);
+    private static readonly Regex IsQuotedLineEnd = new("(?<!\\\\)\"\\s*$", RegexOptions.Compiled);
 
     internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> rawEnvRows,
         bool trimValues)
@@ -18,72 +22,84 @@ internal static class Parser
         {
             var rawEnvRow = rawEnvRows[i];
 
-            if(rawEnvRow.StartsWith("#")) continue;
+            if (string.IsNullOrWhiteSpace(rawEnvRow))
+                continue;
 
-            if (rawEnvRow.Contains("=\""))
+            if (rawEnvRow.IsComment())
+                continue;
+
+            if (!rawEnvRow.HasKey(out var equalsIndex))
+                continue;
+
+            var (key, rawValue) = rawEnvRow.SplitIntoKv(equalsIndex);
+            string value;
+
+            if (string.IsNullOrEmpty(key))
+                continue;
+
+            if (IsQuotedLineStart.IsMatch(rawEnvRow))
             {
-                var key = rawEnvRow.Substring(0, rawEnvRow.IndexOf("=\"", StringComparison.Ordinal));
-                var valueStringBuilder = new StringBuilder();
-                valueStringBuilder.Append(rawEnvRow.Substring(rawEnvRow.IndexOf("=\"", StringComparison.Ordinal) + 2));
+                var valueBuilder = new StringBuilder(rawValue);
 
-                while (!rawEnvRow.EndsWith("\""))
+                while (!IsQuotedLineEnd.IsMatch(rawEnvRow))
                 {
-                    i++;
+                    i += 1;
+
                     if (i >= rawEnvRows.Length)
-                    {
                         break;
-                    }
+
                     rawEnvRow = rawEnvRows[i];
-                    valueStringBuilder.AppendLine();
-                    valueStringBuilder.Append(rawEnvRow);
-                }
-                //Remove last "
-                valueStringBuilder.Remove(valueStringBuilder.Length - 1, 1);
-
-                var value = valueStringBuilder.ToString();
-                if (trimValues)
-                {
-                    value = value.Trim();
+                    valueBuilder.AppendLine();
+                    valueBuilder.Append(rawEnvRow);
                 }
 
-                keyValuePairs.Add(new KeyValuePair<string, string>(key, value));
+                value = valueBuilder.ToString();
             }
             else
             {
-                //Check that line is not empty
-                var rawEnvEmpty = rawEnvRow.Trim();
-                if(string.IsNullOrEmpty(rawEnvEmpty)) continue;
-
-                // Regular key-value pair
-                var keyValue = rawEnvRow.Split(['='], 2);
-
-                var key = keyValue[0].Trim();
-                var value = keyValue[1];
-
-                if(string.IsNullOrEmpty(key)) continue;
-
-                if (IsQuoted(value))
-                {
-                    value = StripQuotes(value);
-                }
-
-                if (trimValues)
-                {
-                    value = value.Trim();
-                }
-
-                keyValuePairs.Add(new KeyValuePair<string, string>(key, value));
+                value = rawValue;
             }
+
+            value = StripQuotes(value);
+
+            if (trimValues)
+                value = value.Trim();
+
+            keyValuePairs.Add(new KeyValuePair<string, string>(key, value));
         }
 
         return keyValuePairs.ToArray();
     }
 
-    private static bool IsQuoted(string value) => (value.StartsWith(SingleQuote) && value.EndsWith(SingleQuote))
-                                                                 || (value.StartsWith(DoubleQuotes) && value.EndsWith(DoubleQuotes));
+    private static bool IsComment(this string value) => value.StartsWith("#");
 
-    private static string StripQuotes(string value)
+    private static string StripQuotes(this string value)
     {
-        return value.Substring(1, value.Length - 2);
+        var trimmed = value.Trim();
+        var modified = false;
+
+        if (trimmed.Length > 1 &&
+            ((trimmed.StartsWith(DoubleQuotes) && trimmed.EndsWith(DoubleQuotes)) ||
+             (trimmed.StartsWith(SingleQuote) && trimmed.EndsWith(SingleQuote))))
+        {
+            trimmed = trimmed.Substring(1, trimmed.Length - 2);
+            modified = true;
+        }
+
+
+        return modified ? trimmed : value;
+    }
+
+    private static bool HasKey(this string value, out int index)
+    {
+        index = value.IndexOf('=');
+        return index > 0;
+    }
+
+    private static (string Key, string Value) SplitIntoKv(this string rawEnvRow, int index)
+    {
+        var key = rawEnvRow.Substring(0, index).Trim();
+        var value = rawEnvRow.Substring(index + 1);
+        return (key, value);
     }
 }

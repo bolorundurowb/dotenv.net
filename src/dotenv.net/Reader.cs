@@ -6,7 +6,7 @@ namespace dotenv.net;
 
 internal static class Reader
 {
-    internal static ReadOnlySpan<string> Read(string envFilePath, bool ignoreExceptions, Encoding encoding)
+    internal static ReadOnlySpan<string> Read(string envFilePath, bool ignoreExceptions, Encoding? encoding)
     {
         var defaultResponse = ReadOnlySpan<string>.Empty;
 

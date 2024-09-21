@@ -121,7 +121,7 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Only write an environment variable if it hasnt been et
+    /// Only write an environment variable if it hasn't been et
     /// </summary>
     /// <returns>configured dot env options</returns>
     public DotEnvOptions WithoutOverwriteExistingVars()
@@ -187,7 +187,7 @@ public class DotEnvOptions
     public IDictionary<string, string> Read() => DotEnv.Read(this);
 
     /// <summary>
-    /// Read the env files and write to the syetm environment variables
+    /// Read the env files and write to the system environment variables
     /// </summary>
     public void Load() => DotEnv.Load(this);
 }

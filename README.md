@@ -16,25 +16,25 @@ an issue.
 
 Version 3 is a huge departure from the previous system of accessing the library functionality. Deprecated methods from
 version 2.x have been removed as indicated. New functionality has been added but the reading and parsing logic has
-mostly stayed unchanged meaning at it's heart, is still the same ol' reliable.
+mostly stayed unchanged meaning at its heart, it is still the same ol' reliable.
 
 ## Installation
 
 If you are hardcore and want to go the manual route. Then add the following to your `csproj` file:
 
-```xml
+```XML
 <PackageReference Include="dotenv.net" Version="3.0.0"/>
 ```
 
 If you're using the Visual Studio package manager console, then run the following:
 
-```cmd
+```CMD
 Install-Package dotenv.net
 ```
 
 If you are making use of the dotnet CLI, then run the following in your terminal:
 
-```bash
+```BASH
 dotnet add package dotenv.net
 ```
 
@@ -61,14 +61,14 @@ DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false));
 ```
 
 You can specify the env files to be loaded. One or more can be loaded. (NOTE: the order in which the env paths are provided is crucial. If there is a duplicate
-key and value specified in an env file specified later in the list, that value would overwrite the earlier values read). *The default is `.env`*:
+key and value specified in an env file specified later in the list, that value will overwrite the earlier values read). *The default is `.env`*:
 
 ```csharp
 DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] {"./path/to/env", "./path/to/second/env"}));
 ```
 
 To search up from the executing library's directory for an env file. The directories would be searched upwards i.e given a directory path `/path/to/var`,
-The `var` directory would be searched first, then the `to` directory and then the `path` directory. The options allow for probing the directories as well
+The `var` directory would be searched first, followed by the `to` directory and then the `path` directory. The options allow for probing the directories as well
 as specifying how high up to search.  *The defaults are `false` and `4` directories up*:
 
 ```csharp
@@ -99,8 +99,8 @@ DotEnv.Load(options: new DotEnvOptions(overwriteExistingVars: false));
 
 ### Read Environment Variables
 
-The `Read()`  method returns a `IDictionary<string, string>` instance detailing the keys and associated values read from the env files provided. This
-hase the added advantage of not modifying your system environment variables. The same options as apply to the `Load()` method, apply to the `Read()` method as well.
+The `Read()`  method returns an `IDictionary<string, string>` instance detailing the keys and associated values read from the env files provided. This
+has the added advantage of not modifying your system environment variables. The same options as apply to the `Load()` method, apply to the `Read()` method as well.
 
 ```csharp
 var envVars = DotEnv.Read();
@@ -127,7 +127,7 @@ Any variable containing double quotes will be considered a multi-line variable, 
 ### Fluent API
 
 There is a fluent API analogue to the static methods documented above and can be terminated with a `Read()` or `Load()` call to return the env value or
-write to the environment variables . 
+write to the environment variables. 
 
 ```csharp
 // to load env vars with the specified options

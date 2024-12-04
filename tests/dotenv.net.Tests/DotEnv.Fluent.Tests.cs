@@ -191,7 +191,7 @@ public class DotEnvFluentTests
 
             EnvReader.GetStringValue("escaped")
                      .Should()
-                     .Be("escaped Value\"\r\nsecondLine");
+                     .Be($"escaped Value\"{Environment.NewLine}secondLine");
 
             EnvReader.GetStringValue("escape_in_the_middle")
                      .Should()

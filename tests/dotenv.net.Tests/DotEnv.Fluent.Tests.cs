@@ -16,6 +16,7 @@ public class DotEnvFluentTests
     private const string AsciiEnvFileName = "ascii.env";
     private const string GenericEnvFileName = "generic.env";
     private const string IncompleteEnvFileName = "incomplete.env";
+    private const string EscapedCharactersEnvFileName = "escape.env";
 
     [Fact]
     public void ConfigShouldThrowWithNonExistentEnvAndTrackedExceptions()
@@ -139,6 +140,9 @@ public class DotEnvFluentTests
         EnvReader.GetStringValue("DOUBLE_QUOTE")
             .Should()
             .Be("double");
+        EnvReader.GetStringValue("DOUBLE_QUOTE_EQUALS2")
+            .Should()
+            .Be("double=2");
         EnvReader.GetStringValue("DOUBLE_QUOTE_MULTI_LINE")
             .Should()
             .Be($"dou{Environment.NewLine}bler");
@@ -168,4 +172,29 @@ public class DotEnvFluentTests
             .Should()
             .BeFalse();
     }
+
+        [Fact]
+        public void ConfigLoadsEnvWithEscapedCharacters()
+        {
+            DotEnv.Fluent()
+                .WithEnvFiles(EscapedCharactersEnvFileName)
+                .WithoutTrimValues()
+                .Load();
+
+            EnvReader.GetStringValue("unescaped")
+                     .Should()
+                     .Be("unescaped Value\\");
+
+            EnvReader.GetStringValue("more_escaped")
+                     .Should()
+                     .Be("more escaped Value\\\\");
+
+            EnvReader.GetStringValue("escaped")
+                     .Should()
+                     .Be("escaped Value\"\r\nsecondLine");
+
+            EnvReader.GetStringValue("escape_in_the_middle")
+                     .Should()
+                     .Be("this time we \" escaped in the middle");
+        }
 }

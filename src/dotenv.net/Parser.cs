@@ -10,7 +10,7 @@ internal static class Parser
     private const string SingleQuote = "'";
     private const string DoubleQuotes = "\"";
 
-    private static readonly Regex IsQuotedLineStart = new("^[a-zA-Z0-9_ ]+=\\s*\".*$", RegexOptions.Compiled);
+    private static readonly Regex IsQuotedLineStart = new("^[a-zA-Z0-9_ .-]+=\\s*\".*$", RegexOptions.Compiled);
     private static readonly Regex IsQuotedLineEnd = new("(?<!\\\\)\"\\s*$", RegexOptions.Compiled);
 
     internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> rawEnvRows,

@@ -52,28 +52,24 @@ internal static class Helpers
         var foundEnvPath = SearchPaths();
 
         if (string.IsNullOrEmpty(foundEnvPath) && !ignoreExceptions)
-        {
             throw new FileNotFoundException(
                 $"Failed to find a file matching the '{DotEnvOptions.DefaultEnvFileName}' search pattern." +
                 $"{Environment.NewLine}Current Directory: {currentDirectory}" +
                 $"{Environment.NewLine}Levels Searched: {levelsToSearch}");
-        }
 
         return foundEnvPath;
 
 
-        string SearchPaths()
+        string? SearchPaths()
         {
             for (;
                  currentDirectory != null && count > 0;
                  count--, currentDirectory = currentDirectory.Parent
                 )
-            {
                 foreach (var file in currentDirectory.GetFiles(
                              DotEnvOptions.DefaultEnvFileName, SearchOption.TopDirectoryOnly)
                         )
                     return file.FullName;
-            }
 
             return null;
         }

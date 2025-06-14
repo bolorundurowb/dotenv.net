@@ -21,7 +21,7 @@ public static class DotEnv
     /// <returns>States whether the operation succeeded</returns>
     [Obsolete(
         "This method would be removed in the next major release. Use the Fluent API, Load() or Read() methods instead.")]
-    public static bool AutoConfig(int levelsToSearch = DotEnvOptions.DefaultProbeDepth)
+    public static bool AutoConfig(int levelsToSearch = DotEnvOptions.DefaultProbeAscendLimit)
     {
         Helpers.ReadAndWrite(new DotEnvOptions(probeLevelsToSearch: levelsToSearch));
         return true;

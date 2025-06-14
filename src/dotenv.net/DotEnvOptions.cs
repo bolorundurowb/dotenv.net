@@ -8,7 +8,7 @@ public class DotEnvOptions
 {
     private static readonly string[] DefaultEnvPath = [DefaultEnvFileName];
     internal const string DefaultEnvFileName = ".env";
-    internal const int DefaultProbeDepth = 4;
+    internal const int DefaultProbeAscendLimit = 4;
 
     /// <summary>
     /// A value to state whether to throw or swallow exceptions. The default is true. <see cref="T:dotenv.net.DotEnvOptions"/>
@@ -57,7 +57,7 @@ public class DotEnvOptions
     /// <param name="envFilePaths">The env file paths to load</param>
     public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string>? envFilePaths = null,
         Encoding? encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
-        bool probeForEnv = false, int probeLevelsToSearch = DefaultProbeDepth)
+        bool probeForEnv = false, int probeLevelsToSearch = DefaultProbeAscendLimit)
     {
         IgnoreExceptions = ignoreExceptions;
         EnvFilePaths = envFilePaths?.Any() != true ? DefaultEnvPath : envFilePaths;
@@ -65,7 +65,7 @@ public class DotEnvOptions
         TrimValues = trimValues;
         OverwriteExistingVars = overwriteExistingVars;
         ProbeForEnv = probeForEnv;
-        ProbeLevelsToSearch = probeLevelsToSearch;
+        ProbeLevelsToSearch = probeLevelsToSearch < 0 ? DefaultProbeAscendLimit : probeLevelsToSearch;
     }
 
     /// <summary>
@@ -89,24 +89,24 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Search up the directory for a .env file. By default searches up 4 directories.
+    /// Search up the directory for a .env file. Searches up 4 directory levels by default.
     /// </summary>
     /// <returns>configured dot env options</returns>
-    public DotEnvOptions WithProbeForEnv(int probeLevelsToSearch = DefaultProbeDepth)
+    public DotEnvOptions WithProbeForEnv(int probeLevelsToSearch = DefaultProbeAscendLimit)
     {
         ProbeForEnv = true;
-        ProbeLevelsToSearch = probeLevelsToSearch;
+        ProbeLevelsToSearch = probeLevelsToSearch < 0 ? DefaultProbeAscendLimit :  probeLevelsToSearch;
         return this;
     }
 
     /// <summary>
-    /// Rely on the provided env files. By default is false.
+    /// Rely on the provided env files. Defaults to false.
     /// </summary>
     /// <returns>configured dot env options</returns>
     public DotEnvOptions WithoutProbeForEnv()
     {
         ProbeForEnv = false;
-        ProbeLevelsToSearch = DefaultProbeDepth;
+        ProbeLevelsToSearch = DefaultProbeAscendLimit;
         return this;
     }
 

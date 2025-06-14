@@ -21,7 +21,7 @@ internal static class Helpers
     {
         var response = new Dictionary<string, string>();
         var envFilePaths = options.ProbeForEnv
-            ? new[] { GetProbedEnvPath(options.ProbeLevelsToSearch, options.IgnoreExceptions) }
+            ? [GetProbedEnvPath(options.ProbeLevelsToSearch, options.IgnoreExceptions)]
             : options.EnvFilePaths;
 
         foreach (var envFilePath in envFilePaths)
@@ -41,12 +41,8 @@ internal static class Helpers
         var envVars = ReadAndReturn(options);
 
         foreach (var envVar in envVars)
-        {
-            if (options.OverwriteExistingVars)
+            if (options.OverwriteExistingVars || !EnvReader.HasValue(envVar.Key))
                 Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
-            else if (!EnvReader.HasValue(envVar.Key))
-                Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
-        }
     }
 
     private static string GetProbedEnvPath(int levelsToSearch, bool ignoreExceptions)

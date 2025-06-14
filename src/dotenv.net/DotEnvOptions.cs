@@ -6,7 +6,7 @@ namespace dotenv.net;
 
 public class DotEnvOptions
 {
-    private static readonly string[] DefaultEnvPath = { DefaultEnvFileName };
+    private static readonly string[] DefaultEnvPath = [DefaultEnvFileName];
     internal const string DefaultEnvFileName = ".env";
     internal const int DefaultProbeDepth = 4;
 
@@ -48,15 +48,15 @@ public class DotEnvOptions
     /// <summary>
     /// Default constructor for the dot env options
     /// </summary>
-    /// <param name="ignoreExceptions">Whether or not to ignore exceptions</param>
+    /// <param name="ignoreExceptions">Whether to ignore exceptions</param>
     /// <param name="encoding">The encoding the env files are in</param>
-    /// <param name="trimValues">Whether or not to trim whitespace from the read values</param>
-    /// <param name="overwriteExistingVars">Whether or not to overwrite </param>
-    /// <param name="probeForEnv">Whether or not to search up the directories looking for an env file</param>
+    /// <param name="trimValues">Whether to trim whitespace from the read values</param>
+    /// <param name="overwriteExistingVars">Whether to overwrite </param>
+    /// <param name="probeForEnv">Whether to search up the directories looking for an env file</param>
     /// <param name="probeLevelsToSearch">How high up the directory chain to search</param>
     /// <param name="envFilePaths">The env file paths to load</param>
-    public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string> envFilePaths = null,
-        Encoding encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
+    public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string>? envFilePaths = null,
+        Encoding? encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
         bool probeForEnv = false, int probeLevelsToSearch = DefaultProbeDepth)
     {
         IgnoreExceptions = ignoreExceptions;

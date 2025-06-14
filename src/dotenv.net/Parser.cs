@@ -11,9 +11,6 @@ internal static class Parser
     private const char DoubleQuotes = '"';
     private const char BackSlash = '\\';
 
-    private static readonly Regex IsQuotedLineStart = new("^[a-zA-Z0-9_ .-]+=\\s*\".*$", RegexOptions.Compiled);
-    private static readonly Regex IsQuotedLineEnd = new("(?<!\\\\)\"\\s*$", RegexOptions.Compiled);
-
     internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> rawEnvRows,
         bool trimValues)
     {
@@ -67,10 +64,10 @@ internal static class Parser
                                 valueBuilder.RemoveLast();
                                 valueBuilder.Append(currentChar);
                             }
-                             else if (j == 0)
-                             {
-                                 // ignore
-                             }
+                            else if (j == 0)
+                            {
+                                // do nothing, this is the first character and we are still inside the quotes
+                            }
                             else if (j != valueToUse.Length - 1)
                             {
                                 throw new InvalidOperationException(
@@ -93,9 +90,10 @@ internal static class Parser
                     {
                         i += 1;
 
-                        if (i >= rawEnvRows.Length) 
-                            throw new ArgumentException($"Unable to parse environment variable: {key}. Missing closing quote.");
-                        
+                        if (i >= rawEnvRows.Length)
+                            throw new ArgumentException(
+                                $"Unable to parse environment variable: {key}. Missing closing quote.");
+
                         valueToUse = rawEnvRows[i];
                         valueBuilder.AppendLine();
                     }
@@ -105,34 +103,6 @@ internal static class Parser
             {
                 value = rawValue;
             }
-            
-            
-
-            // string value;
-            // if (IsQuotedLineStart.IsMatch(rawEnvRow))
-            // {
-            //     var valueBuilder = new StringBuilder(rawValue);
-            //
-            //     while (!IsQuotedLineEnd.IsMatch(rawEnvRow))
-            //     {
-            //         i += 1;
-            //
-            //         if (i >= rawEnvRows.Length)
-            //             break;
-            //
-            //         rawEnvRow = rawEnvRows[i];
-            //         valueBuilder.AppendLine();
-            //         valueBuilder.Append(rawEnvRow);
-            //     }
-            //
-            //     value = valueBuilder.ToString();
-            // }
-            // else
-            // {
-            //     value = rawValue;
-            // }
-
-            // value = StripQuotes(value);
 
             if (trimValues)
                 value = value.Trim();
@@ -144,23 +114,6 @@ internal static class Parser
     }
 
     private static bool IsComment(this string value) => value.StartsWith("#");
-
-    // private static string StripQuotes(this string value)
-    // {
-    //     var trimmed = value.Trim();
-    //     var modified = false;
-    //
-    //     if (trimmed.Length > 1 &&
-    //         ((trimmed.StartsWith(DoubleQuotes) && trimmed.EndsWith(DoubleQuotes)) ||
-    //          (trimmed.StartsWith(SingleQuote) && trimmed.EndsWith(SingleQuote))))
-    //     {
-    //         trimmed = trimmed.Substring(1, trimmed.Length - 2);
-    //         modified = true;
-    //     }
-    //
-    //
-    //     return modified ? trimmed : value;
-    // }
 
     private static bool HasKey(this string value, out int index)
     {
@@ -174,9 +127,10 @@ internal static class Parser
         var value = rawEnvRow.Substring(index + 1);
         return (key, value);
     }
-    
-    private static bool StartsWith(this string input, char character) => !string.IsNullOrEmpty(input) && input[0] == character;
-    
+
+    private static bool StartsWith(this string input, char character) =>
+        !string.IsNullOrEmpty(input) && input[0] == character;
+
     private static void RemoveLast(this StringBuilder sb) => sb.Remove(sb.Length - 1, 1);
 
     private static char? GetCharAtIndexFromEnd(this StringBuilder sb, int indexFromEnd)

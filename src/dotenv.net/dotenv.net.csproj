@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Copyright>©2017-2024 , Bolorunduro Winner-Timothy. All Rights reserved.</Copyright>
-    <PackageReleaseNotes>- add multiline env var support</PackageReleaseNotes>
+    <Copyright>©2017-2025 , Bolorunduro Winner-Timothy. All Rights reserved.</Copyright>
+    <PackageReleaseNotes>- support quotation escape support</PackageReleaseNotes>
     <Authors>Winner-Timothy Bolorunduro</Authors>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>dotenv.net</PackageId>
@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
     <LangVersion>default</LangVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>3.2.1</PackageVersion>
+    <PackageVersion>4.0.0</PackageVersion>
     <RepositoryType>git</RepositoryType>
     <PackageTags>dotnet, environment, variables, env, dotenv, net core, autofac</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

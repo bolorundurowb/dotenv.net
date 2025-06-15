@@ -26,6 +26,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <None Update="appsettings-oidc-config.env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ascii.env">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

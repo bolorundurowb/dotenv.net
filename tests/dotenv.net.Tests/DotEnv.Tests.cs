@@ -122,4 +122,62 @@ public class DotEnvTests
             .Should()
             .Be("world");
     }
+
+    [Fact]
+    public void Should_Parse_Key_With_Colon_Correctly_Using_Read()
+    {
+        // Arrange
+        var envFiles = new[] { "appsettings-oidc-config.env" };
+
+        // Act
+        var result = new DotEnvOptions()
+             .WithEnvFiles(envFiles)
+            .Read();
+
+        // Assert
+        result.ContainsKey("OidcAuthentication:ClientId")
+            .Should()
+            .BeTrue();
+
+        result["OidcAuthentication:ClientId"]
+            .Should()
+            .Be("your-client-id");
+
+        result.ContainsKey("OidcAuthentication:ClientSecret")
+            .Should()
+            .BeTrue();
+
+        result["OidcAuthentication:ClientSecret"]
+            .Should()
+            .Be("your-client-secret");
+    }
+
+    [Fact]
+    public void Should_Parse_Key_With_Colon_Correctly_And_Load_To_Environment() // this is failing because colones are not supported in environment variable names on Windows. TODO: Evaluate to add a extension or Helper to enable dotenv usage in hostbuilder IConfigurationBuilder?
+    {
+        // Arrange
+        var envFiles = new[] { "appsettings-oidc-config.env" };
+
+        // Act
+        new DotEnvOptions()
+            .WithEnvFiles(envFiles) 
+            .WithProbeForEnv()
+            .WithExceptions()
+            .Load();
+
+        // Assert
+        EnvReader.TryGetStringValue("OidcAuthentication:ClientId", out var value)
+            .Should()
+            .BeTrue();
+
+        value.Should()
+            .Be("your-client-id");
+
+        EnvReader.TryGetStringValue("OidcAuthentication:ClientSecret", out value)
+            .Should()
+            .BeTrue();
+
+        value.Should()
+            .Be("your-client-secret");
+    }
 }

@@ -13,7 +13,7 @@ public class ReaderTests
     [InlineData("   ")]
     public void Read_WhenFilePathIsNullOrWhiteSpaceAndNotIgnoringExceptions_ThrowsArgumentException(string filePath)
     {
-        Action act = () => Reader.Read(filePath, ignoreExceptions: false, encoding: null);
+        Action act = () => Reader.ReadFileLines(filePath, ignoreExceptions: false, encoding: null);
 
         act.Should().Throw<ArgumentException>()
             .WithMessage("The file path cannot be null, empty or whitespace. (Parameter 'envFilePath')")
@@ -26,7 +26,7 @@ public class ReaderTests
     [InlineData("   ")]
     public void Read_WhenFilePathIsNullOrWhiteSpaceAndIgnoringExceptions_ReturnsEmptySpan(string filePath)
     {
-        var result = Reader.Read(filePath, ignoreExceptions: true, encoding: null);
+        var result = Reader.ReadFileLines(filePath, ignoreExceptions: true, encoding: null);
 
         result.IsEmpty.Should().BeTrue();
     }
@@ -35,7 +35,7 @@ public class ReaderTests
     public void Read_WhenFileDoesNotExistAndNotIgnoringExceptions_ThrowsFileNotFoundException()
     {
         const string nonExistentPath = "nonexistent.env";
-        Action act = () => Reader.Read(nonExistentPath, ignoreExceptions: false, encoding: null);
+        Action act = () => Reader.ReadFileLines(nonExistentPath, ignoreExceptions: false, encoding: null);
 
         act.Should().Throw<FileNotFoundException>()
             .WithMessage($"A file with provided path \"{nonExistentPath}\" does not exist.");
@@ -45,7 +45,7 @@ public class ReaderTests
     public void Read_WhenFileDoesNotExistAndIgnoringExceptions_ReturnsEmptySpan()
     {
         const string nonExistentPath = "nonexistent.env";
-        var result = Reader.Read(nonExistentPath, ignoreExceptions: true, encoding: null);
+        var result = Reader.ReadFileLines(nonExistentPath, ignoreExceptions: true, encoding: null);
 
         result.IsEmpty.Should().BeTrue();
     }

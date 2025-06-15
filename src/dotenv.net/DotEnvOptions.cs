@@ -31,7 +31,8 @@ public class DotEnvOptions
     public bool TrimValues { get; private set; }
 
     /// <summary>
-    /// A value to state whether to override the env variable if it has been set. the default is true. <see cref="T:dotenv.net.DotEnvOptions"/>
+    /// Whether to overwrite existing environment variables. Also applies to multiple env files; if false and other env
+    /// files have the same key, the values are ignored. Defaults to true. <see cref="T:dotenv.net.DotEnvOptions"/>
     /// </summary>
     public bool OverwriteExistingVars { get; private set; }
 
@@ -187,7 +188,7 @@ public class DotEnvOptions
     public IDictionary<string, string> Read() => DotEnv.Read(this);
 
     /// <summary>
-    /// Read the env files and write to the system environment variables
+    /// ReadFileLines the env files and write to the system environment variables
     /// </summary>
     public void Load() => DotEnv.Load(this);
 }

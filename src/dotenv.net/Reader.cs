@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using dotenv.net.Utilities;
 
 namespace dotenv.net;
 
 internal static class Reader
 {
-    internal static ReadOnlySpan<string> Read(string envFilePath, bool ignoreExceptions, Encoding? encoding)
+    internal static ReadOnlySpan<string> ReadFileLines(string envFilePath, bool ignoreExceptions, Encoding? encoding)
     {
         var defaultResponse = ReadOnlySpan<string>.Empty;
 
@@ -37,45 +36,27 @@ internal static class Reader
         return new ReadOnlySpan<string>(File.ReadAllLines(envFilePath, encoding));
     }
 
-    private static ReadOnlySpan<KeyValuePair<string, string>> ReadAndParse(string envFilePath,
-        bool ignoreExceptions, Encoding encoding, bool trimValues)
-    {
-        var rawEnvRows = Read(envFilePath, ignoreExceptions, encoding);
+    internal static ReadOnlySpan<KeyValuePair<string, string>> ExtractEnvKeyValues(ReadOnlySpan<string> rawEnvRows,
+        bool trimValues) => rawEnvRows == ReadOnlySpan<string>.Empty
+        ? ReadOnlySpan<KeyValuePair<string, string>>.Empty
+        : Parser.Parse(rawEnvRows, trimValues);
 
-        return rawEnvRows == ReadOnlySpan<string>.Empty
-            ? ReadOnlySpan<KeyValuePair<string, string>>.Empty
-            : Parser.Parse(rawEnvRows, trimValues);
-    }
-
-    internal static IDictionary<string, string> ReadAndReturn(DotEnvOptions options)
+    internal static Dictionary<string, string> MergeEnvKeyValues(
+        IEnumerable<KeyValuePair<string, string>[]> envFileKeyValues, bool overwriteExistingVars)
     {
         var response = new Dictionary<string, string>();
-        var envFilePaths = options.ProbeForEnv
-            ? [GetProbedEnvPath(options.ProbeLevelsToSearch, options.IgnoreExceptions)]
-            : options.EnvFilePaths;
 
-        foreach (var envFilePath in envFilePaths)
-        {
-            var envRows = ReadAndParse(envFilePath, options.IgnoreExceptions, options.Encoding,
-                options.TrimValues);
-
-            foreach (var envRow in envRows)
-                response[envRow.Key] = envRow.Value;
-        }
+        foreach (var envFileKeyValue in envFileKeyValues)
+        foreach (var envKeyValue in envFileKeyValue)
+            // if the key does not exist or if a previous env file has the same key, and we are allowed to overwrite it
+            if (!response.ContainsKey(envKeyValue.Key) ||
+                (response.ContainsKey(envKeyValue.Key) && overwriteExistingVars))
+                response[envKeyValue.Key] = envKeyValue.Value;
 
         return response;
     }
 
-    internal static void ReadAndWrite(DotEnvOptions options)
-    {
-        var envVars = ReadAndReturn(options);
-
-        foreach (var envVar in envVars)
-            if (options.OverwriteExistingVars || !EnvReader.HasValue(envVar.Key))
-                Environment.SetEnvironmentVariable(envVar.Key, envVar.Value);
-    }
-
-    private static string GetProbedEnvPath(int levelsToSearch, bool ignoreExceptions)
+    internal static string GetProbedEnvPath(int levelsToSearch, bool ignoreExceptions)
     {
         var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
         var count = levelsToSearch;

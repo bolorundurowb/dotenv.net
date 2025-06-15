@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using dotenv.net.Utilities;
 
 namespace dotenv.net;
 
@@ -16,11 +15,11 @@ public static class DotEnv
     /// <param name="options">The options required to configure the env loader</param>
     /// <returns>The key value pairs read from the env files</returns>
     public static IDictionary<string, string> Read(DotEnvOptions? options = null) =>
-        Helpers.ReadAndReturn(options ?? new DotEnvOptions());
+        Reader.ReadAndReturn(options ?? new DotEnvOptions());
 
     /// <summary>
     /// Load the values in the provided env files into the environment variables
     /// </summary>
     /// <param name="options">The options required to configure the env loader</param>
-    public static void Load(DotEnvOptions? options = null) => Helpers.ReadAndWrite(options ?? new DotEnvOptions());
+    public static void Load(DotEnvOptions? options = null) => Reader.ReadAndWrite(options ?? new DotEnvOptions());
 }

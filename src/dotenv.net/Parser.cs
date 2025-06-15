@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace dotenv.net;
 
@@ -34,75 +33,13 @@ internal static class Parser
             if (string.IsNullOrEmpty(key))
                 continue;
 
-            string value = string.Empty;
             var trimmedRawValue = rawValue.TrimStart();
             var isSingleQuoted = trimmedRawValue.StartsWith(SingleQuote);
             var isDoubleQuoted = trimmedRawValue.StartsWith(DoubleQuotes);
 
-            if (isSingleQuoted || isDoubleQuoted)
-            {
-                var valueBuilder = new StringBuilder();
-                var quoteEnded = false;
-                var valueToUse = trimmedRawValue;
-
-                while (!quoteEnded)
-                {
-                    for (var j = 0; j < valueToUse.Length; j++)
-                    {
-                        var currentChar = valueToUse[j];
-
-                        if (isSingleQuoted && currentChar == SingleQuote ||
-                            isDoubleQuoted && currentChar == DoubleQuotes)
-                        {
-                            // we check to see if the previous character was a backslash and the character before that was not a backslash
-                            var previousChar = valueBuilder.GetCharAtIndexFromEnd(0);
-                            var twoCharsBack = valueBuilder.GetCharAtIndexFromEnd(1);
-
-                            if (previousChar is BackSlash && twoCharsBack is not BackSlash)
-                            {
-                                // remove the most recent backslash and append the current character
-                                valueBuilder.RemoveLast();
-                                valueBuilder.Append(currentChar);
-                            }
-                            else if (j == 0)
-                            {
-                                // do nothing, this is the first character and we are still inside the quotes
-                            }
-                            else if (j != valueToUse.Length - 1)
-                            {
-                                throw new InvalidOperationException(
-                                    $"Unable to parse environment variable: {key}. Unexpected closing quote before row end.");
-                            }
-                            else
-                            {
-                                quoteEnded = true;
-                                value = valueBuilder.ToString();
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            valueBuilder.Append(currentChar);
-                        }
-                    }
-
-                    if (!quoteEnded)
-                    {
-                        i += 1;
-
-                        if (i >= rawEnvRows.Length)
-                            throw new ArgumentException(
-                                $"Unable to parse environment variable: {key}. Missing closing quote.");
-
-                        valueToUse = rawEnvRows[i];
-                        valueBuilder.AppendLine();
-                    }
-                }
-            }
-            else
-            {
-                value = rawValue;
-            }
+            var value = isSingleQuoted || isDoubleQuoted
+                ? ParseQuotedValue(key, rawEnvRows, trimmedRawValue, ref i)
+                : rawValue;
 
             if (trimValues)
                 value = value.Trim();
@@ -111,6 +48,67 @@ internal static class Parser
         }
 
         return keyValuePairs.ToArray();
+    }
+
+    private static string ParseQuotedValue(string key, ReadOnlySpan<string> rawEnvRows, string currentRowValue,
+        ref int i)
+    {
+        var quoteChar = currentRowValue[0];
+        var valueBuilder = new StringBuilder();
+        var currentLineContent = currentRowValue.Substring(1); // Start after the opening quote.
+
+        while (true)
+        {
+            var endQuoteIndex = -1;
+            var searchFrom = 0;
+
+            // find the next unescaped quote on the current line.
+            while (searchFrom < currentLineContent.Length)
+            {
+                var nextQuote = currentLineContent.IndexOf(quoteChar, searchFrom);
+
+                // no more quotes on this line
+                if (nextQuote == -1)
+                    break;
+
+                // count preceding backslashes to see if the quote is escaped.
+                var backslashCount = 0;
+                for (var j = nextQuote - 1; j >= 0 && currentLineContent[j] == BackSlash; j--)
+                    backslashCount++;
+
+                // an even number of backslashes means the quote is NOT escaped.
+                if (backslashCount % 2 == 0)
+                {
+                    endQuoteIndex = nextQuote;
+                    break;
+                }
+
+                // odd number of backslashes means it's escaped, continue searching
+                searchFrom = nextQuote + 1;
+            }
+
+            if (endQuoteIndex != -1)
+            {
+                // closing quote found. Append the content before it and exit
+                valueBuilder.Append(currentLineContent, 0, endQuoteIndex);
+                break;
+            }
+
+            // no closing quote on this line, append the whole line and move to the next
+            valueBuilder.Append(currentLineContent);
+            i++;
+
+            if (i >= rawEnvRows.Length)
+                throw new ArgumentException(
+                    $"Unable to parse environment variable: {key}. Missing closing quote.");
+
+            valueBuilder.AppendLine();
+            currentLineContent = rawEnvRows[i];
+        }
+
+        return valueBuilder.ToString()
+            .UnescapeQuotes(quoteChar)
+            .UnescapeBackslashes();
     }
 
     private static bool IsComment(this string value) => value.StartsWith("#");
@@ -131,13 +129,8 @@ internal static class Parser
     private static bool StartsWith(this string input, char character) =>
         !string.IsNullOrEmpty(input) && input[0] == character;
 
-    private static void RemoveLast(this StringBuilder sb) => sb.Remove(sb.Length - 1, 1);
+    private static string UnescapeQuotes(this string input, char quoteChar) =>
+        input.Replace($"\\{quoteChar}", quoteChar.ToString());
 
-    private static char? GetCharAtIndexFromEnd(this StringBuilder sb, int indexFromEnd)
-    {
-        if (sb.Length < indexFromEnd + 1)
-            return null;
-
-        return sb[sb.Length - indexFromEnd - 1];
-    }
+    private static string UnescapeBackslashes(this string input) => input.Replace("\\\\", "\\");
 }

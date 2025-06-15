@@ -153,7 +153,7 @@ public class EnvReaderTests
         result.Should().BeFalse();
     }
 
-    private void SetTestVariable(string value) => Environment.SetEnvironmentVariable(TestKey, value);
+    private static void SetTestVariable(string value) => Environment.SetEnvironmentVariable(TestKey, value);
 
-    private void ClearTestVariable() => Environment.SetEnvironmentVariable(TestKey, null);
+    private static void ClearTestVariable() => Environment.SetEnvironmentVariable(TestKey, null);
 }

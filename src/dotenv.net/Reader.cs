@@ -40,7 +40,7 @@ internal static class Reader
     private static ReadOnlySpan<KeyValuePair<string, string>> ReadAndParse(string envFilePath,
         bool ignoreExceptions, Encoding encoding, bool trimValues)
     {
-        var rawEnvRows = Reader.Read(envFilePath, ignoreExceptions, encoding);
+        var rawEnvRows = Read(envFilePath, ignoreExceptions, encoding);
 
         return rawEnvRows == ReadOnlySpan<string>.Empty
             ? ReadOnlySpan<KeyValuePair<string, string>>.Empty

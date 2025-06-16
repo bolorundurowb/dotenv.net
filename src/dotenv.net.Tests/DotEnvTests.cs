@@ -20,6 +20,6 @@ public class DotEnvTests
         values.Should().ContainKey("DOTTED.KEY").WhoseValue.Should().Be("spaced value");
         values.Should().ContainKey("KeyWithNoValue").WhoseValue.Should().BeEmpty();
         values.Should().ContainKey("DOUBLE_QUOTE_EVEN_MORE_LINES").WhoseValue.Should().Be(
-            $"this{Environment.NewLine}is{Environment.NewLine}a{Environment.NewLine}multi-line{Environment.NewLine}  value");
+            $"""this{Environment.NewLine}is{Environment.NewLine}"a{Environment.NewLine}multi-line{Environment.NewLine}  value""");
     }
 }

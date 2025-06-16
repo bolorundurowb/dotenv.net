@@ -1,17 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace dotenv.net;
 
 internal static class Parser
 {
-    private const string SingleQuote = "'";
-    private const string DoubleQuotes = "\"";
-
-    private static readonly Regex IsQuotedLineStart = new("^[a-zA-Z0-9_ .-]+=\\s*\".*$", RegexOptions.Compiled);
-    private static readonly Regex IsQuotedLineEnd = new("(?<!\\\\)\"\\s*$", RegexOptions.Compiled);
+    private const char SingleQuote = '\'';
+    private const char DoubleQuotes = '"';
+    private const char BackSlash = '\\';
 
     internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> rawEnvRows,
         bool trimValues)
@@ -32,35 +29,17 @@ internal static class Parser
                 continue;
 
             var (key, rawValue) = rawEnvRow.SplitIntoKv(equalsIndex);
-            string value;
 
             if (string.IsNullOrEmpty(key))
                 continue;
 
-            if (IsQuotedLineStart.IsMatch(rawEnvRow))
-            {
-                var valueBuilder = new StringBuilder(rawValue);
+            var trimmedRawValue = rawValue.TrimStart();
+            var isSingleQuoted = trimmedRawValue.StartsWith(SingleQuote);
+            var isDoubleQuoted = trimmedRawValue.StartsWith(DoubleQuotes);
 
-                while (!IsQuotedLineEnd.IsMatch(rawEnvRow))
-                {
-                    i += 1;
-
-                    if (i >= rawEnvRows.Length)
-                        break;
-
-                    rawEnvRow = rawEnvRows[i];
-                    valueBuilder.AppendLine();
-                    valueBuilder.Append(rawEnvRow);
-                }
-
-                value = valueBuilder.ToString();
-            }
-            else
-            {
-                value = rawValue;
-            }
-
-            value = StripQuotes(value);
+            var value = isSingleQuoted || isDoubleQuoted
+                ? ParseQuotedValue(key, rawEnvRows, trimmedRawValue, ref i)
+                : rawValue;
 
             if (trimValues)
                 value = value.Trim();
@@ -71,24 +50,68 @@ internal static class Parser
         return keyValuePairs.ToArray();
     }
 
-    private static bool IsComment(this string value) => value.StartsWith("#");
-
-    private static string StripQuotes(this string value)
+    private static string ParseQuotedValue(string key, ReadOnlySpan<string> rawEnvRows, string currentRowValue,
+        ref int i)
     {
-        var trimmed = value.Trim();
-        var modified = false;
+        var quoteChar = currentRowValue[0];
+        var valueBuilder = new StringBuilder();
+        var currentLineContent = currentRowValue.Substring(1); // Start after the opening quote.
 
-        if (trimmed.Length > 1 &&
-            ((trimmed.StartsWith(DoubleQuotes) && trimmed.EndsWith(DoubleQuotes)) ||
-             (trimmed.StartsWith(SingleQuote) && trimmed.EndsWith(SingleQuote))))
+        while (true)
         {
-            trimmed = trimmed.Substring(1, trimmed.Length - 2);
-            modified = true;
+            var endQuoteIndex = -1;
+            var searchFrom = 0;
+
+            // find the next unescaped quote on the current line.
+            while (searchFrom < currentLineContent.Length)
+            {
+                var nextQuote = currentLineContent.IndexOf(quoteChar, searchFrom);
+
+                // no more quotes on this line
+                if (nextQuote == -1)
+                    break;
+
+                // count preceding backslashes to see if the quote is escaped.
+                var backslashCount = 0;
+                for (var j = nextQuote - 1; j >= 0 && currentLineContent[j] == BackSlash; j--)
+                    backslashCount++;
+
+                // an even number of backslashes means the quote is NOT escaped.
+                if (backslashCount % 2 == 0)
+                {
+                    endQuoteIndex = nextQuote;
+                    break;
+                }
+
+                // odd number of backslashes means it's escaped, continue searching
+                searchFrom = nextQuote + 1;
+            }
+
+            if (endQuoteIndex != -1)
+            {
+                // closing quote found. Append the content before it and exit
+                valueBuilder.Append(currentLineContent, 0, endQuoteIndex);
+                break;
+            }
+
+            // no closing quote on this line, append the whole line and move to the next
+            valueBuilder.Append(currentLineContent);
+            i++;
+
+            if (i >= rawEnvRows.Length)
+                throw new ArgumentException(
+                    $"Unable to parse environment variable: {key}. Missing closing quote.");
+
+            valueBuilder.AppendLine();
+            currentLineContent = rawEnvRows[i];
         }
 
-
-        return modified ? trimmed : value;
+        return valueBuilder.ToString()
+            .UnescapeQuotes(quoteChar)
+            .UnescapeBackslashes();
     }
+
+    private static bool IsComment(this string value) => value.StartsWith("#");
 
     private static bool HasKey(this string value, out int index)
     {
@@ -102,4 +125,12 @@ internal static class Parser
         var value = rawEnvRow.Substring(index + 1);
         return (key, value);
     }
+
+    private static bool StartsWith(this string input, char character) =>
+        !string.IsNullOrEmpty(input) && input[0] == character;
+
+    private static string UnescapeQuotes(this string input, char quoteChar) =>
+        input.Replace($"\\{quoteChar}", quoteChar.ToString());
+
+    private static string UnescapeBackslashes(this string input) => input.Replace("\\\\", "\\");
 }

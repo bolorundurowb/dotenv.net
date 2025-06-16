@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -12,22 +12,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Use .NET 8 SDK
+      - name: Use .NET 9 SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.x
 
       - name: Restore dependencies
-        run: dotnet restore ./src/**/*.csproj
+        run: dotnet restore 
 
       - name: Build all projects
-        run: dotnet build ./src/**/*.csproj -c Release --no-restore
+        run: dotnet build --no-restore
 
       - name: Run tests with code coverage
-        run: dotnet test dotenv.net.sln /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverage/
+        run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverage/
 
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ github.token }}
-          path-to-lcov: ${{ github.workspace }}/tests/dotenv.net.Tests/coverage/coverage.info
+          path-to-lcov: ${{ github.workspace }}/src/dotenv.net.Tests/coverage/coverage.info

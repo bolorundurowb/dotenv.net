@@ -1,32 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using dotenv.net.Utilities;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace dotenv.net;
 
 public static class DotEnv
 {
-    /// <summary>
-    /// [Deprecated] Configure the environment variables from a .env file
-    /// </summary>
-    /// <param name="options">Options on how to load the env file</param>
-    [Obsolete(
-        "This method would be removed in the next major release. Use the Fluent API, Load() or Read() methods instead.")]
-    public static void Config(DotEnvOptions options) => Helpers.ReadAndWrite(options);
-
-    /// <summary>
-    /// [Deprecated] Searches the current directory and three directories up and loads the environment variables
-    /// </summary>
-    /// <param name="levelsToSearch">The number of top-level directories to search; the default is 4 top-level directories.</param>
-    /// <returns>States whether the operation succeeded</returns>
-    [Obsolete(
-        "This method would be removed in the next major release. Use the Fluent API, Load() or Read() methods instead.")]
-    public static bool AutoConfig(int levelsToSearch = DotEnvOptions.DefaultProbeDepth)
-    {
-        Helpers.ReadAndWrite(new DotEnvOptions(probeLevelsToSearch: levelsToSearch));
-        return true;
-    }
-
     /// <summary>
     /// Initialize the fluent configuration API
     /// </summary>
@@ -37,12 +15,32 @@ public static class DotEnv
     /// </summary>
     /// <param name="options">The options required to configure the env loader</param>
     /// <returns>The key value pairs read from the env files</returns>
-    public static IDictionary<string, string> Read(DotEnvOptions? options = null) =>
-        Helpers.ReadAndReturn(options ?? new DotEnvOptions());
+    public static IDictionary<string, string> Read(DotEnvOptions? options = null)
+    {
+        options ??= new DotEnvOptions();
+        var envFilePaths = options.ProbeForEnv
+            ? [Reader.GetProbedEnvPath(options.ProbeLevelsToSearch, options.IgnoreExceptions)]
+            : options.EnvFilePaths;
+        var envFileKeyValues = envFilePaths
+            .Select(envFilePath =>
+            {
+                var fileRows = Reader.ReadFileLines(envFilePath, options.IgnoreExceptions, options.Encoding);
+                var envKeyValues = Reader.ExtractEnvKeyValues(fileRows, options.TrimValues);
+                return envKeyValues.ToArray();
+            })
+            .ToList();
+
+        return Reader.MergeEnvKeyValues(envFileKeyValues, options.OverwriteExistingVars);
+    }
 
     /// <summary>
     /// Load the values in the provided env files into the environment variables
     /// </summary>
     /// <param name="options">The options required to configure the env loader</param>
-    public static void Load(DotEnvOptions? options = null) => Helpers.ReadAndWrite(options ?? new DotEnvOptions());
+    public static void Load(DotEnvOptions? options = null)
+    {
+        options ??= new DotEnvOptions();
+        var envVars = Read(options);
+        Writer.WriteToEnv(envVars, options.OverwriteExistingVars);
+    }
 }

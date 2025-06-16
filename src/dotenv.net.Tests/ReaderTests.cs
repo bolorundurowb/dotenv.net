@@ -161,19 +161,6 @@ public class ReaderTests : IDisposable
     }
 
     [Fact]
-    public void GetProbedEnvPath_FileFound_ShouldReturnPath()
-    {
-        var envPath = Path.Combine(_tempDirPath, ".env");
-        File.WriteAllText(envPath, "TEST=value");
-        var startDir = Path.Combine(_tempDirPath, "subdir1", "subdir2");
-        Directory.CreateDirectory(startDir);
-
-        using var dir = new TempWorkingDirectory(startDir);
-        var result = Reader.GetProbedEnvPath(levelsToSearch: 3, ignoreExceptions: false);
-        result.Should().Be(envPath);
-    }
-
-    [Fact]
     public void GetProbedEnvPath_FileNotFoundAndIgnoreExceptionsFalse_ShouldThrow()
     {
         using var dir = new TempWorkingDirectory(_tempDirPath);

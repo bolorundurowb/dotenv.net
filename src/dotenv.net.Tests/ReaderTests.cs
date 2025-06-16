@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 
 namespace dotenv.net.Tests;
@@ -35,7 +35,7 @@ public class ReaderTests : IDisposable
     public void ReadFileLines_InvalidPathAndIgnoreExceptionsFalse_ShouldThrowArgumentException(string path, bool ignoreExceptions)
     {
         Action act = () => Reader.ReadFileLines(path, ignoreExceptions, null);
-        act.Should().Throw<ArgumentException>().WithMessage("The file path cannot be null, empty or whitespace.*");
+        act.ShouldThrow<ArgumentException>().Message.ShouldContain("The file path cannot be null, empty or whitespace.");
     }
 
     [Theory]
@@ -45,7 +45,7 @@ public class ReaderTests : IDisposable
     public void ReadFileLines_InvalidPathAndIgnoreExceptionsTrue_ShouldReturnEmptySpan(string path, bool ignoreExceptions)
     {
         var result = Reader.ReadFileLines(path, ignoreExceptions, null).ToArray();
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -53,14 +53,14 @@ public class ReaderTests : IDisposable
     {
         var path = "nonexistent.env";
         Action act = () => Reader.ReadFileLines(path, false, null);
-        act.Should().Throw<FileNotFoundException>().WithMessage($"*{path}*");
+        act.ShouldThrow<FileNotFoundException>().Message.ShouldContain (path);
     }
 
     [Fact]
     public void ReadFileLines_NonExistentFileAndIgnoreExceptionsTrue_ShouldReturnEmptySpan()
     {
         var result = Reader.ReadFileLines("nonexistent.env", true, null).ToArray();
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -68,9 +68,9 @@ public class ReaderTests : IDisposable
     {
         File.WriteAllLines(_tempFilePath, new[] { "KEY1=value1", "KEY2=value2" });
         var result = Reader.ReadFileLines(_tempFilePath, false, null);
-        result.Length.Should().Be(2);
-        result[0].Should().Be("KEY1=value1");
-        result[1].Should().Be("KEY2=value2");
+        result.Length.ShouldBe(2);
+        result[0].ShouldBe("KEY1=value1");
+        result[1].ShouldBe("KEY2=value2");
     }
 
     [Fact]
@@ -79,14 +79,14 @@ public class ReaderTests : IDisposable
         var content = "KEY=üñîçø∂é";
         File.WriteAllText(_tempFilePath, content, Encoding.UTF32);
         var result = Reader.ReadFileLines(_tempFilePath, false, Encoding.UTF32);
-        result[0].Should().Be(content);
+        result[0].ShouldBe(content);
     }
 
     [Fact]
     public void ExtractEnvKeyValues_EmptySpan_ShouldReturnEmptySpan()
     {
         var result = Reader.ExtractEnvKeyValues(ReadOnlySpan<string>.Empty, false).ToArray();
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -94,16 +94,16 @@ public class ReaderTests : IDisposable
     {
         var lines = new[] { "KEY1=value1", "KEY2=value2" };
         var result = Reader.ExtractEnvKeyValues(lines, false);
-        result.Length.Should().Be(2);
-        result[0].Should().Be(new KeyValuePair<string, string>("KEY1", "value1"));
-        result[1].Should().Be(new KeyValuePair<string, string>("KEY2", "value2"));
+        result.Length.ShouldBe(2);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY1", "value1"));
+        result[1].ShouldBe(new KeyValuePair<string, string>("KEY2", "value2"));
     }
 
     [Fact]
     public void MergeEnvKeyValues_NoArrays_ShouldReturnEmptyDictionary()
     {
         var result = Reader.MergeEnvKeyValues(new List<KeyValuePair<string, string>[]>(), false);
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -113,9 +113,7 @@ public class ReaderTests : IDisposable
             new[] { new KeyValuePair<string, string>("KEY1", "value1"), new KeyValuePair<string, string>("KEY2", "value2") }
         };
         var result = Reader.MergeEnvKeyValues(input, false);
-        result.Should().HaveCount(2);
-        result["KEY1"].Should().Be("value1");
-        result["KEY2"].Should().Be("value2");
+        result.ShouldBe(new Dictionary<string, string> { { "KEY1", "value1" }, { "KEY2", "value2" } });
     }
 
     [Fact]
@@ -126,7 +124,8 @@ public class ReaderTests : IDisposable
             new[] { new KeyValuePair<string, string>("KEY", "second") }
         };
         var result = Reader.MergeEnvKeyValues(input, false);
-        result.Should().ContainSingle().Which.Value.Should().Be("first");
+        result.ShouldContainKey("KEY");
+        result["KEY"].ShouldBe("first");
     }
 
     [Fact]
@@ -137,7 +136,8 @@ public class ReaderTests : IDisposable
             new[] { new KeyValuePair<string, string>("KEY", "second") }
         };
         var result = Reader.MergeEnvKeyValues(input, true);
-        result.Should().ContainSingle().Which.Value.Should().Be("second");
+        result.ShouldContainKey("KEY");
+        result["KEY"].ShouldBe("second");
     }
 
     [Fact]
@@ -154,10 +154,7 @@ public class ReaderTests : IDisposable
             }
         };
         var result = Reader.MergeEnvKeyValues(input, true);
-        result.Should().HaveCount(3);
-        result["KEY1"].Should().Be("value1");
-        result["KEY2"].Should().Be("updated");
-        result["KEY3"].Should().Be("value3");
+        result.ShouldBe(new Dictionary<string, string> { { "KEY1", "value1" }, { "KEY2", "updated" }, { "KEY3", "value3" } });
     }
 
     [Fact]
@@ -165,8 +162,8 @@ public class ReaderTests : IDisposable
     {
         using var dir = new TempWorkingDirectory(_tempDirPath);
         Action act = () => Reader.GetProbedEnvPath(levelsToSearch: 2, ignoreExceptions: false);
-        act.Should().Throw<FileNotFoundException>()
-            .WithMessage($"*{DotEnvOptions.DefaultEnvFileName}*");
+        act.ShouldThrow<FileNotFoundException>()
+            .Message.ShouldContain(DotEnvOptions.DefaultEnvFileName);
     }
 
     [Fact]
@@ -174,7 +171,7 @@ public class ReaderTests : IDisposable
     {
         using var dir = new TempWorkingDirectory(_tempDirPath);
         var result = Reader.GetProbedEnvPath(levelsToSearch: 2, ignoreExceptions: true);
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -187,7 +184,7 @@ public class ReaderTests : IDisposable
 
         using var dir = new TempWorkingDirectory(startDir);
         var result = Reader.GetProbedEnvPath(levelsToSearch: 2, ignoreExceptions: true);
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     private class TempWorkingDirectory : IDisposable

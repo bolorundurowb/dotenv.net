@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 
 namespace dotenv.net.Tests;
@@ -12,7 +12,7 @@ public class DotEnvOptionsTests
     public void Constructor_WithNullEnvFilePaths_ShouldUseDefaultPath()
     {
         var options = new DotEnvOptions(envFilePaths: null);
-        options.EnvFilePaths.Should().ContainInOrder(".env");
+        options.EnvFilePaths.ShouldBe(new[] { DotEnvOptions.DefaultEnvFileName });
     }
 
     [Fact]
@@ -20,14 +20,14 @@ public class DotEnvOptionsTests
     {
         var emptyPaths = new List<string>();
         var options = new DotEnvOptions(envFilePaths: emptyPaths);
-        options.EnvFilePaths.Should().ContainInOrder(DotEnvOptions.DefaultEnvFileName);
+        options.EnvFilePaths.ShouldBe(new[] { DotEnvOptions.DefaultEnvFileName });
     }
 
     [Fact]
     public void Constructor_WithNullEncoding_ShouldUseUtf8()
     {
         var options = new DotEnvOptions(encoding: null);
-        options.Encoding.Should().Be(Encoding.UTF8);
+        options.Encoding.ShouldBe(Encoding.UTF8);
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions();
         options.WithEncoding(null!);
-        options.Encoding.Should().Be(Encoding.UTF8);
+        options.Encoding.ShouldBe(Encoding.UTF8);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions();
         options.WithEnvFiles(null!);
-        options.EnvFilePaths.Should().ContainInOrder(DotEnvOptions.DefaultEnvFileName);
+        options.EnvFilePaths.ShouldBe(new[] { DotEnvOptions.DefaultEnvFileName });
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions();
         options.WithEnvFiles(Array.Empty<string>());
-        options.EnvFilePaths.Should().ContainInOrder(DotEnvOptions.DefaultEnvFileName);
+        options.EnvFilePaths.ShouldBe(new[] { DotEnvOptions.DefaultEnvFileName });
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions();
         options.WithProbeForEnv(-1);
-        options.ProbeLevelsToSearch.Should().Be(DotEnvOptions.DefaultProbeAscendLimit);
+        options.ProbeLevelsToSearch.ShouldBe(DotEnvOptions.DefaultProbeAscendLimit);
     }
 
     [Fact]
@@ -67,8 +67,8 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions().WithProbeForEnv(10);
         options.WithoutProbeForEnv();
-        options.ProbeForEnv.Should().BeFalse();
-        options.ProbeLevelsToSearch.Should().Be(DotEnvOptions.DefaultProbeAscendLimit);
+        options.ProbeForEnv.ShouldBeFalse();
+        options.ProbeLevelsToSearch.ShouldBe(DotEnvOptions.DefaultProbeAscendLimit);
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions().WithEncoding(Encoding.ASCII);
         options.WithDefaultEncoding();
-        options.Encoding.Should().Be(Encoding.UTF8);
+        options.Encoding.ShouldBe(Encoding.UTF8);
     }
 
     [Theory]
@@ -86,7 +86,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions(ignoreExceptions: initialValue);
         options.WithExceptions();
-        options.IgnoreExceptions.Should().BeFalse();
+        options.IgnoreExceptions.ShouldBeFalse();
     }
 
     [Theory]
@@ -96,7 +96,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions(ignoreExceptions: initialValue);
         options.WithoutExceptions();
-        options.IgnoreExceptions.Should().BeTrue();
+        options.IgnoreExceptions.ShouldBeTrue();
     }
 
     [Theory]
@@ -106,7 +106,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions(overwriteExistingVars: initialValue);
         options.WithOverwriteExistingVars();
-        options.OverwriteExistingVars.Should().BeTrue();
+        options.OverwriteExistingVars.ShouldBeTrue();
     }
 
     [Theory]
@@ -116,7 +116,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions(overwriteExistingVars: initialValue);
         options.WithoutOverwriteExistingVars();
-        options.OverwriteExistingVars.Should().BeFalse();
+        options.OverwriteExistingVars.ShouldBeFalse();
     }
 
     [Theory]
@@ -126,7 +126,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions(trimValues: initialValue);
         options.WithTrimValues();
-        options.TrimValues.Should().BeTrue();
+        options.TrimValues.ShouldBeTrue();
     }
 
     [Theory]
@@ -136,6 +136,6 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions(trimValues: initialValue);
         options.WithoutTrimValues();
-        options.TrimValues.Should().BeFalse();
+        options.TrimValues.ShouldBeFalse();
     }
 }

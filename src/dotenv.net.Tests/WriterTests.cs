@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 
 namespace dotenv.net.Tests;
@@ -18,7 +18,7 @@ public class WriterTests
 
         Writer.WriteToEnv(envVars, overwriteExistingVars: false);
 
-        Environment.GetEnvironmentVariable(TestVariableKey).Should().Be("test_value");
+        Environment.GetEnvironmentVariable(TestVariableKey).ShouldBe("test_value");
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class WriterTests
 
         Writer.WriteToEnv(envVars, overwriteExistingVars: false);
 
-        Environment.GetEnvironmentVariable(TestVariableKey).Should().Be(existingValue);
+        Environment.GetEnvironmentVariable(TestVariableKey).ShouldBe(existingValue);
     }
 
     [Fact]
@@ -43,6 +43,6 @@ public class WriterTests
 
         Writer.WriteToEnv(envVars, overwriteExistingVars: true);
 
-        Environment.GetEnvironmentVariable(TestVariableKey).Should().Be(newValue);
+        Environment.GetEnvironmentVariable(TestVariableKey).ShouldBe(newValue);
     }
 }

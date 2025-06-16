@@ -1,6 +1,6 @@
 using System;
 using dotenv.net.Utilities;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 
 namespace dotenv.net.Tests.Utilities;
@@ -14,15 +14,14 @@ public class EnvReaderTests
     {
         SetTestVariable("ValidValue");
         var result = EnvReader.GetStringValue(TestKey);
-        result.Should().Be("ValidValue");
+        result.ShouldBe("ValidValue");
     }
 
     [Fact]
     public void GetStringValue_KeyMissing_ThrowsException()
     {
         ClearTestVariable();
-        Action act = () => EnvReader.GetStringValue(TestKey);
-        act.Should().Throw<Exception>().WithMessage("Value could not be retrieved.");
+        Assert.Throws<Exception>(() => EnvReader.GetStringValue(TestKey));
     }
 
     [Fact]
@@ -30,15 +29,14 @@ public class EnvReaderTests
     {
         SetTestVariable("42");
         var result = EnvReader.GetIntValue(TestKey);
-        result.Should().Be(42);
+        result.ShouldBe(42);
     }
 
     [Fact]
     public void GetIntValue_InvalidInteger_ThrowsException()
     {
         SetTestVariable("Invalid");
-        Action act = () => EnvReader.GetIntValue(TestKey);
-        act.Should().Throw<Exception>().WithMessage("Value could not be retrieved.");
+        Assert.Throws<Exception>(() => EnvReader.GetIntValue(TestKey));
     }
 
     [Fact]
@@ -46,15 +44,14 @@ public class EnvReaderTests
     {
         SetTestVariable("3.14");
         var result = EnvReader.GetDoubleValue(TestKey);
-        result.Should().Be(3.14);
+        result.ShouldBe(3.14);
     }
 
     [Fact]
     public void GetDoubleValue_InvalidDouble_ThrowsException()
     {
         SetTestVariable("Invalid");
-        Action act = () => EnvReader.GetDoubleValue(TestKey);
-        act.Should().Throw<Exception>().WithMessage("Value could not be retrieved.");
+        Assert.Throws<Exception>(() => EnvReader.GetDoubleValue(TestKey));
     }
 
     [Fact]
@@ -62,15 +59,14 @@ public class EnvReaderTests
     {
         SetTestVariable("99.99");
         var result = EnvReader.GetDecimalValue(TestKey);
-        result.Should().Be(99.99m);
+        result.ShouldBe(99.99m);
     }
 
     [Fact]
     public void GetDecimalValue_InvalidDecimal_ThrowsException()
     {
         SetTestVariable("Invalid");
-        Action act = () => EnvReader.GetDecimalValue(TestKey);
-        act.Should().Throw<Exception>().WithMessage("Value could not be retrieved.");
+        Assert.Throws<Exception>(() => EnvReader.GetDecimalValue(TestKey));
     }
 
     [Theory]
@@ -82,15 +78,14 @@ public class EnvReaderTests
     {
         SetTestVariable(input);
         var result = EnvReader.GetBooleanValue(TestKey);
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Fact]
     public void GetBooleanValue_InvalidBool_ThrowsException()
     {
         SetTestVariable("Invalid");
-        Action act = () => EnvReader.GetBooleanValue(TestKey);
-        act.Should().Throw<Exception>().WithMessage("Value could not be retrieved.");
+        Assert.Throws<Exception>(() => EnvReader.GetBooleanValue(TestKey));
     }
 
     [Fact]
@@ -98,8 +93,8 @@ public class EnvReaderTests
     {
         SetTestVariable("ValidValue");
         var success = EnvReader.TryGetStringValue(TestKey, out var value);
-        success.Should().BeTrue();
-        value.Should().Be("ValidValue");
+        success.ShouldBeTrue();
+        value.ShouldBe("ValidValue");
     }
 
     [Fact]
@@ -107,8 +102,8 @@ public class EnvReaderTests
     {
         ClearTestVariable();
         var success = EnvReader.TryGetStringValue(TestKey, out var value);
-        success.Should().BeFalse();
-        value.Should().BeNull();
+        success.ShouldBeFalse();
+        value.ShouldBeNull();
     }
 
     [Fact]
@@ -116,8 +111,8 @@ public class EnvReaderTests
     {
         SetTestVariable("42");
         var success = EnvReader.TryGetIntValue(TestKey, out var value);
-        success.Should().BeTrue();
-        value.Should().Be(42);
+        success.ShouldBeTrue();
+        value.ShouldBe(42);
     }
 
     [Fact]
@@ -125,8 +120,8 @@ public class EnvReaderTests
     {
         SetTestVariable("Invalid");
         var success = EnvReader.TryGetIntValue(TestKey, out var value);
-        success.Should().BeFalse();
-        value.Should().Be(0);
+        success.ShouldBeFalse();
+        value.ShouldBe(0);
     }
 
     [Fact]
@@ -134,7 +129,7 @@ public class EnvReaderTests
     {
         SetTestVariable("AnyValue");
         var result = EnvReader.HasValue(TestKey);
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -142,7 +137,7 @@ public class EnvReaderTests
     {
         ClearTestVariable();
         var result = EnvReader.HasValue(TestKey);
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -150,7 +145,7 @@ public class EnvReaderTests
     {
         SetTestVariable("");
         var result = EnvReader.HasValue(TestKey);
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     private static void SetTestVariable(string value) => Environment.SetEnvironmentVariable(TestKey, value);

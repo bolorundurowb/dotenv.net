@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 
 namespace dotenv.net.Tests;
@@ -12,7 +12,8 @@ public class ParserTests
     {
         var lines = new[] { "", "  ", null, "KEY=value" };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().ContainSingle().Which.Should().Be(new KeyValuePair<string, string>("KEY", "value"));
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY", "value"));
     }
 
     [Fact]
@@ -20,7 +21,8 @@ public class ParserTests
     {
         var lines = new[] { "# Comment", " # Indented comment", "KEY=value" };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().ContainSingle().Which.Should().Be(new KeyValuePair<string, string>("KEY", "value"));
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY", "value"));
     }
 
     [Fact]
@@ -28,7 +30,8 @@ public class ParserTests
     {
         var lines = new[] { "=value", "NOKEY", "KEY=value" };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().ContainSingle().Which.Should().Be(new KeyValuePair<string, string>("KEY", "value"));
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY", "value"));
     }
 
     [Fact]
@@ -36,7 +39,8 @@ public class ParserTests
     {
         var lines = new[] { "TEST_KEY=test_value" };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().ContainSingle().Which.Should().Be(new KeyValuePair<string, string>("TEST_KEY", "test_value"));
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(new KeyValuePair<string, string>("TEST_KEY", "test_value"));
     }
 
     [Fact]
@@ -44,7 +48,8 @@ public class ParserTests
     {
         var lines = new[] { "  KEY  =  value  " };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().ContainSingle().Which.Should().Be(new KeyValuePair<string, string>("KEY", "  value  "));
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY", "  value  "));
     }
 
     [Fact]
@@ -52,7 +57,8 @@ public class ParserTests
     {
         var lines = new[] { "KEY=  value  " };
         var result = Parser.Parse(lines, trimValues: true).ToArray();
-        result.Should().ContainSingle().Which.Should().Be(new KeyValuePair<string, string>("KEY", "value"));
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY", "value"));
     }
 
     [Fact]
@@ -60,8 +66,8 @@ public class ParserTests
     {
         var lines = new[] { "KEY='value with \\' quote'" };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().ContainSingle().Which.Should()
-            .Be(new KeyValuePair<string, string>("KEY", "value with ' quote"));
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY", "value with ' quote"));
     }
 
     [Fact]
@@ -69,8 +75,8 @@ public class ParserTests
     {
         var lines = new[] { "KEY=\"value with \\\" quote\"" };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().ContainSingle().Which.Should()
-            .Be(new KeyValuePair<string, string>("KEY", "value with \" quote"));
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY", "value with \" quote"));
     }
 
     [Fact]
@@ -78,8 +84,8 @@ public class ParserTests
     {
         var lines = new[] { "KEY='escaped \\\\ backslash'" };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().ContainSingle().Which.Should()
-            .Be(new KeyValuePair<string, string>("KEY", "escaped \\ backslash"));
+        result.Length.ShouldBe(1);
+        result.ShouldContain(new KeyValuePair<string, string>("KEY", "escaped \\ backslash"));
     }
 
     [Fact]
@@ -87,9 +93,9 @@ public class ParserTests
     {
         var lines = new[] { "KEY='first line", "second line'", "NEXT=value" };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().HaveCount(2);
-        result[0].Should().Be(new KeyValuePair<string, string>("KEY", $"first line{Environment.NewLine}second line"));
-        result[1].Should().Be(new KeyValuePair<string, string>("NEXT", "value"));
+        result.Length.ShouldBe(2);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY", $"first line{Environment.NewLine}second line"));
+        result[1].ShouldBe(new KeyValuePair<string, string>("NEXT", "value"));
     }
 
     [Fact]
@@ -97,8 +103,8 @@ public class ParserTests
     {
         var lines = new[] { "KEY='unclosed quote" };
         Action act = () => Parser.Parse(lines, trimValues: false).ToArray();
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("Unable to parse environment variable: KEY. Missing closing quote.");
+        act.ShouldThrow<ArgumentException>()
+            .Message.ShouldBe("Unable to parse environment variable: KEY. Missing closing quote.");
     }
 
     [Fact]
@@ -106,7 +112,8 @@ public class ParserTests
     {
         var lines = new[] { "KEY='before\\'after'" };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().ContainSingle().Which.Should().Be(new KeyValuePair<string, string>("KEY", "before'after"));
+        result.Length.ShouldBe(1);
+        result.ShouldContain(new KeyValuePair<string, string>("KEY", "before'after"));
     }
 
     [Fact]
@@ -114,6 +121,7 @@ public class ParserTests
     {
         var lines = new[] { "KEY='before\\after'" };
         var result = Parser.Parse(lines, trimValues: false).ToArray();
-        result.Should().ContainSingle().Which.Should().Be(new KeyValuePair<string, string>("KEY", "before\\after"));
+        result.Length.ShouldBe(1);
+        result.ShouldContain(new KeyValuePair<string, string>("KEY", "before\\after"));
     }
 }

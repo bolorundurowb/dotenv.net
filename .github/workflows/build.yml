@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -15,7 +15,7 @@ jobs:
       - name: Use .NET 8 SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 8.x
 
       - name: Restore dependencies
         run: dotnet restore ./src/**/*.csproj
@@ -30,4 +30,4 @@ jobs:
         uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ github.token }}
-          path-to-lcov: ${{ github.workspace }}/tests/dotenv.net.Tests/coverage/coverage.info
+          path-to-lcov: ${{ github.workspace }}/src/dotenv.net.Tests/coverage/coverage.info

@@ -12,7 +12,7 @@ public class DotEnvOptionsTests
     public void Constructor_WithNullEnvFilePaths_ShouldUseDefaultPath()
     {
         var options = new DotEnvOptions(envFilePaths: null);
-        options.EnvFilePaths.ShouldBe(new[] { DotEnvOptions.DefaultEnvFileName });
+        options.EnvFilePaths.ShouldBe([DotEnvOptions.DefaultEnvFileName]);
     }
 
     [Fact]
@@ -20,7 +20,7 @@ public class DotEnvOptionsTests
     {
         var emptyPaths = new List<string>();
         var options = new DotEnvOptions(envFilePaths: emptyPaths);
-        options.EnvFilePaths.ShouldBe(new[] { DotEnvOptions.DefaultEnvFileName });
+        options.EnvFilePaths.ShouldBe([DotEnvOptions.DefaultEnvFileName]);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions();
         options.WithEnvFiles(null!);
-        options.EnvFilePaths.ShouldBe(new[] { DotEnvOptions.DefaultEnvFileName });
+        options.EnvFilePaths.ShouldBe([DotEnvOptions.DefaultEnvFileName]);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class DotEnvOptionsTests
     {
         var options = new DotEnvOptions();
         options.WithEnvFiles(Array.Empty<string>());
-        options.EnvFilePaths.ShouldBe(new[] { DotEnvOptions.DefaultEnvFileName });
+        options.EnvFilePaths.ShouldBe([DotEnvOptions.DefaultEnvFileName]);
     }
 
     [Fact]

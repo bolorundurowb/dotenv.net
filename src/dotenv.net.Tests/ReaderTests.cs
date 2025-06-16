@@ -66,7 +66,7 @@ public class ReaderTests : IDisposable
     [Fact]
     public void ReadFileLines_ValidFile_ShouldReturnLines()
     {
-        File.WriteAllLines(_tempFilePath, new[] { "KEY1=value1", "KEY2=value2" });
+        File.WriteAllLines(_tempFilePath, ["KEY1=value1", "KEY2=value2"]);
         var result = Reader.ReadFileLines(_tempFilePath, false, null);
         result.Length.ShouldBe(2);
         result[0].ShouldBe("KEY1=value1");

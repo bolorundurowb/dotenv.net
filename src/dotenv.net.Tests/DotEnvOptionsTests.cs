@@ -138,4 +138,23 @@ public class DotEnvOptionsTests
         options.WithoutTrimValues();
         options.TrimValues.ShouldBeFalse();
     }
+
+    [Fact]
+    public void Read_ComplexExistingEnv_ShouldExtractValidValues()
+    {
+        var values = DotEnv.Fluent()
+            .WithTrimValues()
+            .WithProbeForEnv()
+            .Read();
+
+        values.ShouldContainKeyAndValue("lower_case_key", "world");
+        values.ShouldContainKeyAndValue("DOUBLE_QUOTES", "double");
+        values.ShouldContainKeyAndValue("SINGLE_QUOTES", "single");
+        values.ShouldContainKeyAndValue("BOOLEAN", "true");
+        values.ShouldContainKeyAndValue("NUMERIC", "34.56");
+        values.ShouldContainKeyAndValue("DOTTED.KEY", "spaced value");
+        values.ShouldContainKeyAndValue("KeyWithNoValue", string.Empty);
+        values.ShouldContainKeyAndValue("DOUBLE_QUOTE_EVEN_MORE_LINES",
+            $"""this{Environment.NewLine}is{Environment.NewLine}"a{Environment.NewLine}multi-line{Environment.NewLine}  value""");
+    }
 }

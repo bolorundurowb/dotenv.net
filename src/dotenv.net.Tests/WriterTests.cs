@@ -9,7 +9,7 @@ public class WriterTests
 {
     private const string TestVariableKey = "TEST_VARIABLE";
 
-    public WriterTests() { Environment.SetEnvironmentVariable(TestVariableKey, null); }
+    public WriterTests() => Environment.SetEnvironmentVariable(TestVariableKey, null);
 
     [Fact]
     public void WriteToEnv_WhenOverwriteIsFalseAndVariableDoesNotExist_ShouldSetVariable()

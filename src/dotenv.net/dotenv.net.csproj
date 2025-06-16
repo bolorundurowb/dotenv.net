@@ -16,8 +16,6 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>dotnet, environment, variables, env, dotenv, net core, autofac</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <AssemblyVersion>3.2.1</AssemblyVersion>
-        <FileVersion>3.2.1</FileVersion>
         <NeutralLanguage>en-NG</NeutralLanguage>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <Title>dotenv.net</Title>
@@ -30,12 +28,7 @@
         <InternalsVisibleTo Include="dotenv.net.Tests"/>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
-        <PackageReference Include="System.Memory" Version="4.5.5"/>
-        <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
-    </ItemGroup>
-
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="System.Memory" Version="4.5.5"/>
+        <PackageReference Include="System.Memory" Version="4.6.3"/>
     </ItemGroup>
 </Project>

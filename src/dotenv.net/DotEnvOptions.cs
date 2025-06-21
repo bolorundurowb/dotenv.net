@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -44,7 +45,7 @@ public class DotEnvOptions
     /// <summary>
     /// A value to state how far up the directory structure we should search for env files. <see cref="T:dotenv.net.DotEnvOptions"/>
     /// </summary>
-    public int ProbeLevelsToSearch { get; private set; }
+    public int? ProbeLevelsToSearch { get; private set; }
 
     /// <summary>
     /// Default constructor for the dot env options
@@ -58,15 +59,30 @@ public class DotEnvOptions
     /// <param name="envFilePaths">The env file paths to load</param>
     public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string>? envFilePaths = null,
         Encoding? encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
-        bool probeForEnv = false, int probeLevelsToSearch = DefaultProbeAscendLimit)
+        bool probeForEnv = false, int? probeLevelsToSearch = null)
     {
-        IgnoreExceptions = ignoreExceptions;
-        EnvFilePaths = envFilePaths?.Any() != true ? DefaultEnvPath : envFilePaths;
-        Encoding = encoding ?? Encoding.UTF8;
-        TrimValues = trimValues;
-        OverwriteExistingVars = overwriteExistingVars;
-        ProbeForEnv = probeForEnv;
-        ProbeLevelsToSearch = probeLevelsToSearch < 0 ? DefaultProbeAscendLimit : probeLevelsToSearch;
+        if (ignoreExceptions)
+            WithoutExceptions();
+        else
+            WithoutOverwriteExistingVars();
+
+        WithEnvFiles((envFilePaths ?? []).ToArray());
+        WithEncoding(encoding ?? Encoding.UTF8);
+
+        if (trimValues)
+            WithTrimValues();
+        else
+            WithoutTrimValues();
+
+        if (overwriteExistingVars)
+            WithOverwriteExistingVars();
+        else
+            WithoutOverwriteExistingVars();
+
+        if (probeForEnv)
+            WithProbeForEnv(probeLevelsToSearch ?? DefaultProbeAscendLimit);
+        else
+            WithoutProbeForEnv();
     }
 
     /// <summary>
@@ -95,8 +111,11 @@ public class DotEnvOptions
     /// <returns>configured dot env options</returns>
     public DotEnvOptions WithProbeForEnv(int probeLevelsToSearch = DefaultProbeAscendLimit)
     {
+        if (EnvFilePaths?.FirstOrDefault() != DefaultEnvFileName)
+            throw new InvalidOperationException("Cannot use ProbeForEnv when EnvFiles is set.");
+
         ProbeForEnv = true;
-        ProbeLevelsToSearch = probeLevelsToSearch < 0 ? DefaultProbeAscendLimit :  probeLevelsToSearch;
+        ProbeLevelsToSearch = probeLevelsToSearch < 0 ? DefaultProbeAscendLimit : probeLevelsToSearch;
         return this;
     }
 
@@ -157,17 +176,7 @@ public class DotEnvOptions
     /// <returns>configured dot env options</returns>
     public DotEnvOptions WithEncoding(Encoding encoding)
     {
-        Encoding = encoding ?? Encoding.UTF8;
-        return this;
-    }
-
-    /// <summary>
-    /// Revert to the default encoding for reading the env files. The default encoding is UTF-8
-    /// </summary>
-    /// <returns>configured dot env options</returns>
-    public DotEnvOptions WithDefaultEncoding()
-    {
-        Encoding = Encoding.UTF8;
+        Encoding = encoding;
         return this;
     }
 
@@ -177,7 +186,10 @@ public class DotEnvOptions
     /// <returns>configured dot env options</returns>
     public DotEnvOptions WithEnvFiles(params string[] envFilePaths)
     {
-        EnvFilePaths = envFilePaths?.Any() != true ? DefaultEnvPath : envFilePaths;
+        if (ProbeForEnv)
+            throw new InvalidOperationException("EnvFiles paths cannot be set when ProbeForEnv is true");
+
+        EnvFilePaths = envFilePaths.Any() != true ? DefaultEnvPath : envFilePaths;
         return this;
     }
 

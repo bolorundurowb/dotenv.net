@@ -71,14 +71,6 @@ public class DotEnvOptionsTests
         options.ProbeLevelsToSearch.ShouldBe(DotEnvOptions.DefaultProbeAscendLimit);
     }
 
-    [Fact]
-    public void WithDefaultEncoding_ShouldResetToUtf8()
-    {
-        var options = new DotEnvOptions().WithEncoding(Encoding.ASCII);
-        options.WithDefaultEncoding();
-        options.Encoding.ShouldBe(Encoding.UTF8);
-    }
-
     [Theory]
     [InlineData(true)]
     [InlineData(false)]

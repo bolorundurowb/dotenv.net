@@ -176,6 +176,9 @@ public class DotEnvOptions
     /// <returns>configured dot env options</returns>
     public DotEnvOptions WithEncoding(Encoding encoding)
     {
+        if (encoding == null ) 
+            throw new ArgumentNullException(nameof(encoding));
+
         Encoding = encoding;
         return this;
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace dotenv.net;
@@ -56,31 +57,30 @@ internal static class Reader
         return response;
     }
 
-    internal static string GetProbedEnvPath(int levelsToSearch, bool ignoreExceptions)
+    internal static IEnumerable<string> GetProbedEnvPath(int levelsToSearch, bool ignoreExceptions)
     {
-        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
+        var pathsSearched = new List<string>();
         var count = levelsToSearch;
         var foundEnvPath = SearchPaths();
 
         if (string.IsNullOrEmpty(foundEnvPath) && !ignoreExceptions)
             throw new FileNotFoundException(
-                $"Failed to find a file matching the '{DotEnvOptions.DefaultEnvFileName}' search pattern." +
-                $"{Environment.NewLine}Current Directory: {currentDirectory}" +
-                $"{Environment.NewLine}Levels Searched: {levelsToSearch}");
+                $"Could not find '{DotEnvOptions.DefaultEnvFileName}' after searching {levelsToSearch} directory level(s) upwards.{Environment.NewLine}Searched paths:{Environment.NewLine}{string.Join(Environment.NewLine, pathsSearched)}");
 
-        return foundEnvPath;
-
+        return foundEnvPath == null ? []: [foundEnvPath];
 
         string? SearchPaths()
         {
-            for (;
-                 currentDirectory != null && count > 0;
-                 count--, currentDirectory = currentDirectory.Parent
-                )
-                foreach (var file in currentDirectory.GetFiles(
-                             DotEnvOptions.DefaultEnvFileName, SearchOption.TopDirectoryOnly)
-                        )
-                    return file.FullName;
+            var directory =  new DirectoryInfo(AppContext.BaseDirectory);
+            for (var i = 0; i <= count; i++)
+            {
+                pathsSearched.Add(directory.FullName);
+
+                foreach (var fileInfo in directory.GetFiles(DotEnvOptions.DefaultEnvFileName, SearchOption.TopDirectoryOnly)) 
+                    return fileInfo.FullName;
+                
+                directory = directory.Parent;
+            }
 
             return null;
         }

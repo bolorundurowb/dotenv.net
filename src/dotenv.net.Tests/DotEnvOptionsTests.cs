@@ -31,6 +31,21 @@ public class DotEnvOptionsTests
     }
 
     [Fact]
+    public void Constructor_WithProbeForEnvAndNoLevels_ShouldSetDefaults()
+    {
+        var options = new DotEnvOptions(probeForEnv: true, envFilePaths: null);
+        options.ProbeForEnv.ShouldBeTrue();
+        options.ProbeLevelsToSearch.ShouldBe(DotEnvOptions.DefaultProbeAscendLimit);
+    }
+
+    [Fact]
+    public void Constructor_WithProbeForEnvAndExplicitLevels_ShouldRespectProvidedLevel()
+    {
+        var options = new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 2, envFilePaths: null);
+        options.ProbeLevelsToSearch.ShouldBe(2);
+    }
+
+    [Fact]
     public void WithEncoding_WithNullEncoding_ShouldThrowException()
     {
         var options = new DotEnvOptions();
@@ -57,11 +72,35 @@ public class DotEnvOptionsTests
     }
 
     [Fact]
+    public void WithEnvFiles_WhenProbeForEnvIsTrue_ShouldThrow()
+    {
+        var options = new DotEnvOptions(probeForEnv: true);
+        var ex = Should.Throw<InvalidOperationException>(() => options.WithEnvFiles("custom.env"));
+        ex.Message.ShouldBe("EnvFiles paths cannot be set when ProbeForEnv is true");
+    }
+
+    [Fact]
+    public void WithEnvFiles_WithNonEmptyList_ShouldSetPaths()
+    {
+        var options = new DotEnvOptions();
+        options.WithEnvFiles("test.env");
+        options.EnvFilePaths.ShouldBe(["test.env"]);
+    }
+
+    [Fact]
     public void WithProbeForEnv_WithNegativeProbeLevels_ShouldUseDefaultProbeDepth()
     {
         var options = new DotEnvOptions();
         options.WithProbeForEnv(-1);
         options.ProbeLevelsToSearch.ShouldBe(DotEnvOptions.DefaultProbeAscendLimit);
+    }
+
+    [Fact]
+    public void WithProbeForEnv_WhenCustomEnvFilePathSet_ShouldThrow()
+    {
+        var options = new DotEnvOptions(envFilePaths: new[] { "custom.env" });
+        var ex = Should.Throw<InvalidOperationException>(() => options.WithProbeForEnv());
+        ex.Message.ShouldBe("Cannot use ProbeForEnv when EnvFiles is set.");
     }
 
     [Fact]

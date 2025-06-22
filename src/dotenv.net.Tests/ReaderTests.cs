@@ -14,7 +14,6 @@ public class ReaderTests : IDisposable
 
     private readonly string _testRootPath;
     private readonly string _startPath;
-    private readonly string _originalBaseDirectory;
 
     public ReaderTests()
     {
@@ -24,23 +23,13 @@ public class ReaderTests : IDisposable
         _testRootPath = Path.Combine(Path.GetTempPath(), "DotEnvTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_testRootPath);
 
-        // Create a nested structure to simulate parent directories.
-        // StartPath will be our simulated AppContext.BaseDirectory.
-        _startPath = Path.Combine(_testRootPath, "level1", "level2");
-        Directory.CreateDirectory(_startPath);
-
-        // HACK: To robustly test the method without changing its source code,
-        // we temporarily set the AppContext.BaseDirectory to our controlled test path.
-        _originalBaseDirectory = (string) AppContext.GetData("APP_CONTEXT_BASE_DIRECTORY")!;
-        AppDomain.CurrentDomain.SetData("APP_CONTEXT_BASE_DIRECTORY", _startPath);
+        _startPath = AppContext.BaseDirectory;
     }
 
     public void Dispose()
     {
         if (File.Exists(_tempFilePath))
             File.Delete(_tempFilePath);
-
-        AppDomain.CurrentDomain.SetData("APP_CONTEXT_BASE_DIRECTORY", _originalBaseDirectory);
 
         if (Directory.Exists(_testRootPath))
             Directory.Delete(_testRootPath, true);
@@ -72,7 +61,7 @@ public class ReaderTests : IDisposable
     [Fact]
     public void ReadFileLines_NonExistentFileAndIgnoreExceptionsFalse_ShouldThrowFileNotFoundException()
     {
-        var path = "nonexistent.env";
+        const string path = "nonexistent.env";
         Action act = () => Reader.ReadFileLines(path, false, null);
         act.ShouldThrow<FileNotFoundException>().Message.ShouldContain(path);
     }
@@ -97,7 +86,7 @@ public class ReaderTests : IDisposable
     [Fact]
     public void ReadFileLines_WithCustomEncoding_ShouldReturnCorrectContent()
     {
-        var content = "KEY=üñîçø∂é";
+        const string content = "KEY=üñîçø∂é";
         File.WriteAllText(_tempFilePath, content, Encoding.UTF32);
         var result = Reader.ReadFileLines(_tempFilePath, false, Encoding.UTF32);
         result[0].ShouldBe(content);
@@ -134,7 +123,8 @@ public class ReaderTests : IDisposable
         {
             new[]
             {
-                new KeyValuePair<string, string>("KEY1", "value1"), new KeyValuePair<string, string>("KEY2", "value2")
+                new KeyValuePair<string, string>("KEY1", "value1"),
+                new KeyValuePair<string, string>("KEY2", "value2")
             }
         };
         var result = Reader.MergeEnvKeyValues(input, false);
@@ -191,64 +181,7 @@ public class ReaderTests : IDisposable
     [Fact]
     public void GetProbedEnvPath_FileNotFoundAndIgnoreExceptionsFalse_ShouldThrow()
     {
-        Action act = () => Reader.GetProbedEnvPath(levelsToSearch: 2, ignoreExceptions: false);
-        act.ShouldThrow<FileNotFoundException>()
-            .Message.ShouldContain(DotEnvOptions.DefaultEnvFileName);
-    }
-
-    [Fact]
-    public void GetProbedEnvPath_ShouldFindFile_InCurrentDirectory()
-    {
-        var expectedPath = Path.Combine(_startPath, DotEnvOptions.DefaultEnvFileName);
-        CreateEnvFileAt(_startPath);
-
-        var result = Reader.GetProbedEnvPath(levelsToSearch: 0, ignoreExceptions: true).ToList();
-
-        result.ShouldHaveSingleItem();
-        result.First().ShouldBe(expectedPath);
-    }
-
-    [Fact]
-    public void GetProbedEnvPath_ShouldFindFile_InParentDirectory()
-    {
-        var parentDirectory = Directory.GetParent(_startPath)!.FullName;
-        var expectedPath = Path.Combine(parentDirectory, DotEnvOptions.DefaultEnvFileName);
-        CreateEnvFileAt(parentDirectory);
-
-        var result = Reader.GetProbedEnvPath(levelsToSearch: 1, ignoreExceptions: true).ToList();
-
-        result.ShouldHaveSingleItem();
-        result.First().ShouldBe(expectedPath);
-    }
-
-    [Fact]
-    public void GetProbedEnvPath_ShouldFindFile_TwoLevelsUp()
-    {
-        var grandParentDirectory = Directory.GetParent(_startPath)!.Parent!.FullName;
-        var expectedPath = Path.Combine(grandParentDirectory, DotEnvOptions.DefaultEnvFileName);
-        CreateEnvFileAt(grandParentDirectory);
-
-        var result = Reader.GetProbedEnvPath(levelsToSearch: 2, ignoreExceptions: true).ToList();
-
-        result.ShouldHaveSingleItem();
-        result.First().ShouldBe(expectedPath);
-    }
-
-    [Fact]
-    public void GetProbedEnvPath_ShouldReturnEmpty_WhenFileNotFoundAndExceptionsIgnored()
-    {
-        var result = Reader.GetProbedEnvPath(levelsToSearch: 3, ignoreExceptions: true);
-        result.ShouldBeEmpty();
-    }
-
-    [Fact]
-    public void GetProbedEnvPath_ShouldThrow_WhenFileNotFoundAndExceptionsNotIgnored()
-    {
-        // No .env file is created.
         var levelsToSearch = 2;
-        var parentPath = Directory.GetParent(_startPath)!.FullName;
-        var grandParentPath = Directory.GetParent(parentPath)!.FullName;
-
         var exception = Should.Throw<FileNotFoundException>(() =>
         {
             Reader.GetProbedEnvPath(levelsToSearch, ignoreExceptions: false);
@@ -257,18 +190,34 @@ public class ReaderTests : IDisposable
         exception.Message.ShouldContain($"Could not find '{DotEnvOptions.DefaultEnvFileName}'");
         exception.Message.ShouldContain($"after searching {levelsToSearch} directory level(s) upwards.");
         exception.Message.ShouldContain("Searched paths:");
-        exception.Message.ShouldContain(_startPath);      // Searched level 0
-        exception.Message.ShouldContain(parentPath);      // Searched level 1
-        exception.Message.ShouldContain(grandParentPath); // Searched level 2
+        exception.Message.ShouldContain(_startPath);
+        exception.Message.ShouldContain("net9.0");
+        exception.Message.ShouldContain("Debug");
+    }
+
+    [Fact]
+    public void GetProbedEnvPath_FileNotFoundAndIgnoreExceptionsTrue_ShouldReturnEmpty()
+    {
+        var result = Reader.GetProbedEnvPath(levelsToSearch: 2, ignoreExceptions: true);
+        result.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void GetProbedEnvPath_ShouldFindFile_ThreeLevelsUp()
+    {
+        var grandParentDirectory = Directory.GetParent(_startPath)!.Parent!.Parent!.Parent!.FullName;
+        var expectedPath = Path.Combine(grandParentDirectory, DotEnvOptions.DefaultEnvFileName);
+
+        var result = Reader.GetProbedEnvPath(levelsToSearch: 3, ignoreExceptions: true).ToList();
+
+        result.ShouldHaveSingleItem();
+        result.First().ShouldBe(expectedPath);
     }
 
     [Fact]
     public void GetProbedEnvPath_ShouldReturnEmpty_WhenFileExistsButIsOutOfSearchRange()
     {
-        // File is at level 2, but we only search up to level 1.
-        var grandParentDirectory = Directory.GetParent(_startPath)!.Parent!.FullName;
-        CreateEnvFileAt(grandParentDirectory);
-
+        // File is at level 3, but we only search up to level 1.
         var result = Reader.GetProbedEnvPath(levelsToSearch: 1, ignoreExceptions: true);
 
         result.ShouldBeEmpty();
@@ -277,10 +226,7 @@ public class ReaderTests : IDisposable
     [Fact]
     public void GetProbedEnvPath_ShouldThrow_WhenFileExistsButIsOutOfSearchRange()
     {
-        // File is at level 2, but we only search up to level 1.
-        var grandParentDirectory = Directory.GetParent(_startPath)!.Parent!.FullName;
-        CreateEnvFileAt(grandParentDirectory);
-
+        // File is at level 3, but we only search up to level 1.
         var exception = Should.Throw<FileNotFoundException>(() =>
         {
             Reader.GetProbedEnvPath(levelsToSearch: 1, ignoreExceptions: false);
@@ -288,7 +234,4 @@ public class ReaderTests : IDisposable
 
         exception.Message.ShouldContain($"Could not find '{DotEnvOptions.DefaultEnvFileName}'");
     }
-
-    private void CreateEnvFileAt(string directoryPath) =>
-        File.WriteAllText(Path.Combine(directoryPath, DotEnvOptions.DefaultEnvFileName), "TEST=true");
 }

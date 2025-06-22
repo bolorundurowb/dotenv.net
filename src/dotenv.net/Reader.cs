@@ -67,18 +67,23 @@ internal static class Reader
             throw new FileNotFoundException(
                 $"Could not find '{DotEnvOptions.DefaultEnvFileName}' after searching {levelsToSearch} directory level(s) upwards.{Environment.NewLine}Searched paths:{Environment.NewLine}{string.Join(Environment.NewLine, pathsSearched)}");
 
-        return foundEnvPath == null ? []: [foundEnvPath];
+        return foundEnvPath == null ? [] : [foundEnvPath];
 
         string? SearchPaths()
         {
-            var directory =  new DirectoryInfo(AppContext.BaseDirectory);
+            var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
             for (var i = 0; i <= count; i++)
             {
+                if (directory == null)
+                    break;
+
                 pathsSearched.Add(directory.FullName);
 
-                foreach (var fileInfo in directory.EnumerateFiles(DotEnvOptions.DefaultEnvFileName, SearchOption.TopDirectoryOnly)) 
+                foreach (var fileInfo in directory.EnumerateFiles(DotEnvOptions.DefaultEnvFileName,
+                             SearchOption.TopDirectoryOnly))
                     return fileInfo.FullName;
-                
+
                 directory = directory.Parent;
             }
 

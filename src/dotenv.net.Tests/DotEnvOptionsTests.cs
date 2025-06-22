@@ -31,19 +31,21 @@ public class DotEnvOptionsTests
     }
 
     [Fact]
-    public void WithEncoding_WithNullEncoding_ShouldUseUtf8()
+    public void WithEncoding_WithNullEncoding_ShouldThrowException()
     {
         var options = new DotEnvOptions();
-        options.WithEncoding(null!);
-        options.Encoding.ShouldBe(Encoding.UTF8);
+        Action action = () => options.WithEncoding(null!);
+        action.ShouldThrow<ArgumentNullException>()
+            .Message.ShouldBe("Encoding cannot be null (Parameter 'encoding')");
     }
 
     [Fact]
-    public void WithEnvFiles_WithNullParams_ShouldUseDefaultPath()
+    public void WithEnvFiles_WithNullParams_ShouldThrowException()
     {
         var options = new DotEnvOptions();
-        options.WithEnvFiles(null!);
-        options.EnvFilePaths.ShouldBe([DotEnvOptions.DefaultEnvFileName]);
+        Action action = () => options.WithEnvFiles(null!);
+        action.ShouldThrow<ArgumentNullException>()
+            .Message.ShouldBe("EnvFilePaths cannot be null (Parameter 'envFilePaths')");
     }
 
     [Fact]

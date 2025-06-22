@@ -177,7 +177,7 @@ public class DotEnvOptions
     public DotEnvOptions WithEncoding(Encoding encoding)
     {
         if (encoding == null ) 
-            throw new ArgumentNullException(nameof(encoding));
+            throw new ArgumentNullException(nameof(encoding), "Encoding cannot be null");
 
         Encoding = encoding;
         return this;
@@ -191,6 +191,9 @@ public class DotEnvOptions
     {
         if (ProbeForEnv)
             throw new InvalidOperationException("EnvFiles paths cannot be set when ProbeForEnv is true");
+
+        if (envFilePaths == null ) 
+            throw new ArgumentNullException(nameof(envFilePaths), "EnvFilePaths cannot be null");
 
         EnvFilePaths = envFilePaths.Any() != true ? DefaultEnvPath : envFilePaths;
         return this;

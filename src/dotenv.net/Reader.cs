@@ -76,7 +76,7 @@ internal static class Reader
             {
                 pathsSearched.Add(directory.FullName);
 
-                foreach (var fileInfo in directory.GetFiles(DotEnvOptions.DefaultEnvFileName, SearchOption.TopDirectoryOnly)) 
+                foreach (var fileInfo in directory.EnumerateFiles(DotEnvOptions.DefaultEnvFileName, SearchOption.TopDirectoryOnly)) 
                     return fileInfo.FullName;
                 
                 directory = directory.Parent;

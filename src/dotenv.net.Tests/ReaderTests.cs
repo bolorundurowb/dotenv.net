@@ -11,7 +11,6 @@ namespace dotenv.net.Tests;
 public class ReaderTests : IDisposable
 {
     private readonly string _tempFilePath;
-    private readonly string _tempDirPath;
 
     private readonly string _testRootPath;
     private readonly string _startPath;
@@ -20,8 +19,6 @@ public class ReaderTests : IDisposable
     public ReaderTests()
     {
         _tempFilePath = Path.GetTempFileName();
-        _tempDirPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(_tempDirPath);
 
         // Create a unique root directory for this test run in the system's temp folder.
         _testRootPath = Path.Combine(Path.GetTempPath(), "DotEnvTests_" + Guid.NewGuid().ToString("N"));
@@ -42,9 +39,6 @@ public class ReaderTests : IDisposable
     {
         if (File.Exists(_tempFilePath))
             File.Delete(_tempFilePath);
-
-        if (Directory.Exists(_tempDirPath))
-            Directory.Delete(_tempDirPath, true);
 
         AppDomain.CurrentDomain.SetData("APP_CONTEXT_BASE_DIRECTORY", _originalBaseDirectory);
 

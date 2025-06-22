@@ -19,7 +19,7 @@ public static class DotEnv
     {
         options ??= new DotEnvOptions();
         var envFilePaths = options.ProbeForEnv
-            ? [Reader.GetProbedEnvPath(options.ProbeLevelsToSearch, options.IgnoreExceptions)]
+            ? Reader.GetProbedEnvPath(options.ProbeLevelsToSearch!.Value, options.IgnoreExceptions)
             : options.EnvFilePaths;
         var envFileKeyValues = envFilePaths
             .Select(envFilePath =>

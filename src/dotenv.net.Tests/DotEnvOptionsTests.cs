@@ -31,19 +31,36 @@ public class DotEnvOptionsTests
     }
 
     [Fact]
-    public void WithEncoding_WithNullEncoding_ShouldUseUtf8()
+    public void Constructor_WithProbeForEnvAndNoLevels_ShouldSetDefaults()
     {
-        var options = new DotEnvOptions();
-        options.WithEncoding(null!);
-        options.Encoding.ShouldBe(Encoding.UTF8);
+        var options = new DotEnvOptions(probeForEnv: true, envFilePaths: null);
+        options.ProbeForEnv.ShouldBeTrue();
+        options.ProbeLevelsToSearch.ShouldBe(DotEnvOptions.DefaultProbeAscendLimit);
     }
 
     [Fact]
-    public void WithEnvFiles_WithNullParams_ShouldUseDefaultPath()
+    public void Constructor_WithProbeForEnvAndExplicitLevels_ShouldRespectProvidedLevel()
+    {
+        var options = new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 2, envFilePaths: null);
+        options.ProbeLevelsToSearch.ShouldBe(2);
+    }
+
+    [Fact]
+    public void WithEncoding_WithNullEncoding_ShouldThrowException()
     {
         var options = new DotEnvOptions();
-        options.WithEnvFiles(null!);
-        options.EnvFilePaths.ShouldBe([DotEnvOptions.DefaultEnvFileName]);
+        Action action = () => options.WithEncoding(null!);
+        action.ShouldThrow<ArgumentNullException>()
+            .Message.ShouldBe("Encoding cannot be null (Parameter 'encoding')");
+    }
+
+    [Fact]
+    public void WithEnvFiles_WithNullParams_ShouldThrowException()
+    {
+        var options = new DotEnvOptions();
+        Action action = () => options.WithEnvFiles(null!);
+        action.ShouldThrow<ArgumentNullException>()
+            .Message.ShouldBe("EnvFilePaths cannot be null (Parameter 'envFilePaths')");
     }
 
     [Fact]
@@ -55,11 +72,35 @@ public class DotEnvOptionsTests
     }
 
     [Fact]
+    public void WithEnvFiles_WhenProbeForEnvIsTrue_ShouldThrow()
+    {
+        var options = new DotEnvOptions(probeForEnv: true);
+        var ex = Should.Throw<InvalidOperationException>(() => options.WithEnvFiles("custom.env"));
+        ex.Message.ShouldBe("EnvFiles paths cannot be set when ProbeForEnv is true");
+    }
+
+    [Fact]
+    public void WithEnvFiles_WithNonEmptyList_ShouldSetPaths()
+    {
+        var options = new DotEnvOptions();
+        options.WithEnvFiles("test.env");
+        options.EnvFilePaths.ShouldBe(["test.env"]);
+    }
+
+    [Fact]
     public void WithProbeForEnv_WithNegativeProbeLevels_ShouldUseDefaultProbeDepth()
     {
         var options = new DotEnvOptions();
         options.WithProbeForEnv(-1);
         options.ProbeLevelsToSearch.ShouldBe(DotEnvOptions.DefaultProbeAscendLimit);
+    }
+
+    [Fact]
+    public void WithProbeForEnv_WhenCustomEnvFilePathSet_ShouldThrow()
+    {
+        var options = new DotEnvOptions(envFilePaths: new[] { "custom.env" });
+        var ex = Should.Throw<InvalidOperationException>(() => options.WithProbeForEnv());
+        ex.Message.ShouldBe("Cannot use ProbeForEnv when EnvFiles is set.");
     }
 
     [Fact]
@@ -69,14 +110,6 @@ public class DotEnvOptionsTests
         options.WithoutProbeForEnv();
         options.ProbeForEnv.ShouldBeFalse();
         options.ProbeLevelsToSearch.ShouldBe(DotEnvOptions.DefaultProbeAscendLimit);
-    }
-
-    [Fact]
-    public void WithDefaultEncoding_ShouldResetToUtf8()
-    {
-        var options = new DotEnvOptions().WithEncoding(Encoding.ASCII);
-        options.WithDefaultEncoding();
-        options.Encoding.ShouldBe(Encoding.UTF8);
     }
 
     [Theory]

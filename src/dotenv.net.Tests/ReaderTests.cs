@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Shouldly;
 using Xunit;
@@ -10,39 +11,48 @@ namespace dotenv.net.Tests;
 public class ReaderTests : IDisposable
 {
     private readonly string _tempFilePath;
-    private readonly string _tempDirPath;
+
+    private readonly string _testRootPath;
+    private readonly string _startPath;
 
     public ReaderTests()
     {
         _tempFilePath = Path.GetTempFileName();
-        _tempDirPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(_tempDirPath);
+
+        // Create a unique root directory for this test run in the system's temp folder.
+        _testRootPath = Path.Combine(Path.GetTempPath(), "DotEnvTests_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_testRootPath);
+
+        _startPath = AppContext.BaseDirectory;
     }
 
     public void Dispose()
     {
         if (File.Exists(_tempFilePath))
             File.Delete(_tempFilePath);
-            
-        if (Directory.Exists(_tempDirPath))
-            Directory.Delete(_tempDirPath, true);
+
+        if (Directory.Exists(_testRootPath))
+            Directory.Delete(_testRootPath, true);
     }
 
     [Theory]
     [InlineData(null, false)]
     [InlineData("", false)]
     [InlineData("   ", false)]
-    public void ReadFileLines_InvalidPathAndIgnoreExceptionsFalse_ShouldThrowArgumentException(string path, bool ignoreExceptions)
+    public void ReadFileLines_InvalidPathAndIgnoreExceptionsFalse_ShouldThrowArgumentException(string path,
+        bool ignoreExceptions)
     {
         Action act = () => Reader.ReadFileLines(path, ignoreExceptions, null);
-        act.ShouldThrow<ArgumentException>().Message.ShouldContain("The file path cannot be null, empty or whitespace.");
+        act.ShouldThrow<ArgumentException>().Message
+            .ShouldContain("The file path cannot be null, empty or whitespace.");
     }
 
     [Theory]
     [InlineData(null, true)]
     [InlineData("", true)]
     [InlineData("   ", true)]
-    public void ReadFileLines_InvalidPathAndIgnoreExceptionsTrue_ShouldReturnEmptySpan(string path, bool ignoreExceptions)
+    public void ReadFileLines_InvalidPathAndIgnoreExceptionsTrue_ShouldReturnEmptySpan(string path,
+        bool ignoreExceptions)
     {
         var result = Reader.ReadFileLines(path, ignoreExceptions, null).ToArray();
         result.ShouldBeEmpty();
@@ -51,9 +61,9 @@ public class ReaderTests : IDisposable
     [Fact]
     public void ReadFileLines_NonExistentFileAndIgnoreExceptionsFalse_ShouldThrowFileNotFoundException()
     {
-        var path = "nonexistent.env";
+        const string path = "nonexistent.env";
         Action act = () => Reader.ReadFileLines(path, false, null);
-        act.ShouldThrow<FileNotFoundException>().Message.ShouldContain (path);
+        act.ShouldThrow<FileNotFoundException>().Message.ShouldContain(path);
     }
 
     [Fact]
@@ -76,7 +86,7 @@ public class ReaderTests : IDisposable
     [Fact]
     public void ReadFileLines_WithCustomEncoding_ShouldReturnCorrectContent()
     {
-        var content = "KEY=üñîçø∂é";
+        const string content = "KEY=üñîçø∂é";
         File.WriteAllText(_tempFilePath, content, Encoding.UTF32);
         var result = Reader.ReadFileLines(_tempFilePath, false, Encoding.UTF32);
         result[0].ShouldBe(content);
@@ -109,8 +119,13 @@ public class ReaderTests : IDisposable
     [Fact]
     public void MergeEnvKeyValues_SingleArray_ShouldReturnAllItems()
     {
-        var input = new[] {
-            new[] { new KeyValuePair<string, string>("KEY1", "value1"), new KeyValuePair<string, string>("KEY2", "value2") }
+        var input = new[]
+        {
+            new[]
+            {
+                new KeyValuePair<string, string>("KEY1", "value1"),
+                new KeyValuePair<string, string>("KEY2", "value2")
+            }
         };
         var result = Reader.MergeEnvKeyValues(input, false);
         result.ShouldBe(new Dictionary<string, string> { { "KEY1", "value1" }, { "KEY2", "value2" } });
@@ -119,7 +134,8 @@ public class ReaderTests : IDisposable
     [Fact]
     public void MergeEnvKeyValues_MultipleArraysWithoutOverwrite_ShouldKeepFirstValue()
     {
-        var input = new[] {
+        var input = new[]
+        {
             new[] { new KeyValuePair<string, string>("KEY", "first") },
             new[] { new KeyValuePair<string, string>("KEY", "second") }
         };
@@ -131,7 +147,8 @@ public class ReaderTests : IDisposable
     [Fact]
     public void MergeEnvKeyValues_MultipleArraysWithOverwrite_ShouldKeepLastValue()
     {
-        var input = new[] {
+        var input = new[]
+        {
             new[] { new KeyValuePair<string, string>("KEY", "first") },
             new[] { new KeyValuePair<string, string>("KEY", "second") }
         };
@@ -143,60 +160,78 @@ public class ReaderTests : IDisposable
     [Fact]
     public void MergeEnvKeyValues_ComplexMerge_ShouldHandleAllCases()
     {
-        var input = new[] {
-            new[] {
+        var input = new[]
+        {
+            new[]
+            {
                 new KeyValuePair<string, string>("KEY1", "value1"),
                 new KeyValuePair<string, string>("KEY2", "value2")
             },
-            new[] {
+            new[]
+            {
                 new KeyValuePair<string, string>("KEY2", "updated"),
                 new KeyValuePair<string, string>("KEY3", "value3")
             }
         };
         var result = Reader.MergeEnvKeyValues(input, true);
-        result.ShouldBe(new Dictionary<string, string> { { "KEY1", "value1" }, { "KEY2", "updated" }, { "KEY3", "value3" } });
+        result.ShouldBe(new Dictionary<string, string>
+            { { "KEY1", "value1" }, { "KEY2", "updated" }, { "KEY3", "value3" } });
     }
 
     [Fact]
     public void GetProbedEnvPath_FileNotFoundAndIgnoreExceptionsFalse_ShouldThrow()
     {
-        using var dir = new TempWorkingDirectory(_tempDirPath);
-        Action act = () => Reader.GetProbedEnvPath(levelsToSearch: 2, ignoreExceptions: false);
-        act.ShouldThrow<FileNotFoundException>()
-            .Message.ShouldContain(DotEnvOptions.DefaultEnvFileName);
-    }
-
-    [Fact]
-    public void GetProbedEnvPath_FileNotFoundAndIgnoreExceptionsTrue_ShouldReturnNull()
-    {
-        using var dir = new TempWorkingDirectory(_tempDirPath);
-        var result = Reader.GetProbedEnvPath(levelsToSearch: 2, ignoreExceptions: true);
-        result.ShouldBeNull();
-    }
-
-    [Fact]
-    public void GetProbedEnvPath_LevelsTooLow_ShouldNotFindFile()
-    {
-        var envPath = Path.Combine(_tempDirPath, ".env");
-        File.WriteAllText(envPath, "TEST=value");
-        var startDir = Path.Combine(_tempDirPath, "subdir1", "subdir2", "subdir3");
-        Directory.CreateDirectory(startDir);
-
-        using var dir = new TempWorkingDirectory(startDir);
-        var result = Reader.GetProbedEnvPath(levelsToSearch: 2, ignoreExceptions: true);
-        result.ShouldBeNull();
-    }
-
-    private class TempWorkingDirectory : IDisposable
-    {
-        private readonly string _originalDirectory;
-
-        public TempWorkingDirectory(string path)
+        var levelsToSearch = 2;
+        var exception = Should.Throw<FileNotFoundException>(() =>
         {
-            _originalDirectory = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(path);
-        }
+            Reader.GetProbedEnvPath(levelsToSearch, ignoreExceptions: false);
+        });
 
-        public void Dispose() => Directory.SetCurrentDirectory(_originalDirectory);
+        exception.Message.ShouldContain($"Could not find '{DotEnvOptions.DefaultEnvFileName}'");
+        exception.Message.ShouldContain($"after searching {levelsToSearch} directory level(s) upwards.");
+        exception.Message.ShouldContain("Searched paths:");
+        exception.Message.ShouldContain(_startPath);
+        exception.Message.ShouldContain("net9.0");
+        exception.Message.ShouldContain("Debug");
+    }
+
+    [Fact]
+    public void GetProbedEnvPath_FileNotFoundAndIgnoreExceptionsTrue_ShouldReturnEmpty()
+    {
+        var result = Reader.GetProbedEnvPath(levelsToSearch: 2, ignoreExceptions: true);
+        result.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void GetProbedEnvPath_ShouldFindFile_ThreeLevelsUp()
+    {
+        var grandParentDirectory = Directory.GetParent(_startPath)!.Parent!.Parent!.Parent!.FullName;
+        var expectedPath = Path.Combine(grandParentDirectory, DotEnvOptions.DefaultEnvFileName);
+
+        var result = Reader.GetProbedEnvPath(levelsToSearch: 3, ignoreExceptions: true).ToList();
+
+        result.ShouldHaveSingleItem();
+        result.First().ShouldBe(expectedPath);
+    }
+
+    [Fact]
+    public void GetProbedEnvPath_ShouldReturnEmpty_WhenFileExistsButIsOutOfSearchRange()
+    {
+        // File is at level 3, but we only search up to level 1.
+        var result = Reader.GetProbedEnvPath(levelsToSearch: 1, ignoreExceptions: true);
+
+        result.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void GetProbedEnvPath_ShouldThrow_WhenFileExistsButIsOutOfSearchRange()
+    {
+        // File is at level 3, but we only search up to level 1.
+        var exception = Should.Throw<FileNotFoundException>(() =>
+        {
+            Reader.GetProbedEnvPath(levelsToSearch: 1, ignoreExceptions: false);
+        });
+
+        exception.Message.ShouldContain($"Could not find '{DotEnvOptions.DefaultEnvFileName}'");
     }
 }

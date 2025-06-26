@@ -180,6 +180,7 @@ public class DotEnvOptionsTests
             .WithProbeForEnv()
             .Read();
 
+        values.Count.ShouldBe(11);
         values.ShouldContainKeyAndValue("lower_case_key", "world");
         values.ShouldContainKeyAndValue("DOUBLE_QUOTES", "double");
         values.ShouldContainKeyAndValue("SINGLE_QUOTES", "single");
@@ -189,5 +190,7 @@ public class DotEnvOptionsTests
         values.ShouldContainKeyAndValue("KeyWithNoValue", string.Empty);
         values.ShouldContainKeyAndValue("DOUBLE_QUOTE_EVEN_MORE_LINES",
             $"""this{Environment.NewLine}is{Environment.NewLine}"a{Environment.NewLine}multi-line{Environment.NewLine}  value""");
+        values.ShouldContainKeyAndValue("OidcAuthentication:ClientId", "your-client-id");
+        values.ShouldContainKeyAndValue("OidcAuthentication:ClientSecret", "your-client-secret");
     }
 }

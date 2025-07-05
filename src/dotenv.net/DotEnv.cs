@@ -25,7 +25,8 @@ public static class DotEnv
             .Select(envFilePath =>
             {
                 var fileRows = Reader.ReadFileLines(envFilePath, options.IgnoreExceptions, options.Encoding);
-                var envKeyValues = Reader.ExtractEnvKeyValues(fileRows, options.TrimValues);
+                var envKeyValues =
+                    Reader.ExtractEnvKeyValues(fileRows, options.TrimValues, options.SupportExportSyntax);
                 return envKeyValues.ToArray();
             })
             .ToList();

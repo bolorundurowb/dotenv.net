@@ -38,9 +38,9 @@ internal static class Reader
     }
 
     internal static ReadOnlySpan<KeyValuePair<string, string>> ExtractEnvKeyValues(ReadOnlySpan<string> rawEnvRows,
-        bool trimValues) => rawEnvRows == ReadOnlySpan<string>.Empty
+        bool trimValues, bool supportExportSyntax) => rawEnvRows == ReadOnlySpan<string>.Empty
         ? ReadOnlySpan<KeyValuePair<string, string>>.Empty
-        : Parser.Parse(rawEnvRows, trimValues);
+        : Parser.Parse(rawEnvRows, trimValues, supportExportSyntax);
 
     internal static Dictionary<string, string> MergeEnvKeyValues(
         IEnumerable<KeyValuePair<string, string>[]> envFileKeyValues, bool overwriteExistingVars)

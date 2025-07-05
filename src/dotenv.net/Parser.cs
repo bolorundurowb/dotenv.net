@@ -9,9 +9,10 @@ internal static class Parser
     private const char SingleQuote = '\'';
     private const char DoubleQuotes = '"';
     private const char BackSlash = '\\';
+    private const string ExportPrefix = "export";
 
     internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> rawEnvRows,
-        bool trimValues)
+        bool trimValues, bool supportExportSyntax)
     {
         var keyValuePairs = new List<KeyValuePair<string, string>>();
 
@@ -28,7 +29,7 @@ internal static class Parser
             if (!rawEnvRow.HasKey(out var equalsIndex))
                 continue;
 
-            var (key, rawValue) = rawEnvRow.SplitIntoKv(equalsIndex);
+            var (key, rawValue) = rawEnvRow.SplitIntoKv(equalsIndex, supportExportSyntax);
 
             if (string.IsNullOrEmpty(key))
                 continue;
@@ -62,7 +63,7 @@ internal static class Parser
             var endQuoteIndex = -1;
             var searchFrom = 0;
 
-            // find the next unescaped quote on the current line.
+            // find the next unescaped quote on the current line
             while (searchFrom < currentLineContent.Length)
             {
                 var nextQuote = currentLineContent.IndexOf(quoteChar, searchFrom);
@@ -71,25 +72,25 @@ internal static class Parser
                 if (nextQuote == -1)
                     break;
 
-                // count preceding backslashes to see if the quote is escaped.
+                // count preceding backslashes to see if the quote is escaped
                 var backslashCount = 0;
                 for (var j = nextQuote - 1; j >= 0 && currentLineContent[j] == BackSlash; j--)
                     backslashCount++;
 
-                // an even number of backslashes means the quote is NOT escaped.
+                // an even number of backslashes means the quote is NOT escaped
                 if (backslashCount % 2 == 0)
                 {
                     endQuoteIndex = nextQuote;
                     break;
                 }
 
-                // odd number of backslashes means it's escaped, continue searching
+                // an odd number of backslashes means it is escaped, continue searching
                 searchFrom = nextQuote + 1;
             }
 
             if (endQuoteIndex != -1)
             {
-                // closing quote found. Append the content before it and exit
+                // no closing quote found; append the content before it and exit
                 valueBuilder.Append(currentLineContent, 0, endQuoteIndex);
                 break;
             }
@@ -119,10 +120,14 @@ internal static class Parser
         return index > 0;
     }
 
-    private static (string Key, string Value) SplitIntoKv(this string rawEnvRow, int index)
+    private static (string Key, string Value) SplitIntoKv(this string rawEnvRow, int index, bool supportExportSyntax)
     {
         var key = rawEnvRow.Substring(0, index).Trim();
         var value = rawEnvRow.Substring(index + 1);
+
+        if (supportExportSyntax && key.StartsWith(ExportPrefix))
+            key = key.Replace(ExportPrefix, string.Empty).Trim();
+
         return (key, value);
     }
 

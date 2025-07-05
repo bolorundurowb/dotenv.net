@@ -88,6 +88,11 @@ public class DotEnvOptions
             WithProbeForEnv(probeLevelsToSearch ?? DefaultProbeAscendLimit);
         else
             WithoutProbeForEnv();
+
+        if (supportExportSyntax)
+            WithSupportExportSyntax();
+        else
+            WithoutSupportExportSyntax();
     }
 
     /// <summary>

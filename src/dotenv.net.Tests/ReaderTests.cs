@@ -95,7 +95,7 @@ public class ReaderTests : IDisposable
     [Fact]
     public void ExtractEnvKeyValues_EmptySpan_ShouldReturnEmptySpan()
     {
-        var result = Reader.ExtractEnvKeyValues(ReadOnlySpan<string>.Empty, false).ToArray();
+        var result = Reader.ExtractEnvKeyValues(ReadOnlySpan<string>.Empty, false, supportExportSyntax: false).ToArray();
         result.ShouldBeEmpty();
     }
 
@@ -103,7 +103,17 @@ public class ReaderTests : IDisposable
     public void ExtractEnvKeyValues_ValidLines_ShouldReturnKeyValuePairs()
     {
         var lines = new[] { "KEY1=value1", "KEY2=value2" };
-        var result = Reader.ExtractEnvKeyValues(lines, false);
+        var result = Reader.ExtractEnvKeyValues(lines, false, supportExportSyntax: false);
+        result.Length.ShouldBe(2);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY1", "value1"));
+        result[1].ShouldBe(new KeyValuePair<string, string>("KEY2", "value2"));
+    }
+
+    [Fact]
+    public void ExtractEnvKeyValues_ExportSyntaxValidLines_ShouldReturnKeyValuePairs()
+    {
+        var lines = new[] { "export KEY1=value1", " export  KEY2 =value2" };
+        var result = Reader.ExtractEnvKeyValues(lines, false, supportExportSyntax: true);
         result.Length.ShouldBe(2);
         result[0].ShouldBe(new KeyValuePair<string, string>("KEY1", "value1"));
         result[1].ShouldBe(new KeyValuePair<string, string>("KEY2", "value2"));

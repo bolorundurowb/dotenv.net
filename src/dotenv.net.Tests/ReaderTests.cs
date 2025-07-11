@@ -39,7 +39,7 @@ public class ReaderTests : IDisposable
     [InlineData(null, false)]
     [InlineData("", false)]
     [InlineData("   ", false)]
-    public void ReadFileLines_InvalidPathAndIgnoreExceptionsFalse_ShouldThrowArgumentException(string path,
+    public void ReadFileLines_InvalidPathAndIgnoreExceptionsFalse_ShouldThrowArgumentException(string? path,
         bool ignoreExceptions)
     {
         Action act = () => Reader.ReadFileLines(path, ignoreExceptions, null);
@@ -51,7 +51,7 @@ public class ReaderTests : IDisposable
     [InlineData(null, true)]
     [InlineData("", true)]
     [InlineData("   ", true)]
-    public void ReadFileLines_InvalidPathAndIgnoreExceptionsTrue_ShouldReturnEmptySpan(string path,
+    public void ReadFileLines_InvalidPathAndIgnoreExceptionsTrue_ShouldReturnEmptySpan(string? path,
         bool ignoreExceptions)
     {
         var result = Reader.ReadFileLines(path, ignoreExceptions, null).ToArray();

@@ -42,7 +42,7 @@ You can install **dotenv.net** via NuGet:
 
 - **Manual Installation** (via `.csproj`):
   ```xml
-  <PackageReference Include="dotenv.net" Version="3.0.0"/>
+  <PackageReference Include="dotenv.net" Version="4.0.0"/>
   ```
 
 ---
@@ -94,6 +94,11 @@ You can install **dotenv.net** via NuGet:
   DotEnv.Load(options: new DotEnvOptions(overwriteExistingVars: false));
   ```
 
+- **Support the Export Syntax**:
+  ```csharp
+  DotEnv.Load(options: new DotEnvOptions(supportExportSyntax: true));
+  ```
+
 ---
 
 ### Reading Environment Variables 📖
@@ -120,6 +125,7 @@ DotEnv.Fluent()
     .WithEncoding(Encoding.ASCII)
     .WithOverwriteExistingVars()
     .WithProbeForEnv(probeLevelsToSearch: 6)
+    .WithSupportExportSyntax()
     .Load();
 
 // Read environment variables
@@ -130,6 +136,7 @@ var envVars = DotEnv.Fluent()
     .WithDefaultEncoding()
     .WithoutOverwriteExistingVars()
     .WithoutProbeForEnv()
+    .WithoutSupportExportSyntax()
     .Read();
 ```
 

@@ -56,12 +56,13 @@ public class DotEnvOptions
     /// Default constructor for the dot env options
     /// </summary>
     /// <param name="ignoreExceptions">Whether to ignore exceptions</param>
+    /// <param name="envFilePaths">The env file paths to load</param>
     /// <param name="encoding">The encoding the env files are in</param>
     /// <param name="trimValues">Whether to trim whitespace from the read values</param>
-    /// <param name="overwriteExistingVars">Whether to overwrite </param>
+    /// <param name="overwriteExistingVars">Whether to overwrite a given env var if it is already set</param>
     /// <param name="probeForEnv">Whether to search up the directories looking for an env file</param>
     /// <param name="probeLevelsToSearch">How high up the directory chain to search</param>
-    /// <param name="envFilePaths">The env file paths to load</param>
+    /// <param name="supportExportSyntax">Whether to support env vars in the export syntax</param>
     public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string>? envFilePaths = null,
         Encoding? encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
         bool probeForEnv = false, int? probeLevelsToSearch = null, bool supportExportSyntax = false)

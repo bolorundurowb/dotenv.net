@@ -15,7 +15,7 @@ public static class EnvReader
     /// <exception cref="Exception">When the value could not be found</exception>
     public static string GetStringValue(string key)
     {
-        if (TryGetStringValue(key, out var value)) 
+        if (TryGetStringValue(key, out var value))
             return value!;
 
         throw new Exception("Value could not be retrieved.");
@@ -29,7 +29,7 @@ public static class EnvReader
     /// <exception cref="Exception">When the value could not be found or is not an integer</exception>
     public static int GetIntValue(string key)
     {
-        if (TryGetIntValue(key, out var value)) 
+        if (TryGetIntValue(key, out var value))
             return value;
 
         throw new Exception("Value could not be retrieved.");
@@ -43,7 +43,7 @@ public static class EnvReader
     /// <exception cref="Exception">When the value could not be found or is not a valid double</exception>
     public static double GetDoubleValue(string key)
     {
-        if (TryGetDoubleValue(key, out var value)) 
+        if (TryGetDoubleValue(key, out var value))
             return value;
 
         throw new Exception("Value could not be retrieved.");
@@ -57,7 +57,7 @@ public static class EnvReader
     /// <exception cref="Exception">When the value could not be found or is not a valid decimal</exception>
     public static decimal GetDecimalValue(string key)
     {
-        if (TryGetDecimalValue(key, out var value)) 
+        if (TryGetDecimalValue(key, out var value))
             return value;
 
         throw new Exception("Value could not be retrieved.");
@@ -71,7 +71,7 @@ public static class EnvReader
     /// <exception cref="Exception">When the value could not be found or is not a valid bool</exception>
     public static bool GetBooleanValue(string key)
     {
-        if (TryGetBooleanValue(key, out var value)) 
+        if (TryGetBooleanValue(key, out var value))
             return value;
 
         throw new Exception("Value could not be retrieved.");
@@ -107,7 +107,7 @@ public static class EnvReader
     {
         var retrievedValue = Environment.GetEnvironmentVariable(key);
 
-        if (!string.IsNullOrEmpty(retrievedValue)) 
+        if (!string.IsNullOrEmpty(retrievedValue))
             return int.TryParse(retrievedValue, out value);
 
         value = 0;
@@ -124,7 +124,7 @@ public static class EnvReader
     {
         var retrievedValue = Environment.GetEnvironmentVariable(key);
 
-        if (!string.IsNullOrEmpty(retrievedValue)) 
+        if (!string.IsNullOrEmpty(retrievedValue))
             return double.TryParse(retrievedValue, out value);
 
         value = 0.0;
@@ -141,7 +141,7 @@ public static class EnvReader
     {
         var retrievedValue = Environment.GetEnvironmentVariable(key);
 
-        if (!string.IsNullOrEmpty(retrievedValue)) 
+        if (!string.IsNullOrEmpty(retrievedValue))
             return decimal.TryParse(retrievedValue, out value);
 
         value = 0.0m;
@@ -158,7 +158,7 @@ public static class EnvReader
     {
         var retrievedValue = Environment.GetEnvironmentVariable(key);
 
-        if (!string.IsNullOrEmpty(retrievedValue)) 
+        if (!string.IsNullOrEmpty(retrievedValue))
             return bool.TryParse(retrievedValue, out value);
 
         value = false;

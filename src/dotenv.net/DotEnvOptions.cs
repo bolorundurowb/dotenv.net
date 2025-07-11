@@ -48,6 +48,11 @@ public class DotEnvOptions
     public int? ProbeLevelsToSearch { get; private set; }
 
     /// <summary>
+    /// Whether the optional dotenv export syntax should be supported. The default is false
+    /// </summary>
+    public bool SupportExportSyntax { get; private set; }
+
+    /// <summary>
     /// Default constructor for the dot env options
     /// </summary>
     /// <param name="ignoreExceptions">Whether to ignore exceptions</param>
@@ -59,7 +64,7 @@ public class DotEnvOptions
     /// <param name="envFilePaths">The env file paths to load</param>
     public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string>? envFilePaths = null,
         Encoding? encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
-        bool probeForEnv = false, int? probeLevelsToSearch = null)
+        bool probeForEnv = false, int? probeLevelsToSearch = null, bool supportExportSyntax = false)
     {
         if (ignoreExceptions)
             WithoutExceptions();
@@ -83,6 +88,11 @@ public class DotEnvOptions
             WithProbeForEnv(probeLevelsToSearch ?? DefaultProbeAscendLimit);
         else
             WithoutProbeForEnv();
+
+        if (supportExportSyntax)
+            WithSupportExportSyntax();
+        else
+            WithoutSupportExportSyntax();
     }
 
     /// <summary>
@@ -176,10 +186,30 @@ public class DotEnvOptions
     /// <returns>configured dot env options</returns>
     public DotEnvOptions WithEncoding(Encoding encoding)
     {
-        if (encoding == null ) 
+        if (encoding == null)
             throw new ArgumentNullException(nameof(encoding), "Encoding cannot be null");
 
         Encoding = encoding;
+        return this;
+    }
+
+    /// <summary>
+    /// Support export syntax entries
+    /// </summary>
+    /// <returns>Configured DotEnvOptions</returns>
+    public DotEnvOptions WithSupportExportSyntax()
+    {
+        SupportExportSyntax = true;
+        return this;
+    }
+
+    /// <summary>
+    /// Disallow support export syntax entries
+    /// </summary>
+    /// <returns>Configured DotEnvOptions</returns>
+    public DotEnvOptions WithoutSupportExportSyntax()
+    {
+        SupportExportSyntax = false;
         return this;
     }
 
@@ -192,7 +222,7 @@ public class DotEnvOptions
         if (ProbeForEnv)
             throw new InvalidOperationException("EnvFiles paths cannot be set when ProbeForEnv is true");
 
-        if (envFilePaths == null ) 
+        if (envFilePaths == null)
             throw new ArgumentNullException(nameof(envFilePaths), "EnvFilePaths cannot be null");
 
         EnvFilePaths = envFilePaths.Any() != true ? DefaultEnvPath : envFilePaths;

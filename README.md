@@ -1,6 +1,6 @@
 # dotenv.net 🌟
 
-[![CI - Build, Test & Coverage](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build.yml/badge.svg)](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build.yml)
+[![Build, Test & Coverage](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build-and-test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![codecov](https://codecov.io/gh/bolorundurowb/dotenv.net/graph/badge.svg?token=Qw8xSiEHNp)](https://codecov.io/gh/bolorundurowb/dotenv.net)
 ![NuGet Version](https://img.shields.io/nuget/v/dotenv.net)

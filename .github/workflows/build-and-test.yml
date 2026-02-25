@@ -18,7 +18,7 @@ jobs:
           dotnet-version: '10.x'
 
       - name: Restore dependencies
-        run: dotnet restore 
+        run: dotnet restore
         working-directory: ./src
 
       - name: Build all projects
@@ -27,7 +27,7 @@ jobs:
 
       - name: Run tests with code coverage
         run: dotnet test --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=../../coverage/coverage.cobertura.xml
-        working-directory: ./src        
+        working-directory: ./src
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5

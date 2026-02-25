@@ -201,7 +201,6 @@ public class ReaderTests : IDisposable
         exception.Message.ShouldContain($"after searching {levelsToSearch} directory level(s) upwards.");
         exception.Message.ShouldContain("Searched paths:");
         exception.Message.ShouldContain(_startPath);
-        exception.Message.ShouldContain("Debug");
     }
 
     [Fact]

@@ -2,7 +2,7 @@
 
 [![CI - Build, Test & Coverage](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build.yml/badge.svg)](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Coverage Status](https://coveralls.io/repos/github/bolorundurowb/dotenv.net/badge.svg?branch=master)](https://coveralls.io/github/bolorundurowb/dotenv.net?branch=master)
+[![codecov](https://codecov.io/gh/bolorundurowb/dotenv.net/graph/badge.svg?token=Qw8xSiEHNp)](https://codecov.io/gh/bolorundurowb/dotenv.net)
 ![NuGet Version](https://img.shields.io/nuget/v/dotenv.net)
 
 
@@ -19,7 +19,7 @@ Whether you're building a small project or a large-scale application, **dotenv.n
 - **Simple and Pain-Free** 🎯: Easily load and read `.env` files with minimal setup.
 - **Flexible Configuration** 🔧: Customize how environment variables are loaded with a variety of options.
 - **Dependency Injection Support** 🧩: Works seamlessly with popular DI frameworks.
-- **Cross-Platform** 🌍: Fully compatible with .NET Core, .NET 5, and beyond.
+- **Cross-Platform** 🌍: Fully compatible with .NET Core, .NET 5, .NET 6, .NET 9 and beyond.
 - **Open Source** 💡: Actively maintained and supported by the community.
 
 ---
@@ -42,7 +42,7 @@ You can install **dotenv.net** via NuGet:
 
 - **Manual Installation** (via `.csproj`):
   ```xml
-  <PackageReference Include="dotenv.net" Version="4.0.0"/>
+  <PackageReference Include="dotenv.net" Version="4.x.x"/>
   ```
 
 ---
@@ -61,13 +61,43 @@ You can install **dotenv.net** via NuGet:
    DotEnv.Load();
    ```
 
-   This will automatically locate and load the `.env` file in the same directory as your application.
+   This will automatically locate and load the `.env` file in the same directory as your application's executable.
+
+---
+
+### Fluent API 🎨
+
+For a more expressive syntax, **dotenv.net** provides a fluent API:
+
+```csharp
+// Load environment variables with custom options
+DotEnv.Fluent()
+    .WithExceptions()
+    .WithEnvFiles("./path/to/env")
+    .WithTrimValues()
+    .WithEncoding(Encoding.ASCII)
+    .WithOverwriteExistingVars()
+    .WithProbeForEnv(probeLevelsToSearch: 6)
+    .WithSupportExportSyntax()
+    .Load();
+
+// Read environment variables
+var envVars = DotEnv.Fluent()
+    .WithoutExceptions()
+    .WithEnvFiles() // Defaults to .env
+    .WithoutTrimValues()
+    .WithEncoding(Encoding.UTF8)
+    .WithoutOverwriteExistingVars()
+    .WithoutProbeForEnv()
+    .WithoutSupportExportSyntax()
+    .Read();
+```
 
 ---
 
 ### Advanced Configuration ⚙️
 
-**dotenv.net** offers a wide range of configuration options to tailor the loading process to your needs:
+**dotenv.net** offers a wide range of configuration options to tailor the loading process to your needs using the `DotEnvOptions` class:
 
 - **Specify Custom `.env` File Paths**:
   ```csharp
@@ -108,36 +138,6 @@ Use the `Read()` method to retrieve environment variables without modifying the 
 ```csharp
 var envVars = DotEnv.Read();
 Console.WriteLine(envVars["KEY"]); // Outputs the value associated with 'KEY'
-```
-
----
-
-### Fluent API 🎨
-
-For a more expressive syntax, **dotenv.net** provides a fluent API:
-
-```csharp
-// Load environment variables with custom options
-DotEnv.Fluent()
-    .WithExceptions()
-    .WithEnvFiles("./path/to/env")
-    .WithTrimValues()
-    .WithEncoding(Encoding.ASCII)
-    .WithOverwriteExistingVars()
-    .WithProbeForEnv(probeLevelsToSearch: 6)
-    .WithSupportExportSyntax()
-    .Load();
-
-// Read environment variables
-var envVars = DotEnv.Fluent()
-    .WithoutExceptions()
-    .WithEnvFiles() // Defaults to .env
-    .WithoutTrimValues()
-    .WithDefaultEncoding()
-    .WithoutOverwriteExistingVars()
-    .WithoutProbeForEnv()
-    .WithoutSupportExportSyntax()
-    .Read();
 ```
 
 ---

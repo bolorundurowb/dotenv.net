@@ -1,0 +1,37 @@
+name: Build, Test & Coverage
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - name: Restore dependencies
+        run: dotnet restore 
+        working-directory: ./src
+
+      - name: Build all projects
+        run: dotnet build --configuration Release --no-restore
+        working-directory: ./src
+
+      - name: Run tests with code coverage
+        run: dotnet test --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=../../coverage/coverage.cobertura.xml
+        working-directory: ./src        
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage/
+          fail_ci_if_error: true

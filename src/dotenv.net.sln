@@ -2,9 +2,9 @@
 # Visual Studio 2013
 VisualStudioVersion = 12.0.0.0
 MinimumVisualStudioVersion = 10.0.0.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net", "src\dotenv.net\dotenv.net.csproj", "{ABC30C21-62C1-4DF5-B352-4D33BCDD9845}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net", "dotenv.net\dotenv.net.csproj", "{ABC30C21-62C1-4DF5-B352-4D33BCDD9845}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.Tests", "src\dotenv.net.Tests\dotenv.net.Tests.csproj", "{FC5ED4B3-DFDC-45E9-889C-847433F08E0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotenv.net.Tests", "dotenv.net.Tests\dotenv.net.Tests.csproj", "{FC5ED4B3-DFDC-45E9-889C-847433F08E0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -53,16 +53,16 @@ public class DotEnvOptions
     public bool SupportExportSyntax { get; private set; }
 
     /// <summary>
-    /// Default constructor for the dot env options
+    /// Initializes a new instance of the <see cref="DotEnvOptions"/> class.
     /// </summary>
-    /// <param name="ignoreExceptions">Whether to ignore exceptions</param>
-    /// <param name="envFilePaths">The env file paths to load</param>
-    /// <param name="encoding">The encoding the env files are in</param>
-    /// <param name="trimValues">Whether to trim whitespace from the read values</param>
-    /// <param name="overwriteExistingVars">Whether to overwrite a given env var if it is already set</param>
-    /// <param name="probeForEnv">Whether to search up the directories looking for an env file</param>
-    /// <param name="probeLevelsToSearch">How high up the directory chain to search</param>
-    /// <param name="supportExportSyntax">Whether to support env vars in the export syntax</param>
+    /// <param name="ignoreExceptions">Whether to ignore exceptions during the loading process.</param>
+    /// <param name="envFilePaths">The paths to the env files to load.</param>
+    /// <param name="encoding">The encoding the env files are in.</param>
+    /// <param name="trimValues">Whether to trim whitespace from the read values.</param>
+    /// <param name="overwriteExistingVars">Whether to overwrite a given env var if it is already set.</param>
+    /// <param name="probeForEnv">Whether to search up the directories looking for an env file.</param>
+    /// <param name="probeLevelsToSearch">How high up the directory chain to search.</param>
+    /// <param name="supportExportSyntax">Whether to support env vars in the export syntax.</param>
     public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string>? envFilePaths = null,
         Encoding? encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
         bool probeForEnv = false, int? probeLevelsToSearch = null, bool supportExportSyntax = false)
@@ -97,9 +97,9 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Ignore exceptions thrown
+    /// Enable exception throwing when errors occur.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithExceptions()
     {
         IgnoreExceptions = false;
@@ -107,9 +107,9 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Throw exceptions when triggered
+    /// Disable exception throwing when errors occur.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithoutExceptions()
     {
         IgnoreExceptions = true;
@@ -117,9 +117,10 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Search up the directory for a .env file. Searches up 4 directory levels by default.
+    /// Enable searching up the directory tree for a .env file.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <param name="probeLevelsToSearch">How high up the directory chain to search.</param>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithProbeForEnv(int probeLevelsToSearch = DefaultProbeAscendLimit)
     {
         if (EnvFilePaths?.FirstOrDefault() != DefaultEnvFileName)
@@ -131,9 +132,9 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Rely on the provided env files. Defaults to false.
+    /// Disable searching up the directory tree for a .env file.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithoutProbeForEnv()
     {
         ProbeForEnv = false;
@@ -142,9 +143,9 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Overwrite an environment variable even if it has been set
+    /// Enable overwriting existing environment variables.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithOverwriteExistingVars()
     {
         OverwriteExistingVars = true;
@@ -152,9 +153,9 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Only write an environment variable if it hasn't been et
+    /// Disable overwriting existing environment variables.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithoutOverwriteExistingVars()
     {
         OverwriteExistingVars = false;
@@ -162,9 +163,9 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Trim whitespace from the values read
+    /// Enable trimming of whitespace from retrieved values.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithTrimValues()
     {
         TrimValues = true;
@@ -172,9 +173,9 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Leave read values as is
+    /// Disable trimming of whitespace from retrieved values.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithoutTrimValues()
     {
         TrimValues = false;
@@ -182,9 +183,10 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Change the encoding for reading the env files
+    /// Set the encoding to be used when reading the env files.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <param name="encoding">The encoding to use.</param>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithEncoding(Encoding encoding)
     {
         if (encoding == null)
@@ -195,9 +197,9 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Support export syntax entries
+    /// Enable support for the 'export' syntax in env files.
     /// </summary>
-    /// <returns>Configured DotEnvOptions</returns>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithSupportExportSyntax()
     {
         SupportExportSyntax = true;
@@ -205,9 +207,9 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Disallow support export syntax entries
+    /// Disable support for the 'export' syntax in env files.
     /// </summary>
-    /// <returns>Configured DotEnvOptions</returns>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithoutSupportExportSyntax()
     {
         SupportExportSyntax = false;
@@ -215,9 +217,10 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Set the env files to be read, if none is provided, we revert to the default '.env'
+    /// Set the env files to be read.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <param name="envFilePaths">The paths to the env files.</param>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     public DotEnvOptions WithEnvFiles(params string[] envFilePaths)
     {
         if (ProbeForEnv)
@@ -231,13 +234,13 @@ public class DotEnvOptions
     }
 
     /// <summary>
-    /// Return the values in the env files without writing to the environment
+    /// Read the env files and return the values without writing to the system environment.
     /// </summary>
-    /// <returns>configured dot env options</returns>
+    /// <returns>A dictionary containing the read environment variables.</returns>
     public IDictionary<string, string> Read() => DotEnv.Read(this);
 
     /// <summary>
-    /// ReadFileLines the env files and write to the system environment variables
+    /// Read the env files and write the values to the system environment variables.
     /// </summary>
     public void Load() => DotEnv.Load(this);
 }

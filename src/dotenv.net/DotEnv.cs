@@ -6,15 +6,16 @@ namespace dotenv.net;
 public static class DotEnv
 {
     /// <summary>
-    /// Initialize the fluent configuration API
+    /// Initialize the fluent configuration API.
     /// </summary>
+    /// <returns>A new instance of <see cref="DotEnvOptions" />.</returns>
     public static DotEnvOptions Fluent() => new();
 
     /// <summary>
-    /// Read and return the values in the provided env files
+    /// Read and return the values in the provided env files.
     /// </summary>
-    /// <param name="options">The options required to configure the env loader</param>
-    /// <returns>The key value pairs read from the env files</returns>
+    /// <param name="options">The options required to configure the env loader.</param>
+    /// <returns>A dictionary containing the key-value pairs read from the env files.</returns>
     public static IDictionary<string, string> Read(DotEnvOptions? options = null)
     {
         options ??= new DotEnvOptions();
@@ -35,9 +36,9 @@ public static class DotEnv
     }
 
     /// <summary>
-    /// Load the values in the provided env files into the environment variables
+    /// Load the values in the provided env files into the environment variables.
     /// </summary>
-    /// <param name="options">The options required to configure the env loader</param>
+    /// <param name="options">The options required to configure the env loader.</param>
     public static void Load(DotEnvOptions? options = null)
     {
         options ??= new DotEnvOptions();

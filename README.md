@@ -2,7 +2,7 @@
 
 [![CI - Build, Test & Coverage](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build.yml/badge.svg)](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Coverage Status](https://coveralls.io/repos/github/bolorundurowb/dotenv.net/badge.svg?branch=master)](https://coveralls.io/github/bolorundurowb/dotenv.net?branch=master)
+[![codecov](https://codecov.io/gh/bolorundurowb/dotenv.net/graph/badge.svg?token=Qw8xSiEHNp)](https://codecov.io/gh/bolorundurowb/dotenv.net)
 ![NuGet Version](https://img.shields.io/nuget/v/dotenv.net)
 
 

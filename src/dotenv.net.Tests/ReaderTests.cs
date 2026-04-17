@@ -93,6 +93,65 @@ public class ReaderTests : IDisposable
     }
 
     [Fact]
+    public void ReadStreamLines_NullStreamAndIgnoreExceptionsFalse_ShouldThrowArgumentNullException()
+    {
+        Action act = () => Reader.ReadStreamLines(null!, false, null);
+        act.ShouldThrow<ArgumentNullException>().Message.ShouldContain("The stream cannot be null.");
+    }
+
+    [Fact]
+    public void ReadStreamLines_NullStreamAndIgnoreExceptionsTrue_ShouldReturnEmptySpan()
+    {
+        var result = Reader.ReadStreamLines(null!, true, null).ToArray();
+        result.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void ReadStreamLines_ValidStream_ShouldReturnLines()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("KEY1=value1\nKEY2=value2"));
+        var result = Reader.ReadStreamLines(stream, false, null);
+        result.Length.ShouldBe(2);
+        result[0].ShouldBe("KEY1=value1");
+        result[1].ShouldBe("KEY2=value2");
+    }
+
+    [Fact]
+    public void ReadStreamLines_WithCustomEncoding_ShouldReturnCorrectContent()
+    {
+        const string content = "KEY=üñîçø∂é";
+        using var stream = new MemoryStream(Encoding.UTF32.GetBytes(content));
+        var result = Reader.ReadStreamLines(stream, false, Encoding.UTF32);
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(content);
+    }
+
+    [Fact]
+    public void ReadStreamLines_ShouldLeaveStreamOpenForCaller()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("a=b"));
+        Reader.ReadStreamLines(stream, false, null);
+        stream.Position = 0;
+        stream.ReadByte().ShouldNotBe(-1);
+    }
+
+    [Fact]
+    public void ReadStreamLines_WhenReadThrowsAndIgnoreExceptionsFalse_ShouldRethrow()
+    {
+        using var stream = new ThrowingOnReadStream();
+        Action act = () => Reader.ReadStreamLines(stream, false, null);
+        act.ShouldThrow<IOException>();
+    }
+
+    [Fact]
+    public void ReadStreamLines_WhenReadThrowsAndIgnoreExceptionsTrue_ShouldReturnEmptySpan()
+    {
+        using var stream = new ThrowingOnReadStream();
+        var result = Reader.ReadStreamLines(stream, true, null).ToArray();
+        result.ShouldBeEmpty();
+    }
+
+    [Fact]
     public void ExtractEnvKeyValues_EmptySpan_ShouldReturnEmptySpan()
     {
         var result = Reader.ExtractEnvKeyValues(ReadOnlySpan<string>.Empty, false, supportExportSyntax: false).ToArray();
@@ -241,5 +300,14 @@ public class ReaderTests : IDisposable
         });
 
         exception.Message.ShouldContain($"Could not find '{DotEnvOptions.DefaultEnvFileName}'");
+    }
+
+    /// <summary>
+    /// Stream whose Read always throws, for exercising ReadStreamLines error handling.
+    /// </summary>
+    private sealed class ThrowingOnReadStream : MemoryStream
+    {
+        public override int Read(byte[] buffer, int offset, int count) =>
+            throw new IOException("simulated read failure");
     }
 }

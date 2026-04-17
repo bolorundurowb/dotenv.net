@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Shouldly;
 using Xunit;
@@ -198,7 +199,7 @@ public class DotEnvOptionsTests
     public void WithEnvStreams_WhenEnvFilesAlreadySet_ShouldThrow()
     {
         var options = new DotEnvOptions().WithEnvFiles("some.env");
-        using var stream = new System.IO.MemoryStream();
+        using var stream = new MemoryStream();
         Should.Throw<InvalidOperationException>(() => options.WithEnvStreams(stream))
             .Message.ShouldBe("Cannot use EnvStreams when EnvFiles is set.");
     }
@@ -206,9 +207,28 @@ public class DotEnvOptionsTests
     [Fact]
     public void WithEnvFiles_WhenEnvStreamsAlreadySet_ShouldThrow()
     {
-        using var stream = new System.IO.MemoryStream();
+        using var stream = new MemoryStream();
         var options = new DotEnvOptions().WithEnvStreams(stream);
         Should.Throw<InvalidOperationException>(() => options.WithEnvFiles("some.env"))
             .Message.ShouldBe("Cannot use EnvFiles when EnvStreams is set.");
+    }
+
+    [Fact]
+    public void WithEnvStreams_WithNullParams_ShouldThrowArgumentNullException()
+    {
+        var options = new DotEnvOptions();
+        Action action = () => options.WithEnvStreams(null!);
+        action.ShouldThrow<ArgumentNullException>()
+            .Message.ShouldBe("EnvStreams cannot be null (Parameter 'streams')");
+    }
+
+    [Fact]
+    public void Read_OnOptions_WithEnvStreams_ShouldReturnParsedValues()
+    {
+        using var stream = new MemoryStream("A=b"u8.ToArray());
+        var options = new DotEnvOptions().WithEnvStreams(stream);
+        var values = options.Read();
+
+        values.ShouldContainKeyAndValue("A", "b");
     }
 }

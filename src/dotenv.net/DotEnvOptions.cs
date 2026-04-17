@@ -83,7 +83,10 @@ public class DotEnvOptions
             WithoutOverwriteExistingVars();
 
         WithEnvFiles((envFilePaths ?? []).ToArray());
-        WithEnvStreams((envStreams ?? []).ToArray());
+        if (envStreams != null && envStreams.Any())
+        {
+            WithEnvStreams(envStreams.ToArray());
+        }
         WithEncoding(encoding ?? Encoding.UTF8);
 
         if (trimValues)
@@ -241,6 +244,9 @@ public class DotEnvOptions
         if (ProbeForEnv)
             throw new InvalidOperationException("EnvFiles paths cannot be set when ProbeForEnv is true");
 
+        if (EnvStreams != null && EnvStreams.Any())
+            throw new InvalidOperationException("Cannot use EnvFiles when EnvStreams is set.");
+
         if (envFilePaths == null)
             throw new ArgumentNullException(nameof(envFilePaths), "EnvFilePaths cannot be null");
 
@@ -256,6 +262,9 @@ public class DotEnvOptions
     /// <exception cref="ArgumentNullException">Thrown when streams is null.</exception>
     public DotEnvOptions WithEnvStreams(params Stream[] streams)
     {
+        if (EnvFilePaths != null && (EnvFilePaths.Count() > 1 || (EnvFilePaths.Count() == 1 && EnvFilePaths.First() != DefaultEnvFileName)))
+            throw new InvalidOperationException("Cannot use EnvStreams when EnvFiles is set.");
+
         if (streams == null)
             throw new ArgumentNullException(nameof(streams), "EnvStreams cannot be null");
 

@@ -10,7 +10,7 @@
         <PackageProjectUrl>https://github.com/bolorundurowb/dotenv.net</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/bolorundurowb/dotenv.net/blob/master/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
-        <LangVersion>14</LangVersion>
+        <LangVersion>default</LangVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageVersion>4.0.1</PackageVersion>
         <RepositoryType>git</RepositoryType>
@@ -21,6 +21,8 @@
         <Title>dotenv.net</Title>
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <AssemblyVersion>4.0.1</AssemblyVersion>
+        <FileVersion>4.0.1</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>

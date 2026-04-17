@@ -1,90 +1,108 @@
-# dotenv.net 🌟
+# dotenv.net
 
 [![Build, Test & Coverage](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/bolorundurowb/dotenv.net/actions/workflows/build-and-test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![codecov](https://codecov.io/gh/bolorundurowb/dotenv.net/graph/badge.svg?token=Qw8xSiEHNp)](https://codecov.io/gh/bolorundurowb/dotenv.net)
 ![NuGet Version](https://img.shields.io/nuget/v/dotenv.net)
 
-
 [![project icon](https://res.cloudinary.com/dg2dgzbt4/image/upload/v1587070177/external_assets/open_source/icons/dotenv.png)]()
 
-**dotenv.net** is a lightweight and intuitive library designed to simplify the process of managing environment variables in .NET applications. By seamlessly integrating with `.env` files, it allows developers to maintain a clean and secure configuration setup, ensuring that sensitive information is kept out of source code. 🔒
+**dotenv.net** is a lightweight library for loading environment variables from `.env` files in .NET applications. It
+keeps sensitive configuration out of source code and supports a range of options to suit different project setups.
 
-Whether you're building a small project or a large-scale application, **dotenv.net** provides the tools you need to efficiently load, read, and manage environment variables, with support for dependency injection (DI) in popular DI systems. 🛠️
+## Installation
 
----
+Install via NuGet using any of the following methods:
 
-## Why Use dotenv.net? 🤔
+**.NET CLI**
 
-- **Simple and Pain-Free** 🎯: Easily load and read `.env` files with minimal setup.
-- **Flexible Configuration** 🔧: Customize how environment variables are loaded with a variety of options.
-- **Dependency Injection Support** 🧩: Works seamlessly with popular DI frameworks.
-- **Cross-Platform** 🌍: Fully compatible with .NET Core, .NET 5, .NET 6, .NET 9 and beyond.
-- **Open Source** 💡: Actively maintained and supported by the community.
+```bash
+dotnet add package dotenv.net
+```
 
----
+**Package Manager Console**
 
-## Getting Started 🚀
+```powershell
+Install-Package dotenv.net
+```
 
-### Installation 📦
+**PackageReference**
 
-You can install **dotenv.net** via NuGet:
+```xml
 
-- **Using the .NET CLI**:
-  ```bash
-  dotnet add package dotenv.net
-  ```
+<PackageReference Include="dotenv.net" Version="4.x.x"/>
+```
 
-- **Using Visual Studio Package Manager**:
-  ```cmd
-  Install-Package dotenv.net
-  ```
-
-- **Manual Installation** (via `.csproj`):
-  ```xml
-  <PackageReference Include="dotenv.net" Version="4.x.x"/>
-  ```
-
----
-
-## Usage 🛠️
-
-### Basic Setup 🏗️
-
-1. **Add the Namespace**:
-   ```csharp
-   using dotenv.net;
-   ```
-
-2. **Load Environment Variables**:
-   ```csharp
-   DotEnv.Load();
-   ```
-
-   This will automatically locate and load the `.env` file in the same directory as your application's executable.
-
----
-
-### Fluent API 🎨
-
-For a more expressive syntax, **dotenv.net** provides a fluent API:
+## Quick Start
 
 ```csharp
-// Load environment variables with custom options
+using dotenv.net;
+
+// Load .env from the application directory into the system environment
+DotEnv.Load();
+
+// Read variables from .env without modifying the system environment
+var envVars = DotEnv.Read();
+Console.WriteLine(envVars["DATABASE_URL"]);
+```
+
+By default, both methods look for a `.env` file in the same directory as the application executable.
+
+## Configuration Options
+
+Both `Load()` and `Read()` accept a `DotEnvOptions` instance to customise behaviour.
+
+```csharp
+DotEnv.Load(options: new DotEnvOptions(
+    ignoreExceptions: false,           // Throw on errors instead of silently failing (default: true)
+    envFilePaths: ["./config/.env"],   // One or more paths to .env files (default: [".env"])
+    encoding: Encoding.UTF8,           // File encoding (default: UTF-8)
+    trimValues: true,                  // Strip whitespace from values (default: false)
+    overwriteExistingVars: false,      // Skip vars already set in the environment (default: true)
+    probeForEnv: true,                 // Search parent directories for a .env file (default: false)
+    probeLevelsToSearch: 3,            // How many directory levels to ascend when probing (default: 4)
+    supportExportSyntax: true          // Support `export KEY=VALUE` syntax (default: false)
+));
+```
+
+> **Note:** `probeForEnv` and `envFilePaths` are mutually exclusive. Setting both will throw an
+`InvalidOperationException`.
+
+### Loading multiple `.env` files
+
+```csharp
+DotEnv.Load(options: new DotEnvOptions(
+    envFilePaths: ["./config/.env", "./secrets/.env"]
+));
+```
+
+When `overwriteExistingVars` is `false`, keys from earlier files take precedence over those in later files.
+
+## Fluent API
+
+`DotEnv.Fluent()` returns a `DotEnvOptions` instance that exposes a chainable builder API, useful when you prefer an
+explicit, readable configuration style.
+
+**Loading variables:**
+
+```csharp
 DotEnv.Fluent()
     .WithExceptions()
-    .WithEnvFiles("./path/to/env")
+    .WithEnvFiles("./config/.env")
     .WithTrimValues()
-    .WithEncoding(Encoding.ASCII)
+    .WithEncoding(Encoding.UTF8)
     .WithOverwriteExistingVars()
     .WithProbeForEnv(probeLevelsToSearch: 6)
     .WithSupportExportSyntax()
     .Load();
+```
 
-// Read environment variables
+**Reading variables without writing to the environment:**
+
+```csharp
 var envVars = DotEnv.Fluent()
     .WithoutExceptions()
-    .WithEnvFiles() // Defaults to .env
+    .WithEnvFiles()               // Defaults to .env
     .WithoutTrimValues()
     .WithEncoding(Encoding.UTF8)
     .WithoutOverwriteExistingVars()
@@ -93,109 +111,105 @@ var envVars = DotEnv.Fluent()
     .Read();
 ```
 
----
+### Fluent builder methods
 
-### Advanced Configuration ⚙️
+| Method                           | Description                                        |
+|----------------------------------|----------------------------------------------------|
+| `WithExceptions()`               | Throw exceptions on errors                         |
+| `WithoutExceptions()`            | Silently ignore errors (default)                   |
+| `WithEnvFiles(params string[])`  | Specify one or more `.env` file paths              |
+| `WithEncoding(Encoding)`         | Set file encoding                                  |
+| `WithTrimValues()`               | Strip whitespace from values                       |
+| `WithoutTrimValues()`            | Preserve whitespace in values (default)            |
+| `WithOverwriteExistingVars()`    | Overwrite existing environment variables (default) |
+| `WithoutOverwriteExistingVars()` | Preserve existing environment variables            |
+| `WithProbeForEnv(int)`           | Search parent directories for a `.env` file        |
+| `WithoutProbeForEnv()`           | Disable parent directory search (default)          |
+| `WithSupportExportSyntax()`      | Support `export KEY=VALUE` syntax                  |
+| `WithoutSupportExportSyntax()`   | Disable export syntax support (default)            |
 
-**dotenv.net** offers a wide range of configuration options to tailor the loading process to your needs using the `DotEnvOptions` class:
+## Reading Variables
 
-- **Specify Custom `.env` File Paths**:
-  ```csharp
-  DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] {"./path/to/env", "./path/to/second/env"}));
-  ```
-
-- **Enable Exception Handling**:
-  ```csharp
-  DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false));
-  ```
-
-- **Search for `.env` Files in Parent Directories**:
-  ```csharp
-  DotEnv.Load(options: new DotEnvOptions(probeForEnv: true, probeLevelsToSearch: 2));
-  ```
-
-- **Trim Whitespace from Values**:
-  ```csharp
-  DotEnv.Load(options: new DotEnvOptions(trimValues: true));
-  ```
-
-- **Skip Overwriting Existing Environment Variables**:
-  ```csharp
-  DotEnv.Load(options: new DotEnvOptions(overwriteExistingVars: false));
-  ```
-
-- **Support the Export Syntax**:
-  ```csharp
-  DotEnv.Load(options: new DotEnvOptions(supportExportSyntax: true));
-  ```
-
----
-
-### Reading Environment Variables 📖
-
-Use the `Read()` method to retrieve environment variables without modifying the system environment:
+`DotEnv.Read()` returns an `IDictionary<string, string>` of the parsed key-value pairs without writing anything to the
+system environment. This is useful for inspecting values or selectively applying them.
 
 ```csharp
 var envVars = DotEnv.Read();
-Console.WriteLine(envVars["KEY"]); // Outputs the value associated with 'KEY'
+
+if (envVars.TryGetValue("API_KEY", out var apiKey))
+{
+    // use apiKey
+}
 ```
 
----
+## EnvReader Utility
 
-### Environment Variable Helpers 🛠️
-
-The `Utilities` namespace provides additional methods for reading environment variables in a typed manner:
+The `dotenv.net.Utilities` namespace provides `EnvReader`, a helper class for reading strongly-typed values directly
+from the system environment (i.e., after calling `DotEnv.Load()`).
 
 ```csharp
 using dotenv.net.Utilities;
 
-var stringValue = EnvReader.GetStringValue("KEY");
-var intValue = EnvReader.GetIntValue("PORT");
-var boolValue = EnvReader.GetBooleanValue("ENABLE_FEATURE");
+var host = EnvReader.GetStringValue("DB_HOST");
+var port = EnvReader.GetIntValue("DB_PORT");
+var enabled = EnvReader.GetBooleanValue("FEATURE_FLAG");
 ```
 
-#### Available Methods 📋
+For non-throwing alternatives, use the `TryGet*` methods:
 
-| Method Name                     | Description                                                                 | Return Type | Default (if applicable) |
-|---------------------------------|-----------------------------------------------------------------------------|-------------|-------------------------|
-| `HasValue(string key)`          | Checks if a value is set for the given key.                                 | `bool`      | `N/A`                  |
-| `GetStringValue(string key)`    | Retrieves a string value by key. Throws an exception if not found.          | `string`    | `N/A`                  |
-| `GetIntValue(string key)`       | Retrieves an integer value by key. Throws an exception if not found.        | `int`       | `N/A`                  |
-| `GetDoubleValue(string key)`    | Retrieves a double value by key. Throws an exception if not found.          | `double`    | `N/A`                  |
-| `GetDecimalValue(string key)`   | Retrieves a decimal value by key. Throws an exception if not found.         | `decimal`   | `N/A`                  |
-| `GetBooleanValue(string key)`   | Retrieves a boolean value by key. Throws an exception if not found.         | `bool`      | `N/A`                  |
-| `TryGetStringValue(string key, out string value)` | Safely retrieves a string value. Returns `true` if successful. | `bool`      | `null`                 |
-| `TryGetIntValue(string key, out int value)`       | Safely retrieves an integer value. Returns `true` if successful. | `bool`      | `0`                    |
-| `TryGetDoubleValue(string key, out double value)` | Safely retrieves a double value. Returns `true` if successful.  | `bool`      | `0.0`                  |
-| `TryGetDecimalValue(string key, out decimal value)` | Safely retrieves a decimal value. Returns `true` if successful. | `bool`      | `0.0m`                 |
-| `TryGetBooleanValue(string key, out bool value)`  | Safely retrieves a boolean value. Returns `true` if successful. | `bool`      | `false`                |
+```csharp
+if (EnvReader.TryGetIntValue("DB_PORT", out var port))
+{
+    // port is valid
+}
+```
 
----
+### Available methods
 
-## Contributing 🤝
+| Method                                              | Return Type | Throws if missing              |
+|-----------------------------------------------------|-------------|--------------------------------|
+| `HasValue(string key)`                              | `bool`      | No                             |
+| `GetStringValue(string key)`                        | `string`    | Yes                            |
+| `GetIntValue(string key)`                           | `int`       | Yes                            |
+| `GetDoubleValue(string key)`                        | `double`    | Yes                            |
+| `GetDecimalValue(string key)`                       | `decimal`   | Yes                            |
+| `GetBooleanValue(string key)`                       | `bool`      | Yes                            |
+| `TryGetStringValue(string key, out string value)`   | `bool`      | No, returns `null` on failure  |
+| `TryGetIntValue(string key, out int value)`         | `bool`      | No, returns `0` on failure     |
+| `TryGetDoubleValue(string key, out double value)`   | `bool`      | No, returns `0.0` on failure   |
+| `TryGetDecimalValue(string key, out decimal value)` | `bool`      | No, returns `0.0m` on failure  |
+| `TryGetBooleanValue(string key, out bool value)`    | `bool`      | No, returns `false` on failure |
 
-We welcome contributions from the community! If you have ideas, bug reports, or feature requests, please [open an issue](https://github.com/bolorundurowb/dotenv.net/issues) or submit a pull request.
+## Contributing
 
-### Special Thanks to Our Contributors 🙏
+Contributions are welcome. If you have a bug report, feature request, or improvement in mind,
+please [open an issue](https://github.com/bolorundurowb/dotenv.net/issues) or submit a pull request.
 
-A huge shoutout to everyone who has contributed to **dotenv.net**:
+To get started:
 
-[@bolorundurowb](https://github.com/bolorundurowb) [@joliveros](https://github.com/joliveros) [@vizeke](https://github.com/vizeke)  
-[@merqlove](https://github.com/merqlove) [@tracker1](https://github.com/tracker1) [@NaturalWill](https://github.com/NaturalWill)  
-[@texyh](https://github.com/texyh) [@jonlabelle](https://github.com/jonlabelle) [@Gounlaf](https://github.com/Gounlaf)  
-[@DTTerastar](https://github.com/DTTerastar) [@Mondonno](https://github.com/Mondonno) [@caveman-dick](https://github.com/caveman-dick)  
-[@VijoPlays](https://github.com/VijoPlays)  [bobbyg603](https://github.com/bobbyg603)
+1. Fork the repository and create a feature branch.
+2. Make your changes and ensure existing tests still pass.
+3. Add tests for any new behaviour.
+4. Open a pull request with a clear description of what was changed and why.
 
----
+The project targets .NET and uses the standard `dotnet` CLI toolchain. Run the test suite with:
 
-## License 📜
+```bash
+dotnet test
+```
 
-**dotenv.net** is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+## Contributors
 
----
+Thanks to everyone who has contributed to **dotenv.net**:
 
-## Get Started Today! 🎉
+[@bolorundurowb](https://github.com/bolorundurowb) [@joliveros](https://github.com/joliveros) [@vizeke](https://github.com/vizeke)
+[@merqlove](https://github.com/merqlove) [@tracker1](https://github.com/tracker1) [@NaturalWill](https://github.com/NaturalWill)
+[@texyh](https://github.com/texyh) [@jonlabelle](https://github.com/jonlabelle) [@Gounlaf](https://github.com/Gounlaf)
+[@DTTerastar](https://github.com/DTTerastar) [@Mondonno](https://github.com/Mondonno) [@caveman-dick](https://github.com/caveman-dick)
+[@VijoPlays](https://github.com/VijoPlays) [@bobbyg603](https://github.com/bobbyg603)
 
-Simplify your environment variable management with **dotenv.net**. Install the package, follow the quick start guide, and enjoy a cleaner, more secure configuration setup for your .NET applications.
+## License
+
+**dotenv.net** is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 **Happy Coding!** 🚀

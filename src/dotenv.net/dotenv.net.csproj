@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Copyright>©2017-2026 , Bolorunduro Winner-Timothy. All Rights reserved.</Copyright>
-        <PackageReleaseNotes>- improve method xml documentation</PackageReleaseNotes>
+        <PackageReleaseNotes>- add support for reading from streams
+- improve README</PackageReleaseNotes>
         <Authors>Winner-Timothy Bolorunduro</Authors>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageId>dotenv.net</PackageId>
@@ -12,17 +13,17 @@
         <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
         <LangVersion>default</LangVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageVersion>4.0.1</PackageVersion>
+        <PackageVersion>4.0.2</PackageVersion>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>dotnet, environment, variables, env, dotenv, net core, autofac</PackageTags>
+        <PackageTags>dot, env, dotnet, .net, environment-variables, dotenv, configuration, env-vars, cross-platform, csharp, dotnet-core, settings, devops, utility, parsing, variable-management, configuration-provider, application-secrets</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <NeutralLanguage>en-NG</NeutralLanguage>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <Title>dotenv.net</Title>
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <AssemblyVersion>4.0.1</AssemblyVersion>
-        <FileVersion>4.0.1</FileVersion>
+        <AssemblyVersion>4.0.2</AssemblyVersion>
+        <FileVersion>4.0.2</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>

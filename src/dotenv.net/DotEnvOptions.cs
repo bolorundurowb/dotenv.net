@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -23,6 +24,11 @@ public class DotEnvOptions
     /// The paths to the env files. The default is [.env]. <see cref="T:dotenv.net.DotEnvOptions"/>
     /// </summary>
     public IEnumerable<string> EnvFilePaths { get; private set; }
+
+    /// <summary>
+    /// The streams to the env files. The default is null. <see cref="T:dotenv.net.DotEnvOptions"/>
+    /// </summary>
+    public IEnumerable<Stream> EnvStreams { get; private set; }
 
     /// <summary>
     /// The encoding that the env file was created with. The default is UTF-8. <see cref="T:dotenv.net.DotEnvOptions"/>
@@ -68,7 +74,8 @@ public class DotEnvOptions
     /// <param name="supportExportSyntax">Whether to support env vars in the export syntax.</param>
     public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string>? envFilePaths = null,
         Encoding? encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
-        bool probeForEnv = false, int? probeLevelsToSearch = null, bool supportExportSyntax = false)
+        bool probeForEnv = false, int? probeLevelsToSearch = null, bool supportExportSyntax = false,
+        IEnumerable<Stream>? envStreams = null)
     {
         if (ignoreExceptions)
             WithoutExceptions();
@@ -76,6 +83,10 @@ public class DotEnvOptions
             WithoutOverwriteExistingVars();
 
         WithEnvFiles((envFilePaths ?? []).ToArray());
+        if (envStreams != null && envStreams.Any())
+        {
+            WithEnvStreams(envStreams.ToArray());
+        }
         WithEncoding(encoding ?? Encoding.UTF8);
 
         if (trimValues)
@@ -233,10 +244,31 @@ public class DotEnvOptions
         if (ProbeForEnv)
             throw new InvalidOperationException("EnvFiles paths cannot be set when ProbeForEnv is true");
 
+        if (EnvStreams != null && EnvStreams.Any())
+            throw new InvalidOperationException("Cannot use EnvFiles when EnvStreams is set.");
+
         if (envFilePaths == null)
             throw new ArgumentNullException(nameof(envFilePaths), "EnvFilePaths cannot be null");
 
         EnvFilePaths = envFilePaths.Any() != true ? DefaultEnvPath : envFilePaths;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the env streams to be read.
+    /// </summary>
+    /// <param name="streams">The streams to the env files.</param>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when streams is null.</exception>
+    public DotEnvOptions WithEnvStreams(params Stream[] streams)
+    {
+        if (EnvFilePaths != null && (EnvFilePaths.Count() > 1 || (EnvFilePaths.Count() == 1 && EnvFilePaths.First() != DefaultEnvFileName)))
+            throw new InvalidOperationException("Cannot use EnvStreams when EnvFiles is set.");
+
+        if (streams == null)
+            throw new ArgumentNullException(nameof(streams), "EnvStreams cannot be null");
+
+        EnvStreams = streams;
         return this;
     }
 

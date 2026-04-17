@@ -21,6 +21,8 @@
         <Title>dotenv.net</Title>
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <AssemblyVersion>4.0.1</AssemblyVersion>
+        <FileVersion>4.0.1</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>

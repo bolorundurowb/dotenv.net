@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace dotenv.net;
@@ -35,6 +34,42 @@ internal static class Reader
 
         // read all lines from the env file
         return new ReadOnlySpan<string>(File.ReadAllLines(envFilePath, encoding));
+    }
+
+    internal static ReadOnlySpan<string> ReadStreamLines(Stream envStream, bool ignoreExceptions, Encoding? encoding)
+    {
+        var defaultResponse = ReadOnlySpan<string>.Empty;
+
+        if (envStream == null)
+        {
+            if (ignoreExceptions)
+                return defaultResponse;
+
+            throw new ArgumentNullException(nameof(envStream), "The stream cannot be null.");
+        }
+
+        encoding ??= Encoding.UTF8;
+        var lines = new List<string>();
+
+        try
+        {
+            // leaving the closing the stream to the calling code
+            using var reader = new StreamReader(envStream, encoding, true, 1024, leaveOpen: true);
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                lines.Add(line);
+            }
+        }
+        catch (Exception)
+        {
+            if (ignoreExceptions)
+                return defaultResponse;
+
+            throw;
+        }
+
+        return new ReadOnlySpan<string>(lines.ToArray());
     }
 
     internal static ReadOnlySpan<KeyValuePair<string, string>> ExtractEnvKeyValues(ReadOnlySpan<string> rawEnvRows,

@@ -10,7 +10,7 @@
         <PackageProjectUrl>https://github.com/bolorundurowb/dotenv.net</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/bolorundurowb/dotenv.net/blob/master/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
-        <LangVersion>default</LangVersion>
+        <LangVersion>14</LangVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageVersion>4.0.1</PackageVersion>
         <RepositoryType>git</RepositoryType>

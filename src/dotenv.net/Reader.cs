@@ -83,11 +83,11 @@ internal static class Reader
         var response = new Dictionary<string, string>();
 
         foreach (var envFileKeyValue in envFileKeyValues)
-        foreach (var envKeyValue in envFileKeyValue)
-            // if the key does not exist or if a previous env file has the same key, and we are allowed to overwrite it
-            if (!response.ContainsKey(envKeyValue.Key) ||
-                (response.ContainsKey(envKeyValue.Key) && overwriteExistingVars))
-                response[envKeyValue.Key] = envKeyValue.Value;
+            foreach (var envKeyValue in envFileKeyValue)
+                // if the key does not exist or if a previous env file has the same key, and we are allowed to overwrite it
+                if (!response.ContainsKey(envKeyValue.Key) ||
+                    (response.ContainsKey(envKeyValue.Key) && overwriteExistingVars))
+                    response[envKeyValue.Key] = envKeyValue.Value;
 
         return response;
     }

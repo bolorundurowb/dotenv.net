@@ -22,18 +22,37 @@ public static class DotEnv
     public static IDictionary<string, string> Read(DotEnvOptions? options = null)
     {
         options ??= new DotEnvOptions();
-        var envFilePaths = options.ProbeForEnv
-            ? Reader.GetProbedEnvPath(options.ProbeLevelsToSearch!.Value, options.IgnoreExceptions)
-            : options.EnvFilePaths;
-        var envFileKeyValues = envFilePaths
-            .Select(envFilePath =>
-            {
-                var fileRows = Reader.ReadFileLines(envFilePath, options.IgnoreExceptions, options.Encoding);
-                var envKeyValues =
-                    Reader.ExtractEnvKeyValues(fileRows, options.TrimValues, options.SupportExportSyntax);
-                return envKeyValues.ToArray();
-            })
-            .ToList();
+        List<KeyValuePair<string, string>[]> envFileKeyValues;
+
+        // the null check is required for environments without nullable checks
+        if (options.EnvStreams != null && options.EnvStreams.Any())
+        {
+            envFileKeyValues = options.EnvStreams
+                .Select(envStream =>
+                {
+                    var fileRows = Reader.ReadStreamLines(envStream, options.IgnoreExceptions, options.Encoding);
+                    var envKeyValues =
+                        Reader.ExtractEnvKeyValues(fileRows, options.TrimValues, options.SupportExportSyntax);
+                    return envKeyValues.ToArray();
+                })
+                .ToList();
+        }
+        else
+        {
+            var envFilePaths = options.ProbeForEnv
+                ? Reader.GetProbedEnvPath(options.ProbeLevelsToSearch!.Value, options.IgnoreExceptions)
+                : options.EnvFilePaths;
+
+            envFileKeyValues = envFilePaths
+                .Select(envFilePath =>
+                {
+                    var fileRows = Reader.ReadFileLines(envFilePath, options.IgnoreExceptions, options.Encoding);
+                    var envKeyValues =
+                        Reader.ExtractEnvKeyValues(fileRows, options.TrimValues, options.SupportExportSyntax);
+                    return envKeyValues.ToArray();
+                })
+                .ToList();
+        }
 
         return Reader.MergeEnvKeyValues(envFileKeyValues, options.OverwriteExistingVars);
     }

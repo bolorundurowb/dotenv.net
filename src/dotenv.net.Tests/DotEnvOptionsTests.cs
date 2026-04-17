@@ -193,4 +193,22 @@ public class DotEnvOptionsTests
         values.ShouldContainKeyAndValue("OidcAuthentication:ClientId", "your-client-id");
         values.ShouldContainKeyAndValue("OidcAuthentication:ClientSecret", "your-client-secret");
     }
+
+    [Fact]
+    public void WithEnvStreams_WhenEnvFilesAlreadySet_ShouldThrow()
+    {
+        var options = new DotEnvOptions().WithEnvFiles("some.env");
+        using var stream = new System.IO.MemoryStream();
+        Should.Throw<InvalidOperationException>(() => options.WithEnvStreams(stream))
+            .Message.ShouldBe("Cannot use EnvStreams when EnvFiles is set.");
+    }
+
+    [Fact]
+    public void WithEnvFiles_WhenEnvStreamsAlreadySet_ShouldThrow()
+    {
+        using var stream = new System.IO.MemoryStream();
+        var options = new DotEnvOptions().WithEnvStreams(stream);
+        Should.Throw<InvalidOperationException>(() => options.WithEnvFiles("some.env"))
+            .Message.ShouldBe("Cannot use EnvFiles when EnvStreams is set.");
+    }
 }

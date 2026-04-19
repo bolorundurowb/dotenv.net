@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="dotenv.net.Tests/dotenv.net.Tests.csproj" />
+  <Project Path="dotenv.net/dotenv.net.csproj" />
+</Solution>

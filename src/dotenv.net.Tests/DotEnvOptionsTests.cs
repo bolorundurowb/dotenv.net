@@ -301,4 +301,79 @@ public class DotEnvOptionsTests
         options.WithoutVariableExpansion();
         options.SupportVariableExpansion.ShouldBeFalse();
     }
+
+    [Fact]
+    public void Constructor_ShouldDefaultEnvironmentCascadeToFalse()
+    {
+        var options = new DotEnvOptions();
+        options.EnvironmentCascade.ShouldBeFalse();
+        options.EnvironmentName.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Constructor_WithEnvironmentCascadeAndName_ShouldSetOptions()
+    {
+        var options = new DotEnvOptions(environmentCascade: true, environmentName: "Staging");
+        options.EnvironmentCascade.ShouldBeTrue();
+        options.EnvironmentName.ShouldBe("Staging");
+    }
+
+    [Fact]
+    public void WithEnvironmentCascade_ShouldEnableCascadeAndStoreName()
+    {
+        var options = new DotEnvOptions().WithEnvironmentCascade("Production");
+        options.EnvironmentCascade.ShouldBeTrue();
+        options.EnvironmentName.ShouldBe("Production");
+    }
+
+    [Fact]
+    public void WithoutEnvironmentCascade_ShouldDisableCascade()
+    {
+        var options = new DotEnvOptions().WithEnvironmentCascade("Development").WithoutEnvironmentCascade();
+        options.EnvironmentCascade.ShouldBeFalse();
+        options.EnvironmentName.ShouldBe("Development");
+    }
+
+    [Fact]
+    public void WithEnvironmentCascade_WhenCustomEnvFilesSet_ShouldThrow()
+    {
+        var options = new DotEnvOptions().WithEnvFiles("custom.env");
+        Should.Throw<InvalidOperationException>(() => options.WithEnvironmentCascade())
+            .Message.ShouldBe("Cannot use EnvironmentCascade when EnvFiles is set.");
+    }
+
+    [Fact]
+    public void WithEnvironmentCascade_WhenEnvStreamsSet_ShouldThrow()
+    {
+        using var stream = new MemoryStream();
+        var options = new DotEnvOptions().WithEnvStreams(stream);
+        Should.Throw<InvalidOperationException>(() => options.WithEnvironmentCascade())
+            .Message.ShouldBe("Cannot use EnvironmentCascade when EnvStreams is set.");
+    }
+
+    [Fact]
+    public void WithEnvFiles_WhenEnvironmentCascadeIsTrue_ShouldThrow()
+    {
+        var options = new DotEnvOptions().WithEnvironmentCascade();
+        Should.Throw<InvalidOperationException>(() => options.WithEnvFiles("custom.env"))
+            .Message.ShouldBe("EnvFiles paths cannot be set when EnvironmentCascade is true");
+    }
+
+    [Fact]
+    public void WithEnvStreams_WhenEnvironmentCascadeIsTrue_ShouldThrow()
+    {
+        using var stream = new MemoryStream();
+        var options = new DotEnvOptions().WithEnvironmentCascade();
+        Should.Throw<InvalidOperationException>(() => options.WithEnvStreams(stream))
+            .Message.ShouldBe("Cannot use EnvStreams when EnvironmentCascade is set.");
+    }
+
+    [Fact]
+    public void WithEnvironmentCascade_WithProbeForEnv_ShouldBeAllowed()
+    {
+        var options = new DotEnvOptions().WithProbeForEnv().WithEnvironmentCascade("Development");
+        options.ProbeForEnv.ShouldBeTrue();
+        options.EnvironmentCascade.ShouldBeTrue();
+        options.EnvironmentName.ShouldBe("Development");
+    }
 }

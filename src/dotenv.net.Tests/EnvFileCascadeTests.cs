@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using Shouldly;
 using Xunit;
 
@@ -29,6 +30,62 @@ public class EnvFileCascadeTests
     {
         Should.Throw<ArgumentException>(() => EnvFileCascade.GetCandidateFileNames(environmentName))
             .ParamName.ShouldBe("environmentName");
+    }
+
+    [Fact]
+    public void GetCandidateFileNames_WithPlatformInvalidFileNameCharacter_ShouldThrow()
+    {
+        var invalidChar = Path.GetInvalidFileNameChars().FirstOrDefault(c => c is not '/' and not '\\' and not '\0');
+        if (invalidChar == '\0')
+            return;
+
+        Should.Throw<ArgumentException>(() => EnvFileCascade.GetCandidateFileNames($"Dev{invalidChar}"))
+            .ParamName.ShouldBe("environmentName");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void EnsureEnvironmentNameIsSafe_WhenMissing_ShouldThrow(string? environmentName)
+    {
+        Should.Throw<ArgumentException>(() => EnvFileCascade.EnsureEnvironmentNameIsSafe(environmentName!))
+            .ParamName.ShouldBe("environmentName");
+    }
+
+    [Fact]
+    public void ResolveEnvironmentName_ShouldSkipWhitespaceEnvironmentVariablesAndTrim()
+    {
+        using var _ = new EnvironmentVariableScope(
+            (EnvFileCascade.AspNetCoreEnvironmentVariable, "   "),
+            (EnvFileCascade.DotNetEnvironmentVariable, "  Staging  "),
+            (EnvFileCascade.DotEnvEnvironmentVariable, "DotEnv"));
+
+        EnvFileCascade.ResolveEnvironmentName(null).ShouldBe("Staging");
+        EnvFileCascade.ResolveEnvironmentName("").ShouldBe("Staging");
+        EnvFileCascade.ResolveEnvironmentName("   ").ShouldBe("Staging");
+    }
+
+    [Fact]
+    public void ResolveExistingFilePaths_WhenDirectoryIsWhitespace_ShouldUseCurrentDirectory()
+    {
+        var previous = Directory.GetCurrentDirectory();
+        var directory = Path.Combine(Path.GetTempPath(), "DotEnvCascade_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+
+        try
+        {
+            File.WriteAllText(Path.Combine(directory, ".env"), "A=from-cwd");
+            Directory.SetCurrentDirectory(directory);
+
+            var paths = EnvFileCascade.ResolveExistingFilePaths("  ", null, ignoreExceptions: true);
+            paths.Select(Path.GetFullPath).ShouldBe([Path.GetFullPath(Path.Combine(directory, ".env"))]);
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(previous);
+            Directory.Delete(directory, true);
+        }
     }
 
     [Fact]

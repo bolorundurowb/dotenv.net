@@ -418,15 +418,15 @@ public class DotEnvOptions
         return this;
     }
 
-    /// <summary>
-    /// Reads the env files and returns the values without writing to the system environment.
-    /// </summary>
-    /// <returns>A dictionary containing the read environment variables.</returns>
     private bool HasCustomEnvFiles() =>
         EnvFilePaths != null &&
         (EnvFilePaths.Count() > 1 ||
          (EnvFilePaths.Count() == 1 && EnvFilePaths.First() != DefaultEnvFileName));
 
+    /// <summary>
+    /// Reads the env files and returns the values without writing to the system environment.
+    /// </summary>
+    /// <returns>A dictionary containing the read environment variables.</returns>
     public IDictionary<string, string> Read() => DotEnv.Read(this);
 
     /// <summary>

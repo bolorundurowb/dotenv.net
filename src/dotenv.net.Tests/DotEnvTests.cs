@@ -270,6 +270,124 @@ public class DotEnvTests
         paths.Count.ShouldBe(2);
     }
 
+    [Fact]
+    public void Read_WithEnvironmentCascadeAndProbeForEnv_ShouldReadLayeredFilesFromProbedDirectory()
+    {
+        var environmentName = "T" + Guid.NewGuid().ToString("N")[..8];
+        var envFile = Path.Combine(AppContext.BaseDirectory, $".env.{environmentName}");
+        var localFile = Path.Combine(AppContext.BaseDirectory, $".env.{environmentName}.local");
+
+        File.WriteAllText(envFile, "KEY=probed");
+        File.WriteAllText(localFile, "KEY=probed-local");
+
+        try
+        {
+            var values = DotEnv.Fluent()
+                .WithProbeForEnv(0)
+                .WithEnvironmentCascade(environmentName)
+                .Read();
+
+            values["KEY"].ShouldBe("probed-local");
+        }
+        finally
+        {
+            File.Delete(envFile);
+            File.Delete(localFile);
+        }
+    }
+
+    [Fact]
+    public void Read_WithEnvironmentCascadeAndProbeForEnv_WhenNotFoundAndExceptionsIgnored_ShouldReturnEmpty()
+    {
+        var environmentName = "M" + Guid.NewGuid().ToString("N")[..8];
+        var values = DotEnv.Fluent()
+            .WithoutExceptions()
+            .WithProbeForEnv(0)
+            .WithEnvironmentCascade(environmentName)
+            .Read();
+
+        values.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Read_WithEnvironmentCascadeAndProbeForEnv_WhenNotFoundAndExceptionsEnabled_ShouldThrow()
+    {
+        var environmentName = "M" + Guid.NewGuid().ToString("N")[..8];
+        Should.Throw<FileNotFoundException>(() =>
+            DotEnv.Fluent()
+                .WithExceptions()
+                .WithProbeForEnv(0)
+                .WithEnvironmentCascade(environmentName)
+                .Read());
+    }
+
+    [Fact]
+    public void Read_WithEnvironmentCascade_UnsafeEnvironmentName_ShouldThrow()
+    {
+        Should.Throw<ArgumentException>(() =>
+            DotEnv.Fluent().WithEnvironmentCascade("../Production").Read());
+    }
+
+    [Fact]
+    public void Read_WithEnvironmentCascade_ShouldUseAspNetCoreEnvironmentVariable()
+    {
+        using var workspace = new TempEnvDirectory();
+        var environmentName = "E" + Guid.NewGuid().ToString("N")[..8];
+        workspace.Write(".env", "KEY=base");
+        workspace.Write($".env.{environmentName}", "KEY=from-aspnet");
+
+        using (new EnvironmentVariableScope(
+                   (EnvFileCascade.AspNetCoreEnvironmentVariable, environmentName),
+                   (EnvFileCascade.DotNetEnvironmentVariable, null),
+                   (EnvFileCascade.DotEnvEnvironmentVariable, null)))
+        using (workspace.SetCurrentDirectory())
+        {
+            var values = DotEnv.Fluent().WithEnvironmentCascade().Read();
+            values["KEY"].ShouldBe("from-aspnet");
+        }
+    }
+
+    [Fact]
+    public void Read_WithEnvironmentCascade_WithoutOverwrite_ShouldPreferEarlierFiles()
+    {
+        using var workspace = new TempEnvDirectory();
+        workspace.Write(".env", "KEY=base");
+        workspace.Write(".env.local", "KEY=local");
+
+        using (workspace.SetCurrentDirectory())
+        {
+            var values = DotEnv.Fluent()
+                .WithoutOverwriteExistingVars()
+                .WithEnvironmentCascade()
+                .Read();
+
+            values["KEY"].ShouldBe("base");
+        }
+    }
+
+    [Fact]
+    public void Load_WithEnvironmentCascade_ShouldWriteHighestPrecedenceValue()
+    {
+        using var workspace = new TempEnvDirectory();
+        var key = "DOTENV_CASCADE_" + Guid.NewGuid().ToString("N");
+        workspace.Write(".env", $"{key}=base");
+        workspace.Write(".env.local", $"{key}=local");
+
+        try
+        {
+            using (workspace.SetCurrentDirectory())
+            {
+                DotEnv.Fluent().WithEnvironmentCascade().Load();
+            }
+
+            Environment.GetEnvironmentVariable(key).ShouldBe("local");
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(key, null);
+        }
+    }
+
     private sealed class TempEnvDirectory : IDisposable
     {
         public string Path { get; } = System.IO.Path.Combine(System.IO.Path.GetTempPath(),

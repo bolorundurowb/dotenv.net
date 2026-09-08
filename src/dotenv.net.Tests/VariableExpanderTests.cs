@@ -280,4 +280,80 @@ public class VariableExpanderTests
     {
         VariableExpander.Expand("${UNCLOSED", null).ShouldBe("${UNCLOSED");
     }
+
+    [Fact]
+    public void Expand_BackslashNotFollowedByDollar_ShouldPreserve()
+    {
+        VariableExpander.Expand(@"C:\dir\file", null).ShouldBe(@"C:\dir\file");
+        VariableExpander.Expand(@"\\server\share", null).ShouldBe(@"\\server\share");
+        VariableExpander.Expand(@"trailing\", null).ShouldBe(@"trailing\");
+    }
+
+    [Fact]
+    public void Expand_EmptyVarNameWithColonDashDefault_ShouldResolveDefault()
+    {
+        VariableExpander.Expand("${:-fallback}", new Dictionary<string, string>()).ShouldBe("fallback");
+    }
+
+    [Fact]
+    public void Expand_EmptyVarNameWithDashDefault_ShouldResolveDefault()
+    {
+        VariableExpander.Expand("${-fallback}", new Dictionary<string, string>()).ShouldBe("fallback");
+    }
+
+    [Fact]
+    public void Expand_EmptyVarNameWithoutOperator_ShouldResolveEmpty()
+    {
+        VariableExpander.Expand("${}", new Dictionary<string, string>()).ShouldBe(string.Empty);
+    }
+
+    [Fact]
+    public void Expand_EmptyDefault_ShouldResolveEmpty()
+    {
+        VariableExpander.Expand("${MISSING:-}", new Dictionary<string, string>()).ShouldBe(string.Empty);
+    }
+
+    [Fact]
+    public void Expand_NestedBracesInVariableName_ShouldResolveEmpty()
+    {
+        VariableExpander.Expand("${${A}}", new Dictionary<string, string> { ["A"] = "x" }).ShouldBe(string.Empty);
+    }
+
+    [Fact]
+    public void Expand_ResolvesFromEnvironment_WhenContextIsNull()
+    {
+        var envVarName = "DOTENV_TEST_VAR_" + Guid.NewGuid().ToString("N");
+        try
+        {
+            Environment.SetEnvironmentVariable(envVarName, "from_env");
+            VariableExpander.Expand($"${{{envVarName}}}", null).ShouldBe("from_env");
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(envVarName, null);
+        }
+    }
+
+    [Fact]
+    public void Expand_UnderscoreAndDigitIdentifiers_ShouldResolve()
+    {
+        var context = new Dictionary<string, string>
+        {
+            ["_private"] = "secret",
+            ["VAR_1"] = "one",
+            ["lower"] = "low"
+        };
+        VariableExpander.Expand("$_private/$VAR_1/$lower", context).ShouldBe("secret/one/low");
+    }
+
+    [Fact]
+    public void Expand_IndirectReference_ShouldResolveRecursively()
+    {
+        var context = new Dictionary<string, string>
+        {
+            ["A"] = "${B}",
+            ["B"] = "final"
+        };
+        VariableExpander.Expand("${A}", context).ShouldBe("final");
+    }
 }

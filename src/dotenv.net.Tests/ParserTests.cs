@@ -35,6 +35,15 @@ public class ParserTests
     }
 
     [Fact]
+    public void Parse_WhitespaceKey_ShouldBeIgnored()
+    {
+        var lines = new[] { " =value", "KEY=value" };
+        var result = Parser.Parse(lines, trimValues: false, supportExportSyntax: false, supportInlineComments: false).ToArray();
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY", "value"));
+    }
+
+    [Fact]
     public void Parse_SimpleKeyValue_ShouldReturnPair()
     {
         var lines = new[] { "TEST_KEY=test_value" };
@@ -96,6 +105,16 @@ public class ParserTests
         result.Length.ShouldBe(2);
         result[0].ShouldBe(new KeyValuePair<string, string>("KEY", $"first line{Environment.NewLine}second line"));
         result[1].ShouldBe(new KeyValuePair<string, string>("NEXT", "value"));
+    }
+
+    [Fact]
+    public void Parse_MultiLineValueWithNullLine_ShouldTreatAsEmpty()
+    {
+        var lines = new[] { "KEY='first", null, "last'" };
+        var result = Parser.Parse(lines, trimValues: false, supportExportSyntax: false, supportInlineComments: false).ToArray();
+        result.Length.ShouldBe(1);
+        result[0].ShouldBe(new KeyValuePair<string, string>("KEY",
+            $"first{Environment.NewLine}{Environment.NewLine}last"));
     }
 
     [Fact]

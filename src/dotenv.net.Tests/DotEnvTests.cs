@@ -9,6 +9,13 @@ namespace dotenv.net.Tests;
 public class DotEnvTests
 {
     [Fact]
+    public void Read_WithNullOptions_ShouldUseDefaultOptions()
+    {
+        var values = DotEnv.Read(null);
+        values.ShouldNotBeNull();
+    }
+
+    [Fact]
     public void Read_ComplexExistingEnv_ShouldExtractValidValues()
     {
         var options = new DotEnvOptions(trimValues: true, probeForEnv: true, probeLevelsToSearch: 5);

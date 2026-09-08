@@ -29,6 +29,7 @@ public static class DotEnv
     {
         options ??= new DotEnvOptions();
         List<KeyValuePair<string, string>[]> envFileKeyValues;
+        var resolutionContext = new Dictionary<string, string>();
 
         // the null check is required for environments without nullable checks
         if (options.EnvStreams != null && options.EnvStreams.Any())
@@ -39,7 +40,8 @@ public static class DotEnv
                     var fileRows = Reader.ReadStreamLines(envStream, options.IgnoreExceptions, options.Encoding);
                     var envKeyValues =
                         Reader.ExtractEnvKeyValues(fileRows, options.TrimValues, options.SupportExportSyntax,
-                            options.SupportInlineComments);
+                            options.SupportInlineComments, options.SupportVariableExpansion, resolutionContext,
+                            options.IgnoreExceptions, options.OverwriteExistingVars);
                     return envKeyValues.ToArray();
                 })
                 .ToList();
@@ -56,7 +58,8 @@ public static class DotEnv
                     var fileRows = Reader.ReadFileLines(envFilePath, options.IgnoreExceptions, options.Encoding);
                     var envKeyValues =
                         Reader.ExtractEnvKeyValues(fileRows, options.TrimValues, options.SupportExportSyntax,
-                            options.SupportInlineComments);
+                            options.SupportInlineComments, options.SupportVariableExpansion, resolutionContext,
+                            options.IgnoreExceptions, options.OverwriteExistingVars);
                     return envKeyValues.ToArray();
                 })
                 .ToList();

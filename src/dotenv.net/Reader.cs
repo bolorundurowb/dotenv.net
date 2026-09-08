@@ -7,7 +7,7 @@ namespace dotenv.net;
 
 internal static class Reader
 {
-    internal static ReadOnlySpan<string> ReadFileLines(string envFilePath, bool ignoreExceptions, Encoding? encoding)
+    internal static ReadOnlySpan<string> ReadFileLines(string? envFilePath, bool ignoreExceptions, Encoding? encoding)
     {
         var defaultResponse = ReadOnlySpan<string>.Empty;
 
@@ -36,7 +36,7 @@ internal static class Reader
         return new ReadOnlySpan<string>(File.ReadAllLines(envFilePath, encoding));
     }
 
-    internal static ReadOnlySpan<string> ReadStreamLines(Stream envStream, bool ignoreExceptions, Encoding? encoding)
+    internal static ReadOnlySpan<string> ReadStreamLines(Stream? envStream, bool ignoreExceptions, Encoding? encoding)
     {
         var defaultResponse = ReadOnlySpan<string>.Empty;
 
@@ -72,10 +72,13 @@ internal static class Reader
         return new ReadOnlySpan<string>(lines.ToArray());
     }
 
-    internal static ReadOnlySpan<KeyValuePair<string, string>> ExtractEnvKeyValues(ReadOnlySpan<string> rawEnvRows,
-        bool trimValues, bool supportExportSyntax, bool supportInlineComments) => rawEnvRows == ReadOnlySpan<string>.Empty
+    internal static ReadOnlySpan<KeyValuePair<string, string>> ExtractEnvKeyValues(ReadOnlySpan<string?> rawEnvRows,
+        bool trimValues, bool supportExportSyntax, bool supportInlineComments,
+        bool supportVariableExpansion = false, IDictionary<string, string>? resolutionContext = null,
+        bool ignoreExceptions = true, bool overwriteExistingVars = true) => rawEnvRows == ReadOnlySpan<string?>.Empty
         ? ReadOnlySpan<KeyValuePair<string, string>>.Empty
-        : Parser.Parse(rawEnvRows, trimValues, supportExportSyntax, supportInlineComments);
+        : Parser.Parse(rawEnvRows, trimValues, supportExportSyntax, supportInlineComments,
+            supportVariableExpansion, resolutionContext, ignoreExceptions, overwriteExistingVars);
 
     internal static Dictionary<string, string> MergeEnvKeyValues(
         IEnumerable<KeyValuePair<string, string>[]> envFileKeyValues, bool overwriteExistingVars)

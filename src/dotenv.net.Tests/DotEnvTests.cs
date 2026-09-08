@@ -9,6 +9,13 @@ namespace dotenv.net.Tests;
 public class DotEnvTests
 {
     [Fact]
+    public void Read_WithNullOptions_ShouldUseDefaultOptions()
+    {
+        var values = DotEnv.Read(null);
+        values.ShouldNotBeNull();
+    }
+
+    [Fact]
     public void Read_ComplexExistingEnv_ShouldExtractValidValues()
     {
         var options = new DotEnvOptions(trimValues: true, probeForEnv: true, probeLevelsToSearch: 5);
@@ -88,5 +95,77 @@ public class DotEnvTests
 
         options.EnvStreams.ShouldNotBeNull();
         options.EnvStreams!.Single().ShouldBe(stream);
+    }
+
+    [Fact]
+    public void Read_WithVariableExpansion_FromStreams_ShouldResolveVariablesAcrossStreams()
+    {
+        using var first = new MemoryStream("HOST=example.com"u8.ToArray());
+        using var second = new MemoryStream("URL=https://${HOST}/api"u8.ToArray());
+
+        var options = new DotEnvOptions(supportVariableExpansion: true).WithEnvStreams(first, second);
+        var values = DotEnv.Read(options);
+
+        values["HOST"].ShouldBe("example.com");
+        values["URL"].ShouldBe("https://example.com/api");
+    }
+
+    [Fact]
+    public void Read_WithVariableExpansion_FromMultipleStreams_WithoutOverwrite_ShouldPreserveFirstVariableExpansion()
+    {
+        using var first = new MemoryStream("HOST=primary.com"u8.ToArray());
+        using var second = new MemoryStream("HOST=secondary.com\nURL=https://${HOST}"u8.ToArray());
+
+        var options = new DotEnvOptions(overwriteExistingVars: false, supportVariableExpansion: true).WithEnvStreams(first, second);
+        var values = DotEnv.Read(options);
+
+        values["HOST"].ShouldBe("primary.com");
+        values["URL"].ShouldBe("https://primary.com");
+    }
+
+    [Fact]
+    public void Read_DefaultOptions_FromStream_ShouldNotExpandVariables()
+    {
+        using var stream = new MemoryStream("A=foo\nB=${A}"u8.ToArray());
+        var options = new DotEnvOptions().WithEnvStreams(stream);
+        var values = DotEnv.Read(options);
+
+        values["A"].ShouldBe("foo");
+        values["B"].ShouldBe("${A}");
+    }
+
+    [Fact]
+    public void Read_WithoutVariableExpansion_FromStream_ShouldNotExpandVariables()
+    {
+        using var stream = new MemoryStream("A=foo\nB=${A}"u8.ToArray());
+        var options = new DotEnvOptions().WithoutVariableExpansion().WithEnvStreams(stream);
+        var values = DotEnv.Read(options);
+
+        values["A"].ShouldBe("foo");
+        values["B"].ShouldBe("${A}");
+    }
+
+    [Fact]
+    public void Load_WithVariableExpansion_ShouldWriteExpandedValuesToEnvironment()
+    {
+        var key = "DOTENV_TEST_EXPAND_" + Guid.NewGuid().ToString("N");
+        var refKey = "DOTENV_TEST_REF_" + Guid.NewGuid().ToString("N");
+
+        try
+        {
+            using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes($"{key}=root\n{refKey}=${{{key}}}/child"));
+            DotEnv.Fluent()
+                .WithEnvStreams(stream)
+                .WithSupportVariableExpansion()
+                .Load();
+
+            Environment.GetEnvironmentVariable(key).ShouldBe("root");
+            Environment.GetEnvironmentVariable(refKey).ShouldBe("root/child");
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(key, null);
+            Environment.SetEnvironmentVariable(refKey, null);
+        }
     }
 }

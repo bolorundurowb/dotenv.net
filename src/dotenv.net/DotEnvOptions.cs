@@ -23,17 +23,17 @@ public class DotEnvOptions
     /// <summary>
     /// The paths to the env files. The default is [.env]. <see cref="T:dotenv.net.DotEnvOptions"/>
     /// </summary>
-    public IEnumerable<string> EnvFilePaths { get; private set; }
+    public IEnumerable<string> EnvFilePaths { get; private set; } = DefaultEnvPath;
 
     /// <summary>
     /// The streams to the env files. The default is null. <see cref="T:dotenv.net.DotEnvOptions"/>
     /// </summary>
-    public IEnumerable<Stream> EnvStreams { get; private set; }
+    public IEnumerable<Stream>? EnvStreams { get; private set; }
 
     /// <summary>
     /// The encoding that the env file was created with. The default is UTF-8. <see cref="T:dotenv.net.DotEnvOptions"/>
     /// </summary>
-    public Encoding Encoding { get; private set; }
+    public Encoding Encoding { get; private set; } = Encoding.UTF8;
 
     /// <summary>
     /// A value to state whether to trim whitespace from the values retrieved. The default is false. <see cref="T:dotenv.net.DotEnvOptions"/>
@@ -67,6 +67,11 @@ public class DotEnvOptions
     public bool SupportInlineComments { get; private set; }
 
     /// <summary>
+    /// Whether variable expansion/interpolation should be supported (e.g. ${VAR} or $VAR). The default is false.
+    /// </summary>
+    public bool SupportVariableExpansion { get; private set; }
+
+    /// <summary>
     /// Initialises a new instance of the <see cref="DotEnvOptions"/> class.
     /// </summary>
     /// <param name="ignoreExceptions">Whether to ignore exceptions during the loading process.</param>
@@ -77,15 +82,19 @@ public class DotEnvOptions
     /// <param name="probeForEnv">Whether to search up the directories looking for an env file.</param>
     /// <param name="probeLevelsToSearch">How high up the directory chain to search.</param>
     /// <param name="supportExportSyntax">Whether to support env vars in the export syntax.</param>
+    /// <param name="supportInlineComments">Whether to support inline comments.</param>
+    /// <param name="envStreams">The streams to the env files to load.</param>
+    /// <param name="supportVariableExpansion">Whether to support variable expansion/interpolation.</param>
     public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string>? envFilePaths = null,
         Encoding? encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
         bool probeForEnv = false, int? probeLevelsToSearch = null, bool supportExportSyntax = false,
-        bool supportInlineComments = true, IEnumerable<Stream>? envStreams = null)
+        bool supportInlineComments = true, IEnumerable<Stream>? envStreams = null,
+        bool supportVariableExpansion = false)
     {
         if (ignoreExceptions)
             WithoutExceptions();
         else
-            WithoutOverwriteExistingVars();
+            WithExceptions();
 
         WithEnvFiles((envFilePaths ?? []).ToArray());
         if (envStreams != null && envStreams.Any())
@@ -118,6 +127,11 @@ public class DotEnvOptions
             WithSupportInlineComments();
         else
             WithoutSupportInlineComments();
+
+        if (supportVariableExpansion)
+            WithSupportVariableExpansion();
+        else
+            WithoutSupportVariableExpansion();
     }
 
     /// <summary>
@@ -271,6 +285,38 @@ public class DotEnvOptions
         SupportInlineComments = false;
         return this;
     }
+
+    /// <summary>
+    /// Enables variable expansion and interpolation within values.
+    /// </summary>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
+    public DotEnvOptions WithSupportVariableExpansion()
+    {
+        SupportVariableExpansion = true;
+        return this;
+    }
+
+    /// <summary>
+    /// Disables variable expansion and interpolation within values.
+    /// </summary>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
+    public DotEnvOptions WithoutSupportVariableExpansion()
+    {
+        SupportVariableExpansion = false;
+        return this;
+    }
+
+    /// <summary>
+    /// Enables variable expansion and interpolation within values (alias for <see cref="WithSupportVariableExpansion"/>).
+    /// </summary>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
+    public DotEnvOptions WithVariableExpansion() => WithSupportVariableExpansion();
+
+    /// <summary>
+    /// Disables variable expansion and interpolation within values (alias for <see cref="WithoutSupportVariableExpansion"/>).
+    /// </summary>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
+    public DotEnvOptions WithoutVariableExpansion() => WithoutSupportVariableExpansion();
 
     /// <summary>
     /// Sets the env files to be read.

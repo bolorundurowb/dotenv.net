@@ -62,7 +62,8 @@ DotEnv.Load(options: new DotEnvOptions(
     probeForEnv: true,                 // Search parent directories for a .env file (default: false)
     probeLevelsToSearch: 3,            // How many directory levels to ascend when probing (default: 4)
     supportExportSyntax: true,         // Support `export KEY=VALUE` syntax (default: false)
-    supportInlineComments: true        // Strip `# comment` from unquoted values (default: true)
+    supportInlineComments: true,       // Strip `# comment` from unquoted values (default: true)
+    supportVariableExpansion: true     // Expand ${VAR} and $VAR variable references (default: true)
 ));
 ```
 
@@ -114,22 +115,67 @@ var envVars = DotEnv.Fluent()
 
 ### Fluent builder methods
 
-| Method                           | Description                                        |
-|----------------------------------|----------------------------------------------------|
-| `WithExceptions()`               | Throw exceptions on errors                         |
-| `WithoutExceptions()`            | Silently ignore errors (default)                   |
-| `WithEnvFiles(params string[])`  | Specify one or more `.env` file paths              |
-| `WithEncoding(Encoding)`         | Set file encoding                                  |
-| `WithTrimValues()`               | Strip whitespace from values                       |
-| `WithoutTrimValues()`            | Preserve whitespace in values (default)            |
-| `WithOverwriteExistingVars()`    | Overwrite existing environment variables (default) |
-| `WithoutOverwriteExistingVars()` | Preserve existing environment variables            |
-| `WithProbeForEnv(int)`           | Search parent directories for a `.env` file        |
-| `WithoutProbeForEnv()`           | Disable parent directory search (default)          |
-| `WithSupportExportSyntax()`      | Support `export KEY=VALUE` syntax                  |
-| `WithoutSupportExportSyntax()`   | Disable export syntax support (default)            |
-| `WithSupportInlineComments()`    | Strip `# comment` from unquoted values (default)   |
-| `WithoutSupportInlineComments()` | Preserve inline comments in values                 |
+| Method                              | Description                                            |
+|-------------------------------------|--------------------------------------------------------|
+| `WithExceptions()`                  | Throw exceptions on errors                             |
+| `WithoutExceptions()`               | Silently ignore errors (default)                       |
+| `WithEnvFiles(params string[])`     | Specify one or more `.env` file paths                  |
+| `WithEncoding(Encoding)`            | Set file encoding                                      |
+| `WithTrimValues()`                  | Strip whitespace from values                           |
+| `WithoutTrimValues()`               | Preserve whitespace in values (default)                |
+| `WithOverwriteExistingVars()`       | Overwrite existing environment variables (default)     |
+| `WithoutOverwriteExistingVars()`    | Preserve existing environment variables                |
+| `WithProbeForEnv(int)`              | Search parent directories for a `.env` file            |
+| `WithoutProbeForEnv()`              | Disable parent directory search (default)              |
+| `WithSupportExportSyntax()`         | Support `export KEY=VALUE` syntax                      |
+| `WithoutSupportExportSyntax()`      | Disable export syntax support (default)                |
+| `WithSupportInlineComments()`       | Strip `# comment` from unquoted values (default)       |
+| `WithoutSupportInlineComments()`    | Preserve inline comments in values                     |
+| `WithSupportVariableExpansion()`    | Enable variable expansion and interpolation            |
+| `WithoutSupportVariableExpansion()` | Disable variable expansion and interpolation (default) |
+| `WithVariableExpansion()`           | Alias for `WithSupportVariableExpansion()`             |
+| `WithoutVariableExpansion()`        | Alias for `WithoutSupportVariableExpansion()`          |
+
+## Variable Expansion & Interpolation
+
+**dotenv.net** supports variable expansion (substitution), allowing values to reference other variables or system environment settings using `${VAR}` or `$VAR` syntax:
+
+```bash
+BASE_URL=https://api.example.com
+API_ENDPOINT=${BASE_URL}/v1
+PORT=8080
+DATABASE_URL=postgres://${USER}:${PASSWORD}@localhost:${PORT}/db
+```
+
+### Syntax and Features
+
+- **Braced variables**: `${VAR}` expands to the value of `VAR`.
+- **Short variables**: `$VAR` expands `VAR` matching `[A-Za-z_][A-Za-z0-9_]*`. Dollar signs not followed by a valid identifier (e.g. `$100` or a trailing `$`) are preserved literally.
+- **Default fallbacks**:
+  - `${VAR:-default}`: Evaluates to `default` if `VAR` is unset or empty.
+  - `${VAR-default}`: Evaluates to `default` if `VAR` is unset (preserves an explicitly set empty value).
+- **Nested expressions**: Fallbacks can be nested, e.g. `${CUSTOM_URL:-${DEFAULT_HOST:-localhost}:3000}`.
+- **Resolution hierarchy**: Variables are resolved sequentially in document order against earlier parsed keys, cascading to `System.Environment` if not set in the `.env` file. Missing variables without a default resolve to an empty string.
+
+### Quoting and Escaping
+
+- **Single quotes (`'...'`)**: Treated as raw literals. Variables inside single quotes are never expanded (e.g. `'${NOT_EXPANDED}'` remains literal `${NOT_EXPANDED}`).
+- **Double quotes (`"..."`) and unquoted values**: Variable expansion is enabled.
+- **Backslash escaping**: Preceding a dollar sign with a backslash prevents expansion (e.g. `\${VAR}` evaluates to `${VAR}`, and `\$VAR` evaluates to `$VAR`).
+
+### Circular Dependency Protection
+
+Circular references (such as direct `A=${A}` or indirect `A=${B}`, `B=${A}`) are detected automatically:
+- When `ignoreExceptions` is `false`, an `InvalidOperationException` is thrown identifying the cycle path.
+- When `ignoreExceptions` is `true`, the cyclic reference resolves safely to an empty string without crashing or causing a stack overflow.
+
+To enable variable expansion:
+
+```csharp
+DotEnv.Fluent()
+    .WithVariableExpansion()
+    .Load();
+```
 
 ## Reading Variables
 

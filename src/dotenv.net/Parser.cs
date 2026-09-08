@@ -11,10 +11,13 @@ internal static class Parser
     private const char BackSlash = '\\';
     private const string ExportPrefix = "export";
 
-    internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> rawEnvRows,
-        bool trimValues, bool supportExportSyntax, bool supportInlineComments)
+    internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string?> rawEnvRows,
+        bool trimValues, bool supportExportSyntax, bool supportInlineComments,
+        bool supportVariableExpansion = false, IDictionary<string, string>? resolutionContext = null,
+        bool ignoreExceptions = true, bool overwriteExistingVars = true)
     {
         var keyValuePairs = new List<KeyValuePair<string, string>>();
+        resolutionContext ??= new Dictionary<string, string>();
 
         for (var i = 0; i < rawEnvRows.Length; i++)
         {
@@ -23,13 +26,15 @@ internal static class Parser
             if (string.IsNullOrWhiteSpace(rawEnvRow))
                 continue;
 
-            if (rawEnvRow.IsComment())
+            var envRow = rawEnvRow!;
+
+            if (envRow.IsComment())
                 continue;
 
-            if (!rawEnvRow.HasKey(out var equalsIndex))
+            if (!envRow.HasKey(out var equalsIndex))
                 continue;
 
-            var (key, rawValue) = rawEnvRow.SplitIntoKv(equalsIndex, supportExportSyntax);
+            var (key, rawValue) = envRow.SplitIntoKv(equalsIndex, supportExportSyntax);
 
             if (string.IsNullOrEmpty(key))
                 continue;
@@ -38,12 +43,32 @@ internal static class Parser
             var isSingleQuoted = trimmedRawValue.StartsWith(SingleQuote);
             var isDoubleQuoted = trimmedRawValue.StartsWith(DoubleQuotes);
 
-            var value = isSingleQuoted || isDoubleQuoted
-                ? ParseQuotedValue(key, rawEnvRows, trimmedRawValue, ref i)
-                : supportInlineComments ? rawValue.StripInlineComment() : rawValue;
+            string value;
+            if (isSingleQuoted || isDoubleQuoted)
+            {
+                value = ParseQuotedValue(key, rawEnvRows, trimmedRawValue, ref i,
+                    supportVariableExpansion, resolutionContext, ignoreExceptions);
+            }
+            else
+            {
+                value = supportInlineComments ? rawValue.StripInlineComment() : rawValue;
+                if (supportVariableExpansion)
+                {
+                    value = VariableExpander.Expand(value, resolutionContext, ignoreExceptions);
+                }
+            }
 
             if (trimValues)
                 value = value.Trim();
+
+            if (supportVariableExpansion)
+            {
+                var contextVal = isSingleQuoted ? value.Replace("$", "\\$") : value;
+                if (overwriteExistingVars || !resolutionContext.ContainsKey(key))
+                {
+                    resolutionContext[key] = contextVal;
+                }
+            }
 
             keyValuePairs.Add(new KeyValuePair<string, string>(key, value));
         }
@@ -51,10 +76,12 @@ internal static class Parser
         return keyValuePairs.ToArray();
     }
 
-    private static string ParseQuotedValue(string key, ReadOnlySpan<string> rawEnvRows, string currentRowValue,
-        ref int i)
+    private static string ParseQuotedValue(string key, ReadOnlySpan<string?> rawEnvRows, string currentRowValue,
+        ref int i, bool supportVariableExpansion, IDictionary<string, string> resolutionContext,
+        bool ignoreExceptions)
     {
         var quoteChar = currentRowValue[0];
+        var isDoubleQuoted = quoteChar == DoubleQuotes;
         var valueBuilder = new StringBuilder();
         var currentLineContent = currentRowValue.Substring(1); // Start after the opening quote.
 
@@ -104,12 +131,18 @@ internal static class Parser
                     $"Unable to parse environment variable: {key}. Missing closing quote.");
 
             valueBuilder.AppendLine();
-            currentLineContent = rawEnvRows[i];
+            currentLineContent = rawEnvRows[i] ?? string.Empty;
         }
 
-        return valueBuilder.ToString()
-            .UnescapeQuotes(quoteChar)
-            .UnescapeBackslashes();
+        var parsed = valueBuilder.ToString()
+            .UnescapeQuotes(quoteChar);
+
+        if (isDoubleQuoted && supportVariableExpansion)
+        {
+            parsed = VariableExpander.Expand(parsed, resolutionContext, ignoreExceptions);
+        }
+
+        return parsed.UnescapeBackslashes();
     }
 
     private static string StripInlineComment(this string value)

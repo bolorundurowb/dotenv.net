@@ -258,4 +258,47 @@ public class DotEnvOptionsTests
 
         values.ShouldContainKeyAndValue("A", "b");
     }
+
+    [Fact]
+    public void Constructor_ShouldDefaultSupportVariableExpansionToFalse()
+    {
+        var options = new DotEnvOptions();
+        options.SupportVariableExpansion.ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void WithSupportVariableExpansion_ShouldSetCorrectly(bool initialValue)
+    {
+        var options = new DotEnvOptions(supportVariableExpansion: initialValue);
+        options.WithSupportVariableExpansion();
+        options.SupportVariableExpansion.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void WithoutSupportVariableExpansion_ShouldSetCorrectly(bool initialValue)
+    {
+        var options = new DotEnvOptions(supportVariableExpansion: initialValue);
+        options.WithoutSupportVariableExpansion();
+        options.SupportVariableExpansion.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void WithVariableExpansion_Alias_ShouldSetToTrue()
+    {
+        var options = new DotEnvOptions(supportVariableExpansion: false);
+        options.WithVariableExpansion();
+        options.SupportVariableExpansion.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void WithoutVariableExpansion_Alias_ShouldSetToFalse()
+    {
+        var options = new DotEnvOptions(supportVariableExpansion: true);
+        options.WithoutVariableExpansion();
+        options.SupportVariableExpansion.ShouldBeFalse();
+    }
 }

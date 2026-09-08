@@ -282,7 +282,7 @@ Thanks to everyone who has contributed to **dotenv.net**:
 [@merqlove](https://github.com/merqlove) [@tracker1](https://github.com/tracker1) [@NaturalWill](https://github.com/NaturalWill)
 [@texyh](https://github.com/texyh) [@jonlabelle](https://github.com/jonlabelle) [@Gounlaf](https://github.com/Gounlaf)
 [@DTTerastar](https://github.com/DTTerastar) [@Mondonno](https://github.com/Mondonno) [@caveman-dick](https://github.com/caveman-dick)
-[@VijoPlays](https://github.com/VijoPlays) [@bobbyg603](https://github.com/bobbyg603)
+[@VijoPlays](https://github.com/VijoPlays) [@bobbyg603](https://github.com/bobbyg603) [@Moha-sami](https://github.com/Moha-sami)
 
 ## License
 

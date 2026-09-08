@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace dotenv.net;
@@ -19,6 +19,12 @@ public static class DotEnv
     /// </summary>
     /// <param name="options">The options required to configure the env loader. If null, default options are used.</param>
     /// <returns>A dictionary containing the key-value pairs read from the env files.</returns>
+    /// <example>
+    /// <code>
+    /// var envVars = DotEnv.Read();
+    /// Console.WriteLine(envVars["DATABASE_URL"]);
+    /// </code>
+    /// </example>
     public static IDictionary<string, string> Read(DotEnvOptions? options = null)
     {
         options ??= new DotEnvOptions();
@@ -61,6 +67,11 @@ public static class DotEnv
     /// Loads the values from the provided env files into the system environment variables.
     /// </summary>
     /// <param name="options">The options required to configure the env loader. If null, default options are used.</param>
+    /// <example>
+    /// <code>
+    /// DotEnv.Load();
+    /// </code>
+    /// </example>
     public static void Load(DotEnvOptions? options = null)
     {
         options ??= new DotEnvOptions();

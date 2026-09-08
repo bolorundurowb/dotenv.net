@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -114,6 +114,11 @@ public class DotEnvOptions
     /// Enables exception throwing when errors occur.
     /// </summary>
     /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
+    /// <example>
+    /// <code>
+    /// DotEnv.Fluent().WithExceptions().Load();
+    /// </code>
+    /// </example>
     public DotEnvOptions WithExceptions()
     {
         IgnoreExceptions = false;
@@ -136,6 +141,11 @@ public class DotEnvOptions
     /// <param name="probeLevelsToSearch">How high up the directory chain to search.</param>
     /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
     /// <exception cref="InvalidOperationException">Thrown when EnvFiles is already set.</exception>
+    /// <example>
+    /// <code>
+    /// DotEnv.Fluent().WithProbeForEnv(probeLevelsToSearch: 4).Load();
+    /// </code>
+    /// </example>
     public DotEnvOptions WithProbeForEnv(int probeLevelsToSearch = DefaultProbeAscendLimit)
     {
         if (EnvFilePaths?.FirstOrDefault() != DefaultEnvFileName)

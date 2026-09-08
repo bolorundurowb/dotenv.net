@@ -302,6 +302,76 @@ public class ReaderTests : IDisposable
         exception.Message.ShouldContain($"Could not find '{DotEnvOptions.DefaultEnvFileName}'");
     }
 
+    [Fact]
+    public void GetProbedEnvDirectory_ShouldPreferEnvThenOtherCascadeFiles()
+    {
+        var root = Path.Combine(_testRootPath, "probe_" + Guid.NewGuid().ToString("N"));
+        var child = Path.Combine(root, "child");
+        Directory.CreateDirectory(child);
+        File.WriteAllText(Path.Combine(root, ".env.local"), "KEY=local");
+
+        var directory = Reader.GetProbedEnvDirectory(2, ignoreExceptions: false,
+            [".env", ".env.local"], child);
+
+        directory.ShouldBe(root);
+    }
+
+    [Fact]
+    public void GetProbedEnvDirectory_WhenNotFoundAndIgnoreExceptionsTrue_ShouldReturnNull()
+    {
+        var start = Path.Combine(_testRootPath, "empty_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(start);
+
+        Reader.GetProbedEnvDirectory(1, ignoreExceptions: true, [".env", ".env.local"], start)
+            .ShouldBeNull();
+    }
+
+    [Fact]
+    public void GetProbedEnvDirectory_WhenNotFoundAndIgnoreExceptionsFalse_ShouldThrow()
+    {
+        var start = Path.Combine(_testRootPath, "empty_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(start);
+
+        var exception = Should.Throw<FileNotFoundException>(() =>
+            Reader.GetProbedEnvDirectory(1, ignoreExceptions: false, [".env", ".env.local"], start));
+
+        exception.Message.ShouldContain(".env");
+        exception.Message.ShouldContain(".env.local");
+        exception.Message.ShouldContain(start);
+    }
+
+    [Fact]
+    public void GetProbedEnvDirectory_ShouldPreferEnvFileInSameDirectory()
+    {
+        var root = Path.Combine(_testRootPath, "both_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        File.WriteAllText(Path.Combine(root, ".env"), "KEY=base");
+        File.WriteAllText(Path.Combine(root, ".env.local"), "KEY=local");
+
+        var directory = Reader.GetProbedEnvDirectory(1, ignoreExceptions: false,
+            [".env", ".env.local"], root);
+
+        directory.ShouldBe(root);
+    }
+
+    [Fact]
+    public void GetProbedEnvDirectory_WhenStartDirectoryIsWhitespace_ShouldSearchFromBaseDirectory()
+    {
+        var directory = Reader.GetProbedEnvDirectory(4, ignoreExceptions: true, [".env"], "  ");
+        directory.ShouldNotBeNull();
+        File.Exists(Path.Combine(directory!, DotEnvOptions.DefaultEnvFileName)).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void GetProbedEnvDirectory_WhenWalkingPastFilesystemRoot_ShouldReturnNull()
+    {
+        var start = Path.Combine(_testRootPath, "rootwalk_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(start);
+
+        Reader.GetProbedEnvDirectory(256, ignoreExceptions: true, [".env.missing-cascade"], start)
+            .ShouldBeNull();
+    }
+
     /// <summary>
     /// Stream whose Read always throws, for exercising ReadStreamLines error handling.
     /// </summary>

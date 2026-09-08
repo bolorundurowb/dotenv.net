@@ -72,6 +72,18 @@ public class DotEnvOptions
     public bool SupportVariableExpansion { get; private set; }
 
     /// <summary>
+    /// Whether to automatically load layered env files (.env, .env.local, .env.{Environment}, .env.{Environment}.local).
+    /// The default is false.
+    /// </summary>
+    public bool EnvironmentCascade { get; private set; }
+
+    /// <summary>
+    /// An explicit environment name used when <see cref="EnvironmentCascade"/> is enabled. When unset, the name is
+    /// resolved from ASPNETCORE_ENVIRONMENT, DOTNET_ENVIRONMENT, then DOTENV_ENV.
+    /// </summary>
+    public string? EnvironmentName { get; private set; }
+
+    /// <summary>
     /// Initialises a new instance of the <see cref="DotEnvOptions"/> class.
     /// </summary>
     /// <param name="ignoreExceptions">Whether to ignore exceptions during the loading process.</param>
@@ -85,11 +97,13 @@ public class DotEnvOptions
     /// <param name="supportInlineComments">Whether to support inline comments.</param>
     /// <param name="envStreams">The streams to the env files to load.</param>
     /// <param name="supportVariableExpansion">Whether to support variable expansion/interpolation.</param>
+    /// <param name="environmentCascade">Whether to load layered env files based on the current environment.</param>
+    /// <param name="environmentName">An explicit environment name for cascade loading.</param>
     public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string>? envFilePaths = null,
         Encoding? encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
         bool probeForEnv = false, int? probeLevelsToSearch = null, bool supportExportSyntax = false,
         bool supportInlineComments = true, IEnumerable<Stream>? envStreams = null,
-        bool supportVariableExpansion = false)
+        bool supportVariableExpansion = false, bool environmentCascade = false, string? environmentName = null)
     {
         if (ignoreExceptions)
             WithoutExceptions();
@@ -132,6 +146,12 @@ public class DotEnvOptions
             WithSupportVariableExpansion();
         else
             WithoutSupportVariableExpansion();
+
+        EnvironmentName = environmentName;
+        if (environmentCascade)
+            WithEnvironmentCascade(environmentName);
+        else
+            WithoutEnvironmentCascade();
     }
 
     /// <summary>
@@ -319,6 +339,40 @@ public class DotEnvOptions
     public DotEnvOptions WithoutVariableExpansion() => WithoutSupportVariableExpansion();
 
     /// <summary>
+    /// Enables hierarchical loading of layered env files based on the current environment.
+    /// Later files override earlier files when <see cref="OverwriteExistingVars"/> is true.
+    /// </summary>
+    /// <param name="environmentName">
+    /// An optional explicit environment name. When omitted, the name is resolved from
+    /// ASPNETCORE_ENVIRONMENT, DOTNET_ENVIRONMENT, then DOTENV_ENV.
+    /// </param>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when custom env files or streams are already set.</exception>
+    public DotEnvOptions WithEnvironmentCascade(string? environmentName = null)
+    {
+        if (HasCustomEnvFiles())
+            throw new InvalidOperationException("Cannot use EnvironmentCascade when EnvFiles is set.");
+
+        if (EnvStreams != null && EnvStreams.Any())
+            throw new InvalidOperationException("Cannot use EnvironmentCascade when EnvStreams is set.");
+
+        EnvironmentCascade = true;
+        if (environmentName != null)
+            EnvironmentName = environmentName;
+        return this;
+    }
+
+    /// <summary>
+    /// Disables hierarchical loading of layered env files.
+    /// </summary>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
+    public DotEnvOptions WithoutEnvironmentCascade()
+    {
+        EnvironmentCascade = false;
+        return this;
+    }
+
+    /// <summary>
     /// Sets the env files to be read.
     /// </summary>
     /// <param name="envFilePaths">The paths to the env files.</param>
@@ -329,6 +383,9 @@ public class DotEnvOptions
     {
         if (ProbeForEnv)
             throw new InvalidOperationException("EnvFiles paths cannot be set when ProbeForEnv is true");
+
+        if (EnvironmentCascade)
+            throw new InvalidOperationException("EnvFiles paths cannot be set when EnvironmentCascade is true");
 
         if (EnvStreams != null && EnvStreams.Any())
             throw new InvalidOperationException("Cannot use EnvFiles when EnvStreams is set.");
@@ -348,8 +405,11 @@ public class DotEnvOptions
     /// <exception cref="ArgumentNullException">Thrown when streams is null.</exception>
     public DotEnvOptions WithEnvStreams(params Stream[] streams)
     {
-        if (EnvFilePaths != null && (EnvFilePaths.Count() > 1 || (EnvFilePaths.Count() == 1 && EnvFilePaths.First() != DefaultEnvFileName)))
+        if (HasCustomEnvFiles())
             throw new InvalidOperationException("Cannot use EnvStreams when EnvFiles is set.");
+
+        if (EnvironmentCascade)
+            throw new InvalidOperationException("Cannot use EnvStreams when EnvironmentCascade is set.");
 
         if (streams == null)
             throw new ArgumentNullException(nameof(streams), "EnvStreams cannot be null");
@@ -357,6 +417,11 @@ public class DotEnvOptions
         EnvStreams = streams;
         return this;
     }
+
+    private bool HasCustomEnvFiles() =>
+        EnvFilePaths != null &&
+        (EnvFilePaths.Count() > 1 ||
+         (EnvFilePaths.Count() == 1 && EnvFilePaths.First() != DefaultEnvFileName));
 
     /// <summary>
     /// Reads the env files and returns the values without writing to the system environment.

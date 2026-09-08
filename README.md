@@ -63,12 +63,13 @@ DotEnv.Load(options: new DotEnvOptions(
     probeLevelsToSearch: 3,            // How many directory levels to ascend when probing (default: 4)
     supportExportSyntax: true,         // Support `export KEY=VALUE` syntax (default: false)
     supportInlineComments: true,       // Strip `# comment` from unquoted values (default: true)
-    supportVariableExpansion: true     // Expand ${VAR} and $VAR variable references (default: true)
+    supportVariableExpansion: true,    // Expand ${VAR} and $VAR variable references (default: true)
+    environmentCascade: true,          // Load layered .env / .env.local / .env.{Environment} files (default: false)
+    environmentName: "Development"     // Optional explicit environment for cascade loading
 ));
 ```
 
-> **Note:** `probeForEnv` and `envFilePaths` are mutually exclusive. Setting both will throw an
-`InvalidOperationException`.
+> **Note:** `probeForEnv` and custom `envFilePaths` are mutually exclusive. `environmentCascade` cannot be combined with custom `envFilePaths` or `envStreams`. `environmentCascade` can be used together with `probeForEnv`. Setting conflicting options will throw an `InvalidOperationException`.
 
 ### Loading multiple `.env` files
 
@@ -79,6 +80,30 @@ DotEnv.Load(options: new DotEnvOptions(
 ```
 
 When `overwriteExistingVars` is `false`, keys from earlier files take precedence over those in later files.
+
+### Environment cascading (hierarchical loading)
+
+Opt-in hierarchical loading resolves layered `.env` files from the same directory as `.env` (or from the probed directory when `probeForEnv` is enabled). Later files override earlier files when `overwriteExistingVars` is `true` (the default):
+
+1. `.env`
+2. `.env.local`
+3. `.env.{Environment}` (only when an environment name is known)
+4. `.env.{Environment}.local` (only when an environment name is known)
+
+The environment name is resolved in this order: an explicit name passed to `WithEnvironmentCascade`, then `ASPNETCORE_ENVIRONMENT`, `DOTNET_ENVIRONMENT`, and `DOTENV_ENV`. If none are set, only `.env` and `.env.local` are considered. Missing files in the cascade are skipped. Add `*.local` to `.gitignore` so machine-specific secrets are not committed.
+
+```csharp
+DotEnv.Fluent()
+    .WithEnvironmentCascade()                 // uses ASPNETCORE_ENVIRONMENT / DOTNET_ENVIRONMENT / DOTENV_ENV
+    .Load();
+
+DotEnv.Fluent()
+    .WithEnvironmentCascade("Production")     // explicit environment name
+    .WithProbeForEnv()                        // cascade + probe is allowed
+    .Load();
+```
+
+`WithEnvironmentCascade()` cannot be combined with custom `WithEnvFiles(...)` paths or `WithEnvStreams(...)`.
 
 ## Fluent API
 
@@ -135,6 +160,8 @@ var envVars = DotEnv.Fluent()
 | `WithoutSupportVariableExpansion()` | Disable variable expansion and interpolation (default) |
 | `WithVariableExpansion()`           | Alias for `WithSupportVariableExpansion()`             |
 | `WithoutVariableExpansion()`        | Alias for `WithoutSupportVariableExpansion()`          |
+| `WithEnvironmentCascade(string?)`   | Load `.env`, `.env.local`, and environment-specific files |
+| `WithoutEnvironmentCascade()`       | Disable hierarchical loading (default)                 |
 
 ## Variable Expansion & Interpolation
 

@@ -95,14 +95,14 @@ public class ReaderTests : IDisposable
     [Fact]
     public void ReadStreamLines_NullStreamAndIgnoreExceptionsFalse_ShouldThrowArgumentNullException()
     {
-        Action act = () => Reader.ReadStreamLines(null!, false, null);
+        Action act = () => Reader.ReadStreamLines(null, false, null);
         act.ShouldThrow<ArgumentNullException>().Message.ShouldContain("The stream cannot be null.");
     }
 
     [Fact]
     public void ReadStreamLines_NullStreamAndIgnoreExceptionsTrue_ShouldReturnEmptySpan()
     {
-        var result = Reader.ReadStreamLines(null!, true, null).ToArray();
+        var result = Reader.ReadStreamLines(null, true, null).ToArray();
         result.ShouldBeEmpty();
     }
 

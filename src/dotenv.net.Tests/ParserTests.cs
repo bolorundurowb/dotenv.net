@@ -187,4 +187,130 @@ public class ParserTests
         result.Length.ShouldBe(1);
         result[0].ShouldBe(new KeyValuePair<string, string>("KEY", "value # comment"));
     }
+
+    [Fact]
+    public void Parse_WithVariableExpansion_SingleQuotedValue_ShouldPreserveLiteralWithoutExpansion()
+    {
+        var lines = new[]
+        {
+            "VAR=resolved",
+            "SINGLE='${VAR}'"
+        };
+        var result = Parser.Parse(lines, trimValues: false, supportExportSyntax: false, supportInlineComments: true,
+            supportVariableExpansion: true).ToArray();
+
+        result.Length.ShouldBe(2);
+        result[0].ShouldBe(new KeyValuePair<string, string>("VAR", "resolved"));
+        result[1].ShouldBe(new KeyValuePair<string, string>("SINGLE", "${VAR}"));
+    }
+
+    [Fact]
+    public void Parse_WithVariableExpansion_DoubleQuotedValue_ShouldExpandVariables()
+    {
+        var lines = new[]
+        {
+            "HOST=example.com",
+            "URL=\"https://${HOST}/api\""
+        };
+        var result = Parser.Parse(lines, trimValues: false, supportExportSyntax: false, supportInlineComments: true,
+            supportVariableExpansion: true).ToArray();
+
+        result.Length.ShouldBe(2);
+        result[1].ShouldBe(new KeyValuePair<string, string>("URL", "https://example.com/api"));
+    }
+
+    [Fact]
+    public void Parse_WithVariableExpansion_UnquotedValue_ShouldExpandVariables()
+    {
+        var lines = new[]
+        {
+            "BASE=http://localhost",
+            "PORT=5000",
+            "ENDPOINT=$BASE:$PORT/v1"
+        };
+        var result = Parser.Parse(lines, trimValues: false, supportExportSyntax: false, supportInlineComments: true,
+            supportVariableExpansion: true).ToArray();
+
+        result.Length.ShouldBe(3);
+        result[2].ShouldBe(new KeyValuePair<string, string>("ENDPOINT", "http://localhost:5000/v1"));
+    }
+
+    [Fact]
+    public void Parse_WithVariableExpansion_SequentialDependency_ShouldResolveEarlierVariables()
+    {
+        var lines = new[]
+        {
+            "A=foo",
+            "B=${A}_bar",
+            "C=${B}_baz"
+        };
+        var result = Parser.Parse(lines, trimValues: false, supportExportSyntax: false, supportInlineComments: true,
+            supportVariableExpansion: true).ToArray();
+
+        result.Length.ShouldBe(3);
+        result[0].ShouldBe(new KeyValuePair<string, string>("A", "foo"));
+        result[1].ShouldBe(new KeyValuePair<string, string>("B", "foo_bar"));
+        result[2].ShouldBe(new KeyValuePair<string, string>("C", "foo_bar_baz"));
+    }
+
+    [Fact]
+    public void Parse_WithVariableExpansion_Disabled_ShouldNotExpandVariables()
+    {
+        var lines = new[]
+        {
+            "A=foo",
+            "B=${A}"
+        };
+        var result = Parser.Parse(lines, trimValues: false, supportExportSyntax: false, supportInlineComments: true,
+            supportVariableExpansion: false).ToArray();
+
+        result.Length.ShouldBe(2);
+        result[1].ShouldBe(new KeyValuePair<string, string>("B", "${A}"));
+    }
+
+    [Fact]
+    public void Parse_WithVariableExpansion_InlineCommentOnUnquotedValue_ShouldStripCommentAndExpand()
+    {
+        var lines = new[]
+        {
+            "BASE=https://example.com",
+            "URL=${BASE}/v1 # this is an endpoint"
+        };
+        var result = Parser.Parse(lines, trimValues: false, supportExportSyntax: false, supportInlineComments: true,
+            supportVariableExpansion: true).ToArray();
+
+        result.Length.ShouldBe(2);
+        result[1].ShouldBe(new KeyValuePair<string, string>("URL", "https://example.com/v1"));
+    }
+
+    [Fact]
+    public void Parse_WithVariableExpansion_EscapedVariableInDoubleQuotes_ShouldPreserveLiteral()
+    {
+        var lines = new[]
+        {
+            "VAR=hello",
+            "ESCAPED=\"\\${VAR}\""
+        };
+        var result = Parser.Parse(lines, trimValues: false, supportExportSyntax: false, supportInlineComments: true,
+            supportVariableExpansion: true).ToArray();
+
+        result.Length.ShouldBe(2);
+        result[1].ShouldBe(new KeyValuePair<string, string>("ESCAPED", "${VAR}"));
+    }
+
+    [Fact]
+    public void Parse_WithVariableExpansion_SingleQuotedReferencedLater_ShouldNotExpandInternalTokens()
+    {
+        var lines = new[]
+        {
+            "SECRET='p@ss$word'",
+            "MY_SECRET=\"${SECRET}\""
+        };
+        var result = Parser.Parse(lines, trimValues: false, supportExportSyntax: false, supportInlineComments: true,
+            supportVariableExpansion: true).ToArray();
+
+        result.Length.ShouldBe(2);
+        result[0].ShouldBe(new KeyValuePair<string, string>("SECRET", "p@ss$word"));
+        result[1].ShouldBe(new KeyValuePair<string, string>("MY_SECRET", "p@ss$word"));
+    }
 }

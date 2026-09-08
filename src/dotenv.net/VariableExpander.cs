@@ -28,24 +28,25 @@ internal static class VariableExpander
         if (string.IsNullOrEmpty(rawValue))
             return string.Empty;
 
+        var value = rawValue!;
         var sb = new StringBuilder();
-        var length = rawValue.Length;
+        var length = value.Length;
         var i = 0;
 
         while (i < length)
         {
-            var c = rawValue[i];
+            var c = value[i];
 
             if (c == '\\')
             {
                 var backslashStart = i;
-                while (i < length && rawValue[i] == '\\')
+                while (i < length && value[i] == '\\')
                 {
                     i++;
                 }
                 var backslashCount = i - backslashStart;
 
-                if (i < length && rawValue[i] == '$')
+                if (i < length && value[i] == '$')
                 {
                     if (backslashCount % 2 != 0)
                     {
@@ -72,7 +73,7 @@ internal static class VariableExpander
 
             if (c == '$')
             {
-                if (i + 1 < length && rawValue[i + 1] == '{')
+                if (i + 1 < length && value[i + 1] == '{')
                 {
                     var braceStart = i + 2;
                     var depth = 1;
@@ -80,11 +81,11 @@ internal static class VariableExpander
 
                     while (j < length && depth > 0)
                     {
-                        if (rawValue[j] == '{')
+                        if (value[j] == '{')
                         {
                             depth++;
                         }
-                        else if (rawValue[j] == '}')
+                        else if (value[j] == '}')
                         {
                             depth--;
                         }
@@ -93,7 +94,7 @@ internal static class VariableExpander
 
                     if (depth == 0)
                     {
-                        var innerExpression = rawValue.Substring(braceStart, j - 1 - braceStart);
+                        var innerExpression = value.Substring(braceStart, j - 1 - braceStart);
                         i = j;
 
                         var expanded = ResolveBracedExpression(innerExpression, context, resolutionStack, ignoreExceptions);
@@ -108,16 +109,16 @@ internal static class VariableExpander
                         continue;
                     }
                 }
-                else if (i + 1 < length && IsValidIdentifierStart(rawValue[i + 1]))
+                else if (i + 1 < length && IsValidIdentifierStart(value[i + 1]))
                 {
                     var varStart = i + 1;
                     var j = varStart + 1;
-                    while (j < length && IsValidIdentifierPart(rawValue[j]))
+                    while (j < length && IsValidIdentifierPart(value[j]))
                     {
                         j++;
                     }
 
-                    var varName = rawValue.Substring(varStart, j - varStart);
+                    var varName = value.Substring(varStart, j - varStart);
                     i = j;
 
                     var expanded = ResolveVariable(varName, null, null, context, resolutionStack, ignoreExceptions);

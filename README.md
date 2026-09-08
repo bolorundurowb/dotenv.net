@@ -61,7 +61,8 @@ DotEnv.Load(options: new DotEnvOptions(
     overwriteExistingVars: false,      // Skip vars already set in the environment (default: true)
     probeForEnv: true,                 // Search parent directories for a .env file (default: false)
     probeLevelsToSearch: 3,            // How many directory levels to ascend when probing (default: 4)
-    supportExportSyntax: true          // Support `export KEY=VALUE` syntax (default: false)
+    supportExportSyntax: true,         // Support `export KEY=VALUE` syntax (default: false)
+    supportInlineComments: true        // Strip `# comment` from unquoted values (default: true)
 ));
 ```
 
@@ -127,6 +128,8 @@ var envVars = DotEnv.Fluent()
 | `WithoutProbeForEnv()`           | Disable parent directory search (default)          |
 | `WithSupportExportSyntax()`      | Support `export KEY=VALUE` syntax                  |
 | `WithoutSupportExportSyntax()`   | Disable export syntax support (default)            |
+| `WithSupportInlineComments()`    | Strip `# comment` from unquoted values (default)   |
+| `WithoutSupportInlineComments()` | Preserve inline comments in values                 |
 
 ## Reading Variables
 

@@ -174,6 +174,33 @@ public class DotEnvOptionsTests
     }
 
     [Fact]
+    public void Constructor_ShouldDefaultSupportInlineCommentsToTrue()
+    {
+        var options = new DotEnvOptions();
+        options.SupportInlineComments.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void WithSupportInlineComments_ShouldSetSupportInlineCommentsCorrectly(bool initialValue)
+    {
+        var options = new DotEnvOptions(supportInlineComments: initialValue);
+        options.WithSupportInlineComments();
+        options.SupportInlineComments.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void WithoutSupportInlineComments_ShouldSetSupportInlineCommentsCorrectly(bool initialValue)
+    {
+        var options = new DotEnvOptions(supportInlineComments: initialValue);
+        options.WithoutSupportInlineComments();
+        options.SupportInlineComments.ShouldBeFalse();
+    }
+
+    [Fact]
     public void Read_ComplexExistingEnv_ShouldExtractValidValues()
     {
         var values = DotEnv.Fluent()

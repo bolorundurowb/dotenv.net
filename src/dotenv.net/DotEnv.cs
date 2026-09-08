@@ -32,7 +32,8 @@ public static class DotEnv
                 {
                     var fileRows = Reader.ReadStreamLines(envStream, options.IgnoreExceptions, options.Encoding);
                     var envKeyValues =
-                        Reader.ExtractEnvKeyValues(fileRows, options.TrimValues, options.SupportExportSyntax);
+                        Reader.ExtractEnvKeyValues(fileRows, options.TrimValues, options.SupportExportSyntax,
+                            options.SupportInlineComments);
                     return envKeyValues.ToArray();
                 })
                 .ToList();
@@ -48,7 +49,8 @@ public static class DotEnv
                 {
                     var fileRows = Reader.ReadFileLines(envFilePath, options.IgnoreExceptions, options.Encoding);
                     var envKeyValues =
-                        Reader.ExtractEnvKeyValues(fileRows, options.TrimValues, options.SupportExportSyntax);
+                        Reader.ExtractEnvKeyValues(fileRows, options.TrimValues, options.SupportExportSyntax,
+                            options.SupportInlineComments);
                     return envKeyValues.ToArray();
                 })
                 .ToList();

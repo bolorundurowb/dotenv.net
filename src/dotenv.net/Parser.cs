@@ -12,7 +12,7 @@ internal static class Parser
     private const string ExportPrefix = "export";
 
     internal static ReadOnlySpan<KeyValuePair<string, string>> Parse(ReadOnlySpan<string> rawEnvRows,
-        bool trimValues, bool supportExportSyntax)
+        bool trimValues, bool supportExportSyntax, bool supportInlineComments)
     {
         var keyValuePairs = new List<KeyValuePair<string, string>>();
 
@@ -40,7 +40,7 @@ internal static class Parser
 
             var value = isSingleQuoted || isDoubleQuoted
                 ? ParseQuotedValue(key, rawEnvRows, trimmedRawValue, ref i)
-                : rawValue;
+                : supportInlineComments ? rawValue.StripInlineComment() : rawValue;
 
             if (trimValues)
                 value = value.Trim();
@@ -110,6 +110,20 @@ internal static class Parser
         return valueBuilder.ToString()
             .UnescapeQuotes(quoteChar)
             .UnescapeBackslashes();
+    }
+
+    private static string StripInlineComment(this string value)
+    {
+        for (var i = 0; i < value.Length; i++)
+        {
+            if (value[i] != '#')
+                continue;
+
+            if (i > 0 && char.IsWhiteSpace(value[i - 1]))
+                return value.Substring(0, i).TrimEnd();
+        }
+
+        return value;
     }
 
     private static bool IsComment(this string value) => value.StartsWith("#");

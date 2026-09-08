@@ -62,6 +62,11 @@ public class DotEnvOptions
     public bool SupportExportSyntax { get; private set; }
 
     /// <summary>
+    /// Whether inline comments (e.g. KEY=value # comment) should be stripped from unquoted values. The default is true.
+    /// </summary>
+    public bool SupportInlineComments { get; private set; }
+
+    /// <summary>
     /// Initialises a new instance of the <see cref="DotEnvOptions"/> class.
     /// </summary>
     /// <param name="ignoreExceptions">Whether to ignore exceptions during the loading process.</param>
@@ -75,7 +80,7 @@ public class DotEnvOptions
     public DotEnvOptions(bool ignoreExceptions = true, IEnumerable<string>? envFilePaths = null,
         Encoding? encoding = null, bool trimValues = false, bool overwriteExistingVars = true,
         bool probeForEnv = false, int? probeLevelsToSearch = null, bool supportExportSyntax = false,
-        IEnumerable<Stream>? envStreams = null)
+        bool supportInlineComments = true, IEnumerable<Stream>? envStreams = null)
     {
         if (ignoreExceptions)
             WithoutExceptions();
@@ -108,6 +113,11 @@ public class DotEnvOptions
             WithSupportExportSyntax();
         else
             WithoutSupportExportSyntax();
+
+        if (supportInlineComments)
+            WithSupportInlineComments();
+        else
+            WithoutSupportInlineComments();
     }
 
     /// <summary>
@@ -239,6 +249,26 @@ public class DotEnvOptions
     public DotEnvOptions WithoutSupportExportSyntax()
     {
         SupportExportSyntax = false;
+        return this;
+    }
+
+    /// <summary>
+    /// Enables support for inline comments in env files.
+    /// </summary>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
+    public DotEnvOptions WithSupportInlineComments()
+    {
+        SupportInlineComments = true;
+        return this;
+    }
+
+    /// <summary>
+    /// Disables support for inline comments in env files.
+    /// </summary>
+    /// <returns>The current <see cref="DotEnvOptions"/> instance.</returns>
+    public DotEnvOptions WithoutSupportInlineComments()
+    {
+        SupportInlineComments = false;
         return this;
     }
 

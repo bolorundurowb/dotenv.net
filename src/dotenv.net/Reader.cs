@@ -97,30 +97,41 @@ internal static class Reader
 
     internal static IEnumerable<string> GetProbedEnvPath(int levelsToSearch, bool ignoreExceptions)
     {
+        var directory = GetProbedEnvDirectory(levelsToSearch, ignoreExceptions, [DotEnvOptions.DefaultEnvFileName]);
+        return directory == null ? [] : [Path.Combine(directory, DotEnvOptions.DefaultEnvFileName)];
+    }
+
+    internal static string? GetProbedEnvDirectory(int levelsToSearch, bool ignoreExceptions,
+        IReadOnlyList<string> candidateFileNames, string? startDirectory = null)
+    {
         var pathsSearched = new List<string>();
-        var count = levelsToSearch;
-        var foundEnvPath = SearchPaths();
+        var foundDirectory = SearchPaths();
 
-        if (string.IsNullOrEmpty(foundEnvPath) && !ignoreExceptions)
+        if (string.IsNullOrEmpty(foundDirectory) && !ignoreExceptions)
             throw new FileNotFoundException(
-                $"Could not find '{DotEnvOptions.DefaultEnvFileName}' after searching {levelsToSearch} directory level(s) upwards.{Environment.NewLine}Searched paths:{Environment.NewLine}{string.Join(Environment.NewLine, pathsSearched)}");
+                $"Could not find '{string.Join("', '", candidateFileNames)}' after searching {levelsToSearch} directory level(s) upwards.{Environment.NewLine}Searched paths:{Environment.NewLine}{string.Join(Environment.NewLine, pathsSearched)}");
 
-        return foundEnvPath == null ? [] : [foundEnvPath];
+        return foundDirectory;
 
         string? SearchPaths()
         {
-            var directory = new DirectoryInfo(AppContext.BaseDirectory);
+            var directory = new DirectoryInfo(string.IsNullOrWhiteSpace(startDirectory)
+                ? AppContext.BaseDirectory
+                : startDirectory);
 
-            for (var i = 0; i <= count; i++)
+            for (var i = 0; i <= levelsToSearch; i++)
             {
                 if (directory == null)
                     break;
 
                 pathsSearched.Add(directory.FullName);
 
-                foreach (var fileInfo in directory.EnumerateFiles(DotEnvOptions.DefaultEnvFileName,
-                             SearchOption.TopDirectoryOnly))
-                    return fileInfo.FullName;
+                foreach (var candidateFileName in candidateFileNames)
+                {
+                    var candidatePath = Path.Combine(directory.FullName, candidateFileName);
+                    if (File.Exists(candidatePath))
+                        return directory.FullName;
+                }
 
                 directory = directory.Parent;
             }

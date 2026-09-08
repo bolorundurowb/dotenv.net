@@ -168,4 +168,155 @@ public class DotEnvTests
             Environment.SetEnvironmentVariable(refKey, null);
         }
     }
+
+    [Fact]
+    public void Read_WithEnvironmentCascade_ShouldOverrideInDotenvFlowOrder()
+    {
+        using var workspace = new TempEnvDirectory();
+        workspace.Write(".env", "KEY=base\nONLY_BASE=yes");
+        workspace.Write(".env.local", "KEY=local\nONLY_LOCAL=yes");
+        workspace.Write(".env.Development", "KEY=development\nONLY_DEV=yes");
+        workspace.Write(".env.Development.local", "KEY=development-local\nONLY_DEV_LOCAL=yes");
+
+        using (workspace.SetCurrentDirectory())
+        {
+            var values = DotEnv.Fluent()
+                .WithEnvironmentCascade("Development")
+                .Read();
+
+            values["KEY"].ShouldBe("development-local");
+            values["ONLY_BASE"].ShouldBe("yes");
+            values["ONLY_LOCAL"].ShouldBe("yes");
+            values["ONLY_DEV"].ShouldBe("yes");
+            values["ONLY_DEV_LOCAL"].ShouldBe("yes");
+        }
+    }
+
+    [Fact]
+    public void Read_WithEnvironmentCascade_WhenNoEnvironment_ShouldLoadBaseAndLocalOnly()
+    {
+        using var workspace = new TempEnvDirectory();
+        workspace.Write(".env", "KEY=base");
+        workspace.Write(".env.local", "KEY=local");
+        workspace.Write(".env.Development", "KEY=development");
+
+        using (new EnvironmentVariableScope(
+                   (EnvFileCascade.AspNetCoreEnvironmentVariable, null),
+                   (EnvFileCascade.DotNetEnvironmentVariable, null),
+                   (EnvFileCascade.DotEnvEnvironmentVariable, null)))
+        using (workspace.SetCurrentDirectory())
+        {
+            var values = DotEnv.Fluent().WithEnvironmentCascade().Read();
+            values["KEY"].ShouldBe("local");
+        }
+    }
+
+    [Fact]
+    public void Read_WithoutEnvironmentCascade_ShouldNotLoadLayeredFiles()
+    {
+        using var workspace = new TempEnvDirectory();
+        workspace.Write(".env", "KEY=base");
+        workspace.Write(".env.local", "KEY=local");
+
+        using (workspace.SetCurrentDirectory())
+        {
+            var values = DotEnv.Read();
+            values["KEY"].ShouldBe("base");
+        }
+    }
+
+    [Fact]
+    public void Read_WithEnvironmentCascade_MissingFiles_ShouldSkipWhenExceptionsIgnored()
+    {
+        using var workspace = new TempEnvDirectory();
+        workspace.Write(".env", "KEY=base");
+
+        using (workspace.SetCurrentDirectory())
+        {
+            var values = DotEnv.Fluent()
+                .WithoutExceptions()
+                .WithEnvironmentCascade("Production")
+                .Read();
+
+            values["KEY"].ShouldBe("base");
+        }
+    }
+
+    [Fact]
+    public void Read_WithEnvironmentCascade_WhenNoFilesExistAndExceptionsEnabled_ShouldThrow()
+    {
+        using var workspace = new TempEnvDirectory();
+
+        using (workspace.SetCurrentDirectory())
+        {
+            Should.Throw<FileNotFoundException>(() =>
+                DotEnv.Fluent().WithExceptions().WithEnvironmentCascade("Development").Read());
+        }
+    }
+
+    [Fact]
+    public void Read_WithEnvironmentCascadeAndProbeForEnv_ShouldLoadFromProbedDirectory()
+    {
+        using var workspace = new TempEnvDirectory();
+        var nested = Directory.CreateDirectory(Path.Combine(workspace.Path, "a", "b", "c"));
+        workspace.Write(".env", "KEY=base");
+        workspace.Write(".env.Staging", "KEY=staging");
+
+        var directory = Reader.GetProbedEnvDirectory(3, ignoreExceptions: false,
+            EnvFileCascade.GetCandidateFileNames("Staging"), nested.FullName);
+        directory.ShouldBe(workspace.Path);
+
+        var paths = EnvFileCascade.ResolveExistingFilePaths(directory!, "Staging", ignoreExceptions: false);
+        paths.Count.ShouldBe(2);
+    }
+
+    private sealed class TempEnvDirectory : IDisposable
+    {
+        public string Path { get; } = System.IO.Path.Combine(System.IO.Path.GetTempPath(),
+            "DotEnvCascade_" + Guid.NewGuid().ToString("N"));
+
+        public TempEnvDirectory() => Directory.CreateDirectory(Path);
+
+        public void Write(string fileName, string contents) =>
+            File.WriteAllText(System.IO.Path.Combine(Path, fileName), contents);
+
+        public CurrentDirectoryScope SetCurrentDirectory() => new(Path);
+
+        public void Dispose()
+        {
+            if (Directory.Exists(Path))
+                Directory.Delete(Path, true);
+        }
+    }
+
+    private sealed class CurrentDirectoryScope : IDisposable
+    {
+        private readonly string _original = Directory.GetCurrentDirectory();
+
+        public CurrentDirectoryScope(string directory) => Directory.SetCurrentDirectory(directory);
+
+        public void Dispose() => Directory.SetCurrentDirectory(_original);
+    }
+
+    private sealed class EnvironmentVariableScope : IDisposable
+    {
+        private readonly (string Key, string? Value)[] _original;
+
+        public EnvironmentVariableScope(params (string Key, string? Value)[] values)
+        {
+            _original = new (string, string?)[values.Length];
+            for (var i = 0; i < values.Length; i++)
+            {
+                var key = values[i].Key;
+                _original[i] = (key, Environment.GetEnvironmentVariable(key));
+                Environment.SetEnvironmentVariable(key, values[i].Value);
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var (key, value) in _original)
+                Environment.SetEnvironmentVariable(key, value);
+        }
+    }
 }

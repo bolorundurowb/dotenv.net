@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace dotenv.net;
@@ -48,9 +49,11 @@ public static class DotEnv
         }
         else
         {
-            var envFilePaths = options.ProbeForEnv
-                ? Reader.GetProbedEnvPath(options.ProbeLevelsToSearch!.Value, options.IgnoreExceptions)
-                : options.EnvFilePaths;
+            var envFilePaths = options.EnvironmentCascade
+                ? ResolveCascadeFilePaths(options)
+                : options.ProbeForEnv
+                    ? Reader.GetProbedEnvPath(options.ProbeLevelsToSearch!.Value, options.IgnoreExceptions)
+                    : options.EnvFilePaths;
 
             envFileKeyValues = envFilePaths
                 .Select(envFilePath =>
@@ -82,5 +85,29 @@ public static class DotEnv
         options ??= new DotEnvOptions();
         var envVars = Read(options);
         Writer.WriteToEnv(envVars, options.OverwriteExistingVars);
+    }
+
+    private static IEnumerable<string> ResolveCascadeFilePaths(DotEnvOptions options)
+    {
+        var environmentName = EnvFileCascade.ResolveEnvironmentName(options.EnvironmentName);
+        var candidateFileNames = EnvFileCascade.GetCandidateFileNames(environmentName);
+        string directory;
+
+        if (options.ProbeForEnv)
+        {
+            var probedDirectory = Reader.GetProbedEnvDirectory(options.ProbeLevelsToSearch!.Value,
+                options.IgnoreExceptions, candidateFileNames);
+            if (probedDirectory == null)
+                return [];
+
+            directory = probedDirectory;
+        }
+        else
+        {
+            var defaultPath = options.EnvFilePaths?.FirstOrDefault() ?? DotEnvOptions.DefaultEnvFileName;
+            directory = Path.GetDirectoryName(Path.GetFullPath(defaultPath)) ?? ".";
+        }
+
+        return EnvFileCascade.ResolveExistingFilePaths(directory, environmentName, options.IgnoreExceptions);
     }
 }

@@ -302,6 +302,30 @@ public class ReaderTests : IDisposable
         exception.Message.ShouldContain($"Could not find '{DotEnvOptions.DefaultEnvFileName}'");
     }
 
+    [Fact]
+    public void GetProbedEnvDirectory_ShouldPreferEnvThenOtherCascadeFiles()
+    {
+        var root = Path.Combine(_testRootPath, "probe_" + Guid.NewGuid().ToString("N"));
+        var child = Path.Combine(root, "child");
+        Directory.CreateDirectory(child);
+        File.WriteAllText(Path.Combine(root, ".env.local"), "KEY=local");
+
+        var directory = Reader.GetProbedEnvDirectory(2, ignoreExceptions: false,
+            [".env", ".env.local"], child);
+
+        directory.ShouldBe(root);
+    }
+
+    [Fact]
+    public void GetProbedEnvDirectory_WhenNotFoundAndIgnoreExceptionsTrue_ShouldReturnNull()
+    {
+        var start = Path.Combine(_testRootPath, "empty_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(start);
+
+        Reader.GetProbedEnvDirectory(1, ignoreExceptions: true, [".env", ".env.local"], start)
+            .ShouldBeNull();
+    }
+
     /// <summary>
     /// Stream whose Read always throws, for exercising ReadStreamLines error handling.
     /// </summary>

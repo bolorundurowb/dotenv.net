@@ -6,6 +6,7 @@ using Xunit;
 
 namespace dotenv.net.Tests;
 
+[Collection("CurrentDirectory")]
 public class EnvFileCascadeTests
 {
     [Fact]

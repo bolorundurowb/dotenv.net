@@ -119,6 +119,52 @@ public class DotEnvConfigurationTests
         settings.Timeout.ShouldBe(30);
     }
 
+    [Fact]
+    public void DotEnvConfigurationSource_NullOptions_ShouldThrow()
+    {
+        Should.Throw<ArgumentNullException>(() => new DotEnvConfigurationSource(null!))
+            .ParamName.ShouldBe("options");
+    }
+
+    [Fact]
+    public void DotEnvConfigurationProvider_NullOptions_ShouldThrow()
+    {
+        Should.Throw<ArgumentNullException>(() => new DotEnvConfigurationProvider(null!))
+            .ParamName.ShouldBe("options");
+    }
+
+    [Fact]
+    public void AddDotNetEnv_NullBuilder_ShouldThrow()
+    {
+        Should.Throw<ArgumentNullException>(() =>
+                DotEnvConfigurationExtensions.AddDotNetEnv((IConfigurationBuilder)null!))
+            .ParamName.ShouldBe("builder");
+    }
+
+    [Fact]
+    public void AddDotNetEnv_NullOptions_ShouldThrow()
+    {
+        var builder = new ConfigurationBuilder();
+        Should.Throw<ArgumentNullException>(() => builder.AddDotNetEnv((DotEnvOptions)null!))
+            .ParamName.ShouldBe("options");
+    }
+
+    [Fact]
+    public void AddDotNetEnv_NullConfigure_ShouldThrow()
+    {
+        var builder = new ConfigurationBuilder();
+        Should.Throw<ArgumentNullException>(() => builder.AddDotNetEnv((Action<DotEnvOptions>)null!))
+            .ParamName.ShouldBe("configure");
+    }
+
+    [Fact]
+    public void AddDotNetEnv_NullBuilderWithConfigure_ShouldThrow()
+    {
+        Should.Throw<ArgumentNullException>(() =>
+                DotEnvConfigurationExtensions.AddDotNetEnv((IConfigurationBuilder)null!, _ => { }))
+            .ParamName.ShouldBe("builder");
+    }
+
     private sealed class TestSettings
     {
         public string? Name { get; set; }

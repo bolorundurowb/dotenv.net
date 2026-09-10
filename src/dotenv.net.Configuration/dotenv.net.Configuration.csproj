@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Copyright>©2017-2026 , Bolorunduro Winner-Timothy. All Rights reserved.</Copyright>
+        <PackageReleaseNotes>- adds Microsoft.Extensions.Configuration integration (AddDotNetEnv)</PackageReleaseNotes>
+        <Authors>Winner-Timothy Bolorunduro</Authors>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageId>dotenv.net.Configuration</PackageId>
+        <Description>Microsoft.Extensions.Configuration integration for dotenv.net, enabling .env files to be loaded into IConfiguration, IOptions and dependency injection.</Description>
+        <PackageIconUrl>https://res.cloudinary.com/dg2dgzbt4/image/upload/v1587070177/external_assets/open_source/icons/dotenv.png</PackageIconUrl>
+        <PackageProjectUrl>https://github.com/bolorundurowb/dotenv.net</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/bolorundurowb/dotenv.net/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
+        <LangVersion>default</LangVersion>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageVersion>4.1.0</PackageVersion>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>dotenv, .env, configuration, Microsoft.Extensions.Configuration, IConfiguration, IOptions, environment-variables, dotnet, csharp</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <NeutralLanguage>en-NG</NeutralLanguage>
+        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+        <Title>dotenv.net.Configuration</Title>
+        <Nullable>enable</Nullable>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <AssemblyVersion>4.1.0</AssemblyVersion>
+        <FileVersion>4.1.0</FileVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+        <InternalsVisibleTo Include="dotenv.net.Tests"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\dotenv.net\dotenv.net.csproj"/>
+    </ItemGroup>
+</Project>

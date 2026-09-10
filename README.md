@@ -140,28 +140,28 @@ var envVars = DotEnv.Fluent()
 
 ### Fluent builder methods
 
-| Method                              | Description                                            |
-|-------------------------------------|--------------------------------------------------------|
-| `WithExceptions()`                  | Throw exceptions on errors                             |
-| `WithoutExceptions()`               | Silently ignore errors (default)                       |
-| `WithEnvFiles(params string[])`     | Specify one or more `.env` file paths                  |
-| `WithEncoding(Encoding)`            | Set file encoding                                      |
-| `WithTrimValues()`                  | Strip whitespace from values                           |
-| `WithoutTrimValues()`               | Preserve whitespace in values (default)                |
-| `WithOverwriteExistingVars()`       | Overwrite existing environment variables (default)     |
-| `WithoutOverwriteExistingVars()`    | Preserve existing environment variables                |
-| `WithProbeForEnv(int)`              | Search parent directories for a `.env` file            |
-| `WithoutProbeForEnv()`              | Disable parent directory search (default)              |
-| `WithSupportExportSyntax()`         | Support `export KEY=VALUE` syntax                      |
-| `WithoutSupportExportSyntax()`      | Disable export syntax support (default)                |
-| `WithSupportInlineComments()`       | Strip `# comment` from unquoted values (default)       |
-| `WithoutSupportInlineComments()`    | Preserve inline comments in values                     |
-| `WithSupportVariableExpansion()`    | Enable variable expansion and interpolation            |
-| `WithoutSupportVariableExpansion()` | Disable variable expansion and interpolation (default) |
-| `WithVariableExpansion()`           | Alias for `WithSupportVariableExpansion()`             |
-| `WithoutVariableExpansion()`        | Alias for `WithoutSupportVariableExpansion()`          |
+| Method                              | Description                                               |
+|-------------------------------------|-----------------------------------------------------------|
+| `WithExceptions()`                  | Throw exceptions on errors                                |
+| `WithoutExceptions()`               | Silently ignore errors (default)                          |
+| `WithEnvFiles(params string[])`     | Specify one or more `.env` file paths                     |
+| `WithEncoding(Encoding)`            | Set file encoding                                         |
+| `WithTrimValues()`                  | Strip whitespace from values                              |
+| `WithoutTrimValues()`               | Preserve whitespace in values (default)                   |
+| `WithOverwriteExistingVars()`       | Overwrite existing environment variables (default)        |
+| `WithoutOverwriteExistingVars()`    | Preserve existing environment variables                   |
+| `WithProbeForEnv(int)`              | Search parent directories for a `.env` file               |
+| `WithoutProbeForEnv()`              | Disable parent directory search (default)                 |
+| `WithSupportExportSyntax()`         | Support `export KEY=VALUE` syntax                         |
+| `WithoutSupportExportSyntax()`      | Disable export syntax support (default)                   |
+| `WithSupportInlineComments()`       | Strip `# comment` from unquoted values (default)          |
+| `WithoutSupportInlineComments()`    | Preserve inline comments in values                        |
+| `WithSupportVariableExpansion()`    | Enable variable expansion and interpolation               |
+| `WithoutSupportVariableExpansion()` | Disable variable expansion and interpolation (default)    |
+| `WithVariableExpansion()`           | Alias for `WithSupportVariableExpansion()`                |
+| `WithoutVariableExpansion()`        | Alias for `WithoutSupportVariableExpansion()`             |
 | `WithEnvironmentCascade(string?)`   | Load `.env`, `.env.local`, and environment-specific files |
-| `WithoutEnvironmentCascade()`       | Disable hierarchical loading (default)                 |
+| `WithoutEnvironmentCascade()`       | Disable hierarchical loading (default)                    |
 
 ## Variable Expansion & Interpolation
 
@@ -255,6 +255,45 @@ if (EnvReader.TryGetIntValue("DB_PORT", out var port))
 | `TryGetDoubleValue(string key, out double value)`   | `bool`      | No, returns `0.0` on failure   |
 | `TryGetDecimalValue(string key, out decimal value)` | `bool`      | No, returns `0.0m` on failure  |
 | `TryGetBooleanValue(string key, out bool value)`    | `bool`      | No, returns `false` on failure |
+
+## Microsoft.Extensions.Configuration Integration
+
+The `dotenv.net.Configuration` package adds native `IConfigurationProvider` support, so `.env` files flow into
+`IConfiguration`, `IOptions<T>`, dependency injection, and ASP.NET Core `WebApplicationBuilder` — no manual plumbing.
+
+**Installation**
+
+```bash
+dotnet add package dotenv.net.Configuration
+```
+
+**Usage**
+
+```csharp
+using dotenv.net.Configuration;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddDotNetEnv();                       // loads .env with default options
+builder.Configuration.AddDotNetEnv(options => options
+    .WithEncoding(Encoding.UTF8)
+    .WithEnvFiles(".env", ".env.development")
+    .WithTrimValues());
+```
+
+Values are then available everywhere configuration is used:
+
+```csharp
+// Direct access
+var connectionString = builder.Configuration["ConnectionStrings:Default"];
+
+// Bound to strongly-typed options
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+```
+
+The `AddDotNetEnv` overloads accept `DotEnvOptions` directly or a `Action<DotEnvOptions>` configuration delegate, so
+all existing options (multiple files, streams, probe, cascade, variable expansion, etc.) are supported. Sources are
+applied in the order they are added; later sources override earlier ones.
 
 ## Contributing
 

@@ -1,0 +1,105 @@
+name: Generate Release
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-release:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - name: Detect version and tag
+        id: detect
+        run: |
+          set -euo pipefail
+
+          VERSION=$(grep -oP '(?<=<PackageVersion>)[^<]+' src/dotenv.net/dotenv.net.csproj | head -n1 | xargs || true)
+
+          if [[ -z "$VERSION" ]]; then
+            echo "::error::Could not extract a version from src/dotenv.net/dotenv.net.csproj"
+            exit 1
+          fi
+
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Malformed version '${VERSION}'. Expected semver such as 4.1.0 or 4.1.0-beta.1"
+            exit 1
+          fi
+
+          TAG="v${VERSION}"
+          PRERELEASE="false"
+          LOWER_VERSION=$(echo "$VERSION" | tr '[:upper:]' '[:lower:]')
+          if [[ "$LOWER_VERSION" == *"-alpha"* ]] || [[ "$LOWER_VERSION" == *"-beta"* ]]; then
+            PRERELEASE="true"
+          fi
+
+          if git rev-parse "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "::notice::Tag ${TAG} already exists, skipping release"
+            echo "tag_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "prerelease=${PRERELEASE}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and pack
+        if: steps.detect.outputs.tag_exists == 'false'
+        run: |
+          set -euo pipefail
+          dotnet restore ./src/dotenv.net.slnx
+          dotnet build ./src/dotenv.net.slnx --configuration Release --no-restore
+          dotnet pack ./src/dotenv.net/dotenv.net.csproj --configuration Release --no-build --output ./artifacts
+          dotnet pack ./src/dotenv.net.Configuration/dotenv.net.Configuration.csproj --configuration Release --no-build --output ./artifacts
+
+      - name: Create tag and release
+        if: steps.detect.outputs.tag_exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.detect.outputs.tag }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$TAG"
+          git push origin "$TAG"
+
+          if [[ "${{ steps.detect.outputs.prerelease }}" == "true" ]]; then
+            PRERELEASE_FLAG="--prerelease"
+          else
+            PRERELEASE_FLAG=""
+          fi
+
+          # Prefer GitHub's auto-generated notes; fall back to commit messages when unavailable.
+          if gh release create --help 2>&1 | grep -q -- '--generate-notes'; then
+            NOTES_ARGS=(--generate-notes)
+          else
+            PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+            if [[ -n "$PREV_TAG" ]]; then
+              git log "${PREV_TAG}..HEAD" --pretty=format:'- %s' > ./artifacts/release-notes.md
+            else
+              git log --pretty=format:'- %s' > ./artifacts/release-notes.md
+            fi
+            NOTES_ARGS=(--notes-file ./artifacts/release-notes.md)
+          fi
+
+          gh release create "$TAG" ./artifacts/*.nupkg \
+            --title "$TAG" \
+            "${NOTES_ARGS[@]}" \
+            $PRERELEASE_FLAG

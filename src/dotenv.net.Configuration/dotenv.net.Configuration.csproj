@@ -12,7 +12,7 @@
         <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
         <LangVersion>default</LangVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageVersion>4.1.0</PackageVersion>
+        <PackageVersion>4.2.0</PackageVersion>
         <RepositoryType>git</RepositoryType>
         <PackageTags>dotenv, .env, configuration, Microsoft.Extensions.Configuration, IConfiguration, IOptions, environment-variables, dotnet, csharp</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -21,8 +21,8 @@
         <Title>dotenv.net.Configuration</Title>
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <AssemblyVersion>4.1.0</AssemblyVersion>
-        <FileVersion>4.1.0</FileVersion>
+        <AssemblyVersion>4.2.0</AssemblyVersion>
+        <FileVersion>4.2.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>

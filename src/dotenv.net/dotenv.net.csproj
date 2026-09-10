@@ -2,8 +2,7 @@
     <PropertyGroup>
         <Copyright>©2017-2026 , Bolorunduro Winner-Timothy. All Rights reserved.</Copyright>
         <PackageReleaseNotes>- adds env cascade loading support
-- implements variable expansion support
-- adds support for inline comments</PackageReleaseNotes>
+- implement IConfiguration support</PackageReleaseNotes>
         <Authors>Winner-Timothy Bolorunduro</Authors>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageId>dotenv.net</PackageId>
@@ -14,7 +13,7 @@
         <RepositoryUrl>https://github.com/bolorundurowb/dotenv.net</RepositoryUrl>
         <LangVersion>default</LangVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageVersion>4.1.0</PackageVersion>
+        <PackageVersion>4.2.0</PackageVersion>
         <RepositoryType>git</RepositoryType>
         <PackageTags>dot, env, dotnet, .net, environment-variables, dotenv, configuration, env-vars, cross-platform, csharp, dotnet-core, settings, devops, utility, parsing, variable-management, configuration-provider, application-secrets</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -23,8 +22,8 @@
         <Title>dotenv.net</Title>
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <AssemblyVersion>4.1.0</AssemblyVersion>
-        <FileVersion>4.1.0</FileVersion>
+        <AssemblyVersion>4.2.0</AssemblyVersion>
+        <FileVersion>4.2.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
